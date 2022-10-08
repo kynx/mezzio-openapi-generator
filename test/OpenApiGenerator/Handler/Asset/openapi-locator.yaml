@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Test OpenAPI
+  description: Test OpenAPI
+  version: 1.0.0
+servers:
+  - url: 'https://localhost'
+paths:
+  /op-id:
+    post:
+      operationId: opId
+      responses:
+        '200':
+          description: successful operation
+  /no-op-id/query:
+    get:
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: array
+      responses:
+        '200':
+          description: successful operation
+  '/param/{paramId}':
+    get:
+      operationId: getParamById
+      parameters:
+        - name: paramId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+  '/no-op-id/{paramId}':
+    get:
+      parameters:
+        - name: paramId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+  '/param-with-referenced-schema/{name}':
+    get:
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ParamSchema'
+      responses:
+        '200':
+          description: successful operation
+  '/referenced-param/{referencedParam}':
+    get:
+      parameters:
+        - $ref: '#/components/parameters/MyParam'
+      responses:
+        '200':
+          description: successful operation
+components:
+ schemas:
+   ParamSchema:
+     type: string
+ parameters:
+   MyParam:
+     name: referencedParam
+     in: path
+     required: true
+     schema:
+       $ref: '#/components/schemas/ParamSchema'
+  
