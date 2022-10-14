@@ -6,7 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
 use cebe\openapi\Reader;
 use cebe\openapi\spec\OpenApi;
-use Kynx\CodeUtils\ClassNameNormalizer;
+use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApi\OpenApiRouteParameter;
 use Kynx\Mezzio\OpenApi\OpenApiSchema;

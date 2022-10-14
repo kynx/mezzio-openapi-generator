@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
-use Kynx\CodeUtils\ClassNameNormalizer;
+use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApiGenerator\Handler\FlatNamer;
 use PHPUnit\Framework\TestCase;
