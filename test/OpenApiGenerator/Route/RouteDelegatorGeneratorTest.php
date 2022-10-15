@@ -6,6 +6,8 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
 use cebe\openapi\Reader;
 use Kynx\Code\Normalizer\ClassNameNormalizer;
+use Kynx\Code\Normalizer\UniqueClassLabeler;
+use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Mezzio\OpenApiGenerator\Handler\FlatNamer;
 use Kynx\Mezzio\OpenApiGenerator\Handler\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\Route\DotSnakeCaseNamer;
@@ -15,6 +17,8 @@ use Kynx\Mezzio\OpenApiGenerator\Stub\RouteDelegator;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Reflection\ClassReflection;
 use PHPUnit\Framework\TestCase;
+
+use function trim;
 
 /**
  * @covers \Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator
@@ -35,11 +39,14 @@ final class RouteDelegatorGeneratorTest extends TestCase
     public function testGenerateCreatesRoutes(): void
     {
         $openApi = Reader::readFromYamlFile(__DIR__ . '/Asset/route-delegator.yaml');
-        $locator = new OpenApiLocator(
+        self::assertTrue($openApi->validate(), "Invalid openapi schema");
+
+        $labeler    = new UniqueClassLabeler(new ClassNameNormalizer('Handler'), new NumberSuffix());
+        $locator    = new OpenApiLocator(
             $openApi,
-            new FlatNamer(self::NAMESPACE, new ClassNameNormalizer('Handler'))
+            new FlatNamer(self::NAMESPACE, $labeler)
         );
-        $handlers = $locator->create();
+        $handlers   = $locator->create();
         $reflection = new ClassReflection(RouteDelegator::class);
 
         $generator = ClassGenerator::fromReflection($reflection);
@@ -47,14 +54,15 @@ final class RouteDelegatorGeneratorTest extends TestCase
         $generator->setFinal(true);
 
         $expected = trim($this->getExpectedCode());
-        $actual = trim($this->generator->generate($openApi, $handlers, $generator));
+        $actual   = trim($this->generator->generate($openApi, $handlers, $generator));
 
         self::assertSame($expected, $actual);
     }
 
     private function getExpectedCode(): string
     {
-        return <<<EndOfExpected
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        return <<<EXPECTED
         namespace KynxTest\Mezzio\OpenApiGenerator\Route\Asset;
         
         final class RouteDelegator
@@ -71,6 +79,7 @@ final class RouteDelegatorGeneratorTest extends TestCase
                 return \$app;
             }
         }
-        EndOfExpected;
+        EXPECTED;
+        // phpcs:enable
     }
 }

@@ -9,7 +9,8 @@ use Kynx\Mezzio\OpenApi\OpenApiOperation;
 interface HandlerNamerInterface
 {
     /**
-     * @return class-string
+     * @param list<OpenApiOperation> $operations
+     * @return array<string, OpenApiOperation>
      */
-    public function getName(OpenApiOperation $operation): string;
+    public function keyByUniqueName(array $operations): array;
 }

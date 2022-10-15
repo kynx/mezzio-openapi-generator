@@ -22,6 +22,12 @@ paths:
       responses:
         '200':
           description: successful operation
+  /op-id/case:
+    post:
+      operationId: OpId
+      responses:
+        '200':
+          description: successful operation
   '/param/{paramId}':
     get:
       operationId: getParamById

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Handler;
 
-use Kynx\Code\Normalizer\ClassNameNormalizer;
+use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 
+use function array_combine;
 use function array_map;
 use function array_slice;
 use function explode;
@@ -18,24 +19,30 @@ use function preg_replace;
  */
 final class FlatNamer implements HandlerNamerInterface
 {
-    public function __construct(private string $baseNamespace, private ClassNameNormalizer $normalizer)
+    public function __construct(private string $baseNamespace, private UniqueClassLabeler $labeler)
     {
     }
 
-    public function getName(OpenApiOperation $operation): string
+    public function keyByUniqueName(array $operations): array
+    {
+        $labels = array_map(fn (OpenApiOperation $operation): string => $this->getName($operation), $operations);
+        $unique = $this->labeler->getUnique($labels);
+        return array_combine($unique, $operations);
+    }
+
+    private function getName(OpenApiOperation $operation): string
     {
         if ($operation->getOperationId()) {
-            return $this->baseNamespace . '\\' . $this->normalizer->normalize($operation->getOperationId());
+            return $this->baseNamespace . '\\' . $operation->getOperationId();
         }
 
-        $parts = array_slice(explode('/', $operation->getPath()), 1);
-        $parts = array_map(
+        $parts   = array_slice(explode('/', $operation->getPath()), 1);
+        $parts   = array_map(
             fn (string $part): string => preg_replace('/\{(.*)}/Uu', '$1', $part),
             $parts
         );
         $parts[] = $operation->getMethod();
-        $className = implode(' ', $parts);
 
-        return $this->baseNamespace . '\\' . $this->normalizer->normalize($className);
+        return $this->baseNamespace . '\\' . implode(' ', $parts);
     }
 }

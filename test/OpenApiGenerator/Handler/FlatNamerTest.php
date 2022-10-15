@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
 use Kynx\Code\Normalizer\ClassNameNormalizer;
+use Kynx\Code\Normalizer\UniqueClassLabeler;
+use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApiGenerator\Handler\FlatNamer;
 use PHPUnit\Framework\TestCase;
+
+use function array_combine;
 
 /**
  * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\FlatNamer
@@ -20,55 +24,70 @@ final class FlatNamerTest extends TestCase
     {
         parent::setUp();
 
-        $this->namer = new FlatNamer(__NAMESPACE__, new ClassNameNormalizer('Handler'));
+        $labeler     = new UniqueClassLabeler(new ClassNameNormalizer('Handler'), new NumberSuffix());
+        $this->namer = new FlatNamer(__NAMESPACE__, $labeler);
     }
 
-    public function testGetNameUsesOperationId(): void
+    public function testKeyByUniqueNameUsesOperationId(): void
     {
-        $expected = __NAMESPACE__ . '\\GetFoo';
         $operation = new OpenApiOperation('getFoo', '/bar', 'get');
+        $expected  = [__NAMESPACE__ . '\\GetFoo' => $operation];
 
-        $actual = $this->namer->getName($operation);
+        $actual = $this->namer->keyByUniqueName([$operation]);
 
         self::assertSame($expected, $actual);
     }
 
-    public function testGetNameNormalizesOperationId(): void
+    public function testKeyByUniqueNameNormalizesOperationId(): void
     {
-        $expected = __NAMESPACE__ . '\\TildeRef';
         $operation = new OpenApiOperation('~ref', '/bar', 'get');
+        $expected  = [__NAMESPACE__ . '\\TildeRef' => $operation];
 
-        $actual = $this->namer->getName($operation);
+        $actual = $this->namer->keyByUniqueName([$operation]);
 
         self::assertSame($expected, $actual);
     }
 
-    public function testGetNameUsesPathAndMethod(): void
+    public function testKeyByUniqueNameUsesPathAndMethod(): void
     {
-        $expected = __NAMESPACE__ . '\\FooBarGet';
         $operation = new OpenApiOperation(null, '/foo/bar', 'get');
+        $expected  = [__NAMESPACE__ . '\\FooBarGet' => $operation];
 
-        $actual = $this->namer->getName($operation);
+        $actual = $this->namer->keyByUniqueName([$operation]);
 
         self::assertSame($expected, $actual);
     }
 
-    public function testGetNameStripsParameterMarkers(): void
+    public function testKeyByUniqueNameStripsParameterMarkers(): void
     {
-        $expected = __NAMESPACE__ . '\\FooBarGet';
         $operation = new OpenApiOperation(null, '/foo/{bar}', 'get');
+        $expected  = [__NAMESPACE__ . '\\FooBarGet' => $operation];
 
-        $actual = $this->namer->getName($operation);
+        $actual = $this->namer->keyByUniqueName([$operation]);
 
         self::assertSame($expected, $actual);
     }
 
-    public function testGetNameNormalizesPathAndMethod(): void
+    public function testKeyByUniqueNameNormalizesPathAndMethod(): void
     {
-        $expected = __NAMESPACE__ . '\\FooTildeBarGet';
         $operation = new OpenApiOperation(null, '/foo/~bar', 'get');
+        $expected  = [__NAMESPACE__ . '\\FooTildeBarGet' => $operation];
 
-        $actual = $this->namer->getName($operation);
+        $actual = $this->namer->keyByUniqueName([$operation]);
+
+        self::assertSame($expected, $actual);
+    }
+
+    public function testKeyByUniqueNameCreatesUnique(): void
+    {
+        $operations = [
+            new OpenApiOperation('foobar', '/foobar', 'get'),
+            new OpenApiOperation('fooBar', '/foo/bar', 'get'),
+        ];
+        $labels     = [__NAMESPACE__ . '\\Foobar1', __NAMESPACE__ . '\\FooBar2'];
+        $expected   = array_combine($labels, $operations);
+
+        $actual = $this->namer->keyByUniqueName($operations);
 
         self::assertSame($expected, $actual);
     }

@@ -13,6 +13,9 @@ use Kynx\Mezzio\OpenApi\OpenApiSchema;
 use Kynx\Mezzio\OpenApi\ParameterStyle;
 use Kynx\Mezzio\OpenApi\SchemaType;
 
+use function array_filter;
+use function array_map;
+
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\OpenApiLocatorTest
  */
@@ -35,18 +38,21 @@ final class OpenApiLocator implements HandlerLocatorInterface
 
     private function getHandlerClasses(): array
     {
-        $handlerClasses = [];
-
+        $operations = [];
         foreach ($this->openApi->paths as $path => $spec) {
             foreach ($spec->getOperations() as $method => $operation) {
-                $operation = new OpenApiOperation(
+                $operations[] = new OpenApiOperation(
                     $operation->operationId,
                     $path,
                     $method,
                     ...$this->getParameters($operation)
                 );
-                $handlerClasses[] = new HandlerClass($this->namer->getName($operation), $operation);
             }
+        }
+
+        $handlerClasses = [];
+        foreach ($this->namer->keyByUniqueName($operations) as $className => $operation) {
+            $handlerClasses[] = new HandlerClass($className, $operation);
         }
 
         return $handlerClasses;
