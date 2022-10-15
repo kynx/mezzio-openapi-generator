@@ -6,5 +6,4 @@ namespace Kynx\Mezzio\OpenApiGenerator;
 
 final class ComponentGenerator
 {
-
 }

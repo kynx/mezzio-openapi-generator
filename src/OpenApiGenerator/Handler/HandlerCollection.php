@@ -6,7 +6,8 @@ namespace Kynx\Mezzio\OpenApiGenerator\Handler;
 
 use Countable;
 use Iterator;
-use Kynx\Mezzio\OpenApi\OpenApiOperation;
+
+use function count;
 
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerCollectionTest

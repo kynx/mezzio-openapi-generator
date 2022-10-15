@@ -26,6 +26,7 @@ final class FlatNamer implements HandlerNamerInterface
     public function keyByUniqueName(array $operations): array
     {
         $labels = array_map(fn (OpenApiOperation $operation): string => $this->getName($operation), $operations);
+        /** @var array<array-key, string> $unique */
         $unique = $this->labeler->getUnique($labels);
         return array_combine($unique, $operations);
     }

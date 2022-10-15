@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
-use cebe\openapi\spec\Parameter;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApi\OpenApiRouteParameter;
 use Kynx\Mezzio\OpenApi\OpenApiSchema;
@@ -45,10 +44,10 @@ final class FastRouteConverterTest extends TestCase
     ): void {
         $aParams = array_map(fn (string $param): OpenApiRouteParameter => $this->makeParam($param), $aParams);
         $bParams = array_map(fn (string $param): OpenApiRouteParameter => $this->makeParam($param), $bParams);
-        $a = new HandlerClass('Foo', new OpenApiOperation(null, $aPath, $aMethod, ...$aParams));
-        $b = new HandlerClass('Bar', new OpenApiOperation(null, $bPath, $bMethod, ...$bParams));
+        $a       = new HandlerClass('Foo', new OpenApiOperation(null, $aPath, $aMethod, ...$aParams));
+        $b       = new HandlerClass('Bar', new OpenApiOperation(null, $bPath, $bMethod, ...$bParams));
 
-        $expected = [$a, $b];
+        $expected   = [$a, $b];
         $collection = new HandlerCollection();
         $collection->add($b);
         $collection->add($a);
@@ -78,7 +77,7 @@ final class FastRouteConverterTest extends TestCase
     public function testConvertReturnsConverted(string $path, array $parameters, string $expected): void
     {
         $operation = new OpenApiOperation(null, $path, 'get', ...$parameters);
-        $actual = $this->routeConverter->convert($operation);
+        $actual    = $this->routeConverter->convert($operation);
         self::assertSame($expected, $actual);
     }
 
@@ -99,7 +98,7 @@ final class FastRouteConverterTest extends TestCase
             'number'    => ['/foo/{num}', [$numParam], '/foo/{num:[\d.]+}'],
             'object'    => ['/foo/{obj}', [$objectParam], '/foo/{obj:.+}'],
             'string'    => ['/foo/{str}', [$stringParam], '/foo/{str:.+}'],
-            'multiple'  => ['/foo/{int}/{bool}', [$intParam, $boolParam], '/foo/{int:\d+}/{bool:(true|false)}']
+            'multiple'  => ['/foo/{int}/{bool}', [$intParam, $boolParam], '/foo/{int:\d+}/{bool:(true|false)}'],
         ];
     }
 

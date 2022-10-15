@@ -8,6 +8,8 @@ use DomainException;
 use Exception;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 
+use function sprintf;
+
 final class RouteException extends DomainException
 {
     public static function missingDelegator(string $delegatorClass, ?Exception $exception): self

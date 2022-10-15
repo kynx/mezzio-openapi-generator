@@ -6,8 +6,8 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApiGenerator\Handler\FileSystemLocator;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerException;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerException;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\Asset\Invalid\BadOpenApiOperation;
 use PHPUnit\Framework\TestCase;
 
@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
  */
 final class FileSystemLocatorTest extends TestCase
 {
-    private const ASSET_DIR = __DIR__ . '/Asset/Valid';
+    private const ASSET_DIR       = __DIR__ . '/Asset/Valid';
     private const ASSET_NAMESPACE = __NAMESPACE__ . '\\Asset\\Valid';
 
     public function testCreateInvalidDirThrowsException(): void
     {
-        $path = __DIR__ . '/nonexistent';
+        $path    = __DIR__ . '/nonexistent';
         $locator = new FileSystemLocator(__NAMESPACE__ . '\\Asset', __DIR__ . '/nonexistent');
 
         self::expectException(HandlerException::class);
@@ -54,7 +54,7 @@ final class FileSystemLocatorTest extends TestCase
     public function testCreateInvalidOpenApiOperationThrowsException(): void
     {
         $locator = new FileSystemLocator(__NAMESPACE__ . '\\Asset\\Invalid', __DIR__ . '/Asset/Invalid');
-        $class = BadOpenApiOperation::class;
+        $class   = BadOpenApiOperation::class;
 
         self::expectException(HandlerException::class);
         self::expectExceptionMessage("Invalid OpenApiOperation attribute for class '$class'");

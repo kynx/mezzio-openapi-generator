@@ -12,9 +12,10 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerException
  * @uses \Kynx\Mezzio\OpenApi\OpenApiOperation
  * @uses \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass
+ *
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerException
  */
 final class HandlerExceptionTest extends TestCase
 {
@@ -29,7 +30,7 @@ final class HandlerExceptionTest extends TestCase
 
     public function testHandlerExists(): void
     {
-        $expected = "Handler class '\Foo' already exists";
+        $expected     = "Handler class '\Foo' already exists";
         $handlerClass = new HandlerClass('\Foo', new OpenApiOperation(null, '/foo', 'get'));
 
         $actual = HandlerException::handlerExists($handlerClass);
@@ -39,9 +40,9 @@ final class HandlerExceptionTest extends TestCase
 
     public function testInvalidOpenApiOperation(): void
     {
-        $expected = "Invalid OpenApiOperation attribute for class '" . __CLASS__ . "'";
+        $expected   = "Invalid OpenApiOperation attribute for class '" . self::class . "'";
         $reflection = new ReflectionClass($this);
-        $exception = self::createStub(Exception::class);
+        $exception  = self::createStub(Exception::class);
 
         $actual = HandlerException::invalidOpenApiOperation($reflection, $exception);
 

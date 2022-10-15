@@ -7,11 +7,13 @@ namespace Kynx\Mezzio\OpenApiGenerator\Route;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApi\OpenApiSchema;
 use Kynx\Mezzio\OpenApi\SchemaType;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 
 use function iterator_to_array;
+use function sprintf;
 use function str_replace;
+use function trim;
 use function usort;
 
 /**
@@ -21,12 +23,12 @@ use function usort;
 final class FastRouteConverter implements RouteConverterInterface
 {
     /**
+     * @see https://spec.openapis.org/oas/v3.1.0#path-templating-matching
+     * @see \FastRoute\DataGenerator\RegexBasedAbstract::addStaticRoute()
+     *
      * @inheritDoc
      *
      * Sort operations to avoid static route shadowing
-     *
-     * @see https://spec.openapis.org/oas/v3.1.0#path-templating-matching
-     * @see \FastRoute\DataGenerator\RegexBasedAbstract::addStaticRoute()
      */
     public function sort(HandlerCollection $collection): HandlerCollection
     {
@@ -50,7 +52,7 @@ final class FastRouteConverter implements RouteConverterInterface
 
         // The spec does _not_ support optional params
         foreach ($operation->getRouteParameters() as $parameter) {
-            $search[] = '{' . $parameter->getName() . '}';
+            $search[]  = '{' . $parameter->getName() . '}';
             $replace[] = sprintf(
                 '{%s:%s}',
                 $parameter->getName(),
@@ -64,7 +66,7 @@ final class FastRouteConverter implements RouteConverterInterface
     private function sortOperations(OpenApiOperation $first, OpenApiOperation $second): int
     {
         // replace '~' with space so '{' and '}' are sorted after it
-        $firstPath = str_replace('~', ' ', trim($first->getPath()));
+        $firstPath  = str_replace('~', ' ', trim($first->getPath()));
         $secondPath = str_replace('~', ' ', trim($second->getPath()));
 
         if ($firstPath === $secondPath) {

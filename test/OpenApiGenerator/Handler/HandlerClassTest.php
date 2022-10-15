@@ -29,7 +29,7 @@ final class HandlerClassTest extends TestCase
     public function testMatches(OpenApiOperation $operation, OpenApiOperation $test, bool $expected): void
     {
         $handlerFile = new HandlerClass('\\Foo', $operation);
-        $operation = $handlerFile->matches($test);
+        $operation   = $handlerFile->matches($test);
         self::assertSame($expected, $operation);
     }
 
@@ -39,27 +39,27 @@ final class HandlerClassTest extends TestCase
             'path_different'      => [
                 new OpenApiOperation(null, '/foo', 'post'),
                 new OpenApiOperation(null, '/bar', 'post'),
-                false
+                false,
             ],
             'method_different'    => [
                 new OpenApiOperation(null, '/foo', 'post'),
                 new OpenApiOperation(null, '/foo', 'get'),
-                false
+                false,
             ],
             'op_matches'          => [
                 new OpenApiOperation('op', '/foo', 'post'),
                 new OpenApiOperation('op', '/bar', 'get'),
-                false
+                false,
             ],
             'path_method_matches' => [
                 new OpenApiOperation('op', '/foo', 'post'),
                 new OpenApiOperation('op', '/foo', 'post'),
-                true
+                true,
             ],
             'op_different'        => [
                 new OpenApiOperation('op1', '/foo', 'post'),
                 new OpenApiOperation('op2', '/foo', 'post'),
-                true
+                true,
             ],
         ];
     }

@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerException;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use PHPUnit\Framework\TestCase;
-
-use ReflectionProperty;
-
-use function iterator_to_array;
 
 /**
  * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection
@@ -27,7 +23,7 @@ final class HandlerCollectionTest extends TestCase
         parent::setUp();
 
         $this->collection = new HandlerCollection();
-        $this->handler = new HandlerClass(
+        $this->handler    = new HandlerClass(
             'FooHandler',
             new OpenApiOperation('getFoo', 'foo', 'get')
         );
@@ -55,7 +51,7 @@ final class HandlerCollectionTest extends TestCase
     {
         $this->collection->add($this->handler);
 
-        $new = new HandlerClass(
+        $new           = new HandlerClass(
             'BarHandler',
             new OpenApiOperation('getBar', 'foo', 'get')
         );
@@ -73,7 +69,7 @@ final class HandlerCollectionTest extends TestCase
     public function testReplaceNonMatchingDoesNothing(): void
     {
         $this->collection->add($this->handler);
-        $new = new HandlerClass(
+        $new           = new HandlerClass(
             'FooHandler',
             new OpenApiOperation('getFoo', 'foo', 'post')
         );
@@ -100,13 +96,13 @@ final class HandlerCollectionTest extends TestCase
 
     public function hasProvider(): array
     {
-        return  [
-            'class_matches' => [
+        return [
+            'class_matches'     => [
                 new HandlerClass('FooHandler', new OpenApiOperation(null, 'foo', 'get')),
                 new HandlerClass('FooHandler', new OpenApiOperation('opId', 'bar', 'get')),
                 true,
             ],
-            'path_matches' => [
+            'path_matches'      => [
                 new HandlerClass('FooHandler', new OpenApiOperation(null, 'foo', 'get')),
                 new HandlerClass('BarHandler', new OpenApiOperation('opId', 'foo', 'get')),
                 true,
@@ -116,7 +112,7 @@ final class HandlerCollectionTest extends TestCase
                 new HandlerClass('BarHandler', new OpenApiOperation('opId', 'bar', 'get')),
                 true,
             ],
-            'no_match' => [
+            'no_match'          => [
                 new HandlerClass('FooHandler', new OpenApiOperation(null, 'foo', 'get')),
                 new HandlerClass('BarHandler', new OpenApiOperation(null, 'bar', 'get')),
                 false,

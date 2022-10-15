@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Handler;
 
-
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\FileSystemLocatorTest
  */

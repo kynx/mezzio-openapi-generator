@@ -7,6 +7,8 @@ namespace Kynx\Mezzio\OpenApiGenerator\Handler;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Parameter;
+use cebe\openapi\spec\Reference;
+use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApi\OpenApiRouteParameter;
 use Kynx\Mezzio\OpenApi\OpenApiSchema;
@@ -29,17 +31,22 @@ final class OpenApiLocator implements HandlerLocatorInterface
     {
         $collection = new HandlerCollection();
 
-        foreach ($this->getHandlerClasses() as $handlerFile) {
-            $collection->add($handlerFile);
+        foreach ($this->getHandlerClasses() as $handlerClass) {
+            $collection->add($handlerClass);
         }
 
         return $collection;
     }
 
+    /**
+     * @return list<HandlerClass>
+     */
     private function getHandlerClasses(): array
     {
         $operations = [];
+        /** @var string $path */
         foreach ($this->openApi->paths as $path => $spec) {
+            /** @var string $method */
             foreach ($spec->getOperations() as $method => $operation) {
                 $operations[] = new OpenApiOperation(
                     $operation->operationId,
@@ -58,9 +65,14 @@ final class OpenApiLocator implements HandlerLocatorInterface
         return $handlerClasses;
     }
 
+    /**
+     * @return list<OpenApiRouteParameter>
+     */
     private function getParameters(Operation $operation): array
     {
-        $pathParams = array_filter($operation->parameters, fn(Parameter $param): bool => $param->in === 'path');
+        $pathParams = array_filter($operation->parameters, function (Parameter|Reference $param): bool {
+            return $param instanceof Parameter && $param->in === 'path';
+        });
 
         return array_map(fn (Parameter $param): OpenApiRouteParameter => $this->getParameter($param), $pathParams);
     }
@@ -68,6 +80,9 @@ final class OpenApiLocator implements HandlerLocatorInterface
     private function getParameter(Parameter $parameter): OpenApiRouteParameter
     {
         $schema = $parameter->schema;
+        // @fixme: can path parameters have `content` instead of `schema`?
+        assert($schema instanceof Schema);
+
         return new OpenApiRouteParameter(
             $parameter->name,
             ParameterStyle::from($parameter->style),

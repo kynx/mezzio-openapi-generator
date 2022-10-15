@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Route;
 
 use cebe\openapi\spec\OpenApi;
-use Kynx\Mezzio\OpenApi\OpenApiOperation;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApi\RouteOptionInterface;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\MethodGenerator;
 use Laminas\Code\Generator\ParameterGenerator;
@@ -16,6 +15,7 @@ use Mezzio\Application;
 use Psr\Container\ContainerInterface;
 
 use function implode;
+use function sprintf;
 
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorTest
@@ -52,7 +52,7 @@ final class RouteDelegatorGenerator
             new ParameterGenerator('serviceName', 'string'),
             new ParameterGenerator('callback', 'callable'),
         ];
-        $invoke = new MethodGenerator('__invoke');
+        $invoke     = new MethodGenerator('__invoke');
         $invoke->setParameters($parameters)
             ->setReturnType(Application::class)
             ->setBody(implode("\n", $lines));
@@ -64,7 +64,7 @@ final class RouteDelegatorGenerator
     private function getRoute(OpenApi $openApi, HandlerClass $handler): string
     {
         $operation = $handler->getOperation();
-        $route = $this->routeConverter->convert($handler->getOperation(), $this->getParameters($openApi, $operation));
+        $route     = $this->routeConverter->convert($handler->getOperation());
         return sprintf(
             "\$app->%s('%s', \\%s::class, '%s')->setOptions([\\%s::PATH => '%s']);",
             $operation->getMethod(),
@@ -74,17 +74,5 @@ final class RouteDelegatorGenerator
             RouteOptionInterface::class,
             $operation->getPath()
         );
-    }
-
-    private function getParameters(OpenApi $openApi, OpenApiOperation $operation): array
-    {
-        $path = $openApi->paths->getPath($operation->getPath());
-        $operations = $path->getOperations();
-        if (! isset($operations[$operation->getMethod()])) {
-            throw RouteException::missingOperation($operation);
-        }
-
-        $openApiOperation = $operations[$operation->getMethod()];
-        return $openApiOperation->parameters;
     }
 }

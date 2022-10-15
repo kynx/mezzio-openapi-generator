@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Route;
 
+use function array_map;
 use function explode;
 use function implode;
 use function rawurlencode;
+use function str_replace;
+use function trim;
 
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Route\UtilTest

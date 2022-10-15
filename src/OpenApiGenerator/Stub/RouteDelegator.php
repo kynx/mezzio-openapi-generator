@@ -7,6 +7,8 @@ namespace Kynx\Mezzio\OpenApiGenerator\Stub;
 use Mezzio\Application;
 use Psr\Container\ContainerInterface;
 
+use function assert;
+
 final class RouteDelegator
 {
     public function __invoke(ContainerInterface $container, string $serviceName, callable $callback): Application

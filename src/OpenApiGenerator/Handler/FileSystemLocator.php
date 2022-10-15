@@ -15,8 +15,12 @@ use SplFileInfo;
 use Throwable;
 
 use function current;
+use function in_array;
 use function str_replace;
 use function strlen;
+use function substr;
+
+use const DIRECTORY_SEPARATOR;
 
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\FileSystemLocatorTest
@@ -31,24 +35,29 @@ final class FileSystemLocator implements HandlerLocatorInterface
     {
         $collection = new HandlerCollection();
 
-        foreach ($this->getHandlerFiles() as $handlerFile) {
+        foreach ($this->getHandlerClasses() as $handlerFile) {
             $collection->add($handlerFile);
         }
 
         return $collection;
     }
 
-    private function getHandlerFiles(): array
+    /**
+     * @return list<HandlerClass>
+     */
+    private function getHandlerClasses(): array
     {
-        $handlers = [];
+        $handlers  = [];
         $directory = $this->getDirectoryIterator();
-        $iterator = new RegexIterator(new RecursiveIteratorIterator($directory), '|\.php$|');
+        $iterator  = new RegexIterator(new RecursiveIteratorIterator($directory), '|\.php$|');
 
+        /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
             $reflection = $this->getReflection($file);
             if (! $this->isRequestHandler($reflection)) {
                 continue;
             }
+            assert($reflection !== null);
 
             $operation = $this->getOpenApiOperation($reflection);
             if ($operation === null) {
@@ -74,13 +83,14 @@ final class FileSystemLocator implements HandlerLocatorInterface
 
     private function getReflection(SplFileInfo $file): ?ReflectionClass
     {
-        $name = substr(
+        $name      = substr(
             $file->getPath() . DIRECTORY_SEPARATOR . $file->getBasename('.php'),
             strlen($this->path)
         );
         $className = $this->namespace . str_replace(DIRECTORY_SEPARATOR, '\\', $name);
 
         try {
+            /** @psalm-suppress ArgumentTypeCoercion */
             return new ReflectionClass($className);
         } catch (Throwable) {
             return null;

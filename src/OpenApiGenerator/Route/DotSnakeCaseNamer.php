@@ -7,8 +7,12 @@ namespace Kynx\Mezzio\OpenApiGenerator\Route;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Laminas\Filter\Word\CamelCaseToUnderscore;
 
+use function array_map;
+use function array_merge;
 use function array_slice;
 use function explode;
+use function implode;
+use function preg_replace;
 use function strtolower;
 
 /**
@@ -34,8 +38,8 @@ final class DotSnakeCaseNamer implements RouteNamerInterface
                 fn (string $part): string => preg_replace('/{(.+)}/', '$1', $part),
                 array_slice(explode('/', $operation->getPath()), 1)
             );
-            $parts = array_merge($parts, $routeParts);
-            $parts[] = $operation->getMethod();
+            $parts      = array_merge($parts, $routeParts);
+            $parts[]    = $operation->getMethod();
         }
 
         return implode(
