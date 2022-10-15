@@ -16,12 +16,10 @@ use function strtolower;
  */
 final class DotSnakeCaseNamer implements RouteNamerInterface
 {
-    private string $prefix;
     private CamelCaseToUnderscore $filter;
 
-    public function __construct(string $prefix)
+    public function __construct(private string $prefix)
     {
-        $this->prefix = $prefix;
         $this->filter = new CamelCaseToUnderscore();
     }
 

@@ -22,15 +22,10 @@ use function implode;
  */
 final class RouteDelegatorGenerator
 {
-    private RouteConverterInterface $routeConverter;
-    private RouteNamerInterface $routeNamer;
-
     public function __construct(
-        RouteConverterInterface $routeConverter,
-        RouteNamerInterface $routeNamer
+        private RouteConverterInterface $routeConverter,
+        private RouteNamerInterface $routeNamer
     ) {
-        $this->routeConverter = $routeConverter;
-        $this->routeNamer = $routeNamer;
     }
 
     public function generate(OpenApi $openApi, HandlerCollection $handlers, ClassGenerator $generator): string

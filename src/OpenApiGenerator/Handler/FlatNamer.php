@@ -18,13 +18,8 @@ use function preg_replace;
  */
 final class FlatNamer implements HandlerNamerInterface
 {
-    private string $baseNamespace;
-    private ClassNameNormalizer $normalizer;
-
-    public function __construct(string $baseNamespace, ClassNameNormalizer $normalizer)
+    public function __construct(private string $baseNamespace, private ClassNameNormalizer $normalizer)
     {
-        $this->baseNamespace = $baseNamespace;
-        $this->normalizer = $normalizer;
     }
 
     public function getName(OpenApiOperation $operation): string

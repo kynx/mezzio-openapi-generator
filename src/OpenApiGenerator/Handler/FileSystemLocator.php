@@ -23,13 +23,8 @@ use function strlen;
  */
 final class FileSystemLocator implements HandlerLocatorInterface
 {
-    private string $namespace;
-    private string $path;
-
-    public function __construct(string $namespace, string $path)
+    public function __construct(private string $namespace, private string $path)
     {
-        $this->namespace = $namespace;
-        $this->path = $path;
     }
 
     public function create(): HandlerCollection

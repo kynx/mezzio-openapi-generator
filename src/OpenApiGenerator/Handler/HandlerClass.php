@@ -11,13 +11,8 @@ use Kynx\Mezzio\OpenApi\OpenApiOperation;
  */
 final class HandlerClass
 {
-    private string $className;
-    private OpenApiOperation $operation;
-
-    public function __construct(string $className, OpenApiOperation $operation)
+    public function __construct(private string $className, private OpenApiOperation $operation)
     {
-        $this->className = $className;
-        $this->operation = $operation;
     }
 
     /**

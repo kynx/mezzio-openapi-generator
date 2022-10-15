@@ -18,29 +18,24 @@ use Kynx\Mezzio\OpenApi\SchemaType;
  */
 final class OpenApiLocator implements HandlerLocatorInterface
 {
-    private OpenApi $openApi;
-    private HandlerNamerInterface $namer;
-
-    public function __construct(OpenApi $openApi, HandlerNamerInterface $namer)
+    public function __construct(private OpenApi $openApi, private HandlerNamerInterface $namer)
     {
-        $this->openApi = $openApi;
-        $this->namer = $namer;
     }
 
     public function create(): HandlerCollection
     {
         $collection = new HandlerCollection();
 
-        foreach ($this->getHandlerFiles() as $handlerFile) {
+        foreach ($this->getHandlerClasses() as $handlerFile) {
             $collection->add($handlerFile);
         }
 
         return $collection;
     }
 
-    private function getHandlerFiles(): array
+    private function getHandlerClasses(): array
     {
-        $handlerFiles = [];
+        $handlerClasses = [];
 
         foreach ($this->openApi->paths as $path => $spec) {
             foreach ($spec->getOperations() as $method => $operation) {
@@ -50,11 +45,11 @@ final class OpenApiLocator implements HandlerLocatorInterface
                     $method,
                     ...$this->getParameters($operation)
                 );
-                $handlerFiles[] = new HandlerClass($this->namer->getName($operation), $operation);
+                $handlerClasses[] = new HandlerClass($this->namer->getName($operation), $operation);
             }
         }
 
-        return $handlerFiles;
+        return $handlerClasses;
     }
 
     private function getParameters(Operation $operation): array
