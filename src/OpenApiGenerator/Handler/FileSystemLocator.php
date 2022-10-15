@@ -14,6 +14,7 @@ use RegexIterator;
 use SplFileInfo;
 use Throwable;
 
+use function assert;
 use function current;
 use function in_array;
 use function str_replace;

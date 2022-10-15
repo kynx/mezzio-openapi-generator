@@ -17,6 +17,7 @@ use Kynx\Mezzio\OpenApi\SchemaType;
 
 use function array_filter;
 use function array_map;
+use function assert;
 
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\OpenApiLocatorTest
@@ -70,6 +71,7 @@ final class OpenApiLocator implements HandlerLocatorInterface
      */
     private function getParameters(Operation $operation): array
     {
+        /** @var list<Parameter> $pathParams */
         $pathParams = array_filter($operation->parameters, function (Parameter|Reference $param): bool {
             return $param instanceof Parameter && $param->in === 'path';
         });

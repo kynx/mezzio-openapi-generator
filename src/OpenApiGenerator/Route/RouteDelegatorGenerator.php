@@ -37,7 +37,7 @@ final class RouteDelegatorGenerator
         ];
 
         foreach ($handlers as $handler) {
-            $lines[] = $this->getRoute($openApi, $handler);
+            $lines[] = $this->getRoute($handler);
         }
 
         $lines[] = '';
@@ -61,7 +61,7 @@ final class RouteDelegatorGenerator
         return $generator->generate();
     }
 
-    private function getRoute(OpenApi $openApi, HandlerClass $handler): string
+    private function getRoute(HandlerClass $handler): string
     {
         $operation = $handler->getOperation();
         $route     = $this->routeConverter->convert($handler->getOperation());

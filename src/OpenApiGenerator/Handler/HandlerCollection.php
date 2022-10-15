@@ -96,7 +96,7 @@ final class HandlerCollection implements Iterator, Countable
         ++$this->index;
     }
 
-    public function key(): mixed
+    public function key(): int
     {
         return $this->index;
     }

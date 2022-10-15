@@ -73,6 +73,7 @@ final class FastRouteConverterTest extends TestCase
 
     /**
      * @dataProvider routeProvider
+     * @param list<OpenApiRouteParameter> $parameters
      */
     public function testConvertReturnsConverted(string $path, array $parameters, string $expected): void
     {

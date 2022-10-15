@@ -10,8 +10,10 @@ use Laminas\Filter\Word\CamelCaseToUnderscore;
 use function array_map;
 use function array_merge;
 use function array_slice;
+use function assert;
 use function explode;
 use function implode;
+use function is_string;
 use function preg_replace;
 use function strtolower;
 
@@ -44,7 +46,14 @@ final class DotSnakeCaseNamer implements RouteNamerInterface
 
         return implode(
             '.',
-            array_map(fn (string $part): string => strtolower($this->filter->filter($part)), $parts)
+            array_map(fn (string $part): string => strtolower($this->filter($part)), $parts)
         );
+    }
+
+    private function filter(string $part): string
+    {
+        $filtered = $this->filter->filter($part);
+        assert(is_string($filtered));
+        return $filtered;
     }
 }
