@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Route;
+namespace Kynx\Mezzio\OpenApiGenerator\Route\Namer;
 
-use Kynx\Mezzio\OpenApi\OpenApiOperation;
+use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
+use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
 use Laminas\Filter\Word\CamelCaseToUnderscore;
 
 use function array_map;
@@ -18,9 +19,9 @@ use function preg_replace;
 use function strtolower;
 
 /**
- * @see \KynxTest\Mezzio\OpenApiGenerator\Route\DotSnakeCaseNamerTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamerTest
  */
-final class DotSnakeCaseNamer implements RouteNamerInterface
+final class DotSnakeCaseNamer implements NamerInterface
 {
     private CamelCaseToUnderscore $filter;
 
@@ -29,19 +30,20 @@ final class DotSnakeCaseNamer implements RouteNamerInterface
         $this->filter = new CamelCaseToUnderscore();
     }
 
-    public function getName(OpenApiOperation $operation): string
+    public function getName(OpenApiRoute $route): string
     {
-        $parts = [$this->prefix];
+        $operation = $route->getOperation();
+        $parts     = [$this->prefix];
 
-        if ($operation->getOperationId() !== null) {
-            $parts[] = $operation->getOperationId();
+        if (! empty($operation->operationId)) {
+            $parts[] = $operation->operationId;
         } else {
             $routeParts = array_map(
                 fn (string $part): string => preg_replace('/{(.+)}/', '$1', $part),
-                array_slice(explode('/', $operation->getPath()), 1)
+                array_slice(explode('/', $route->getPath()), 1)
             );
             $parts      = array_merge($parts, $routeParts);
-            $parts[]    = $operation->getMethod();
+            $parts[]    = $route->getMethod();
         }
 
         return implode(

@@ -37,29 +37,6 @@ final class HandlerCollection implements Iterator, Countable
     }
 
     /**
-     * Returns new collection class names replaced
-     *
-     * The returned collection will contain all operations from the original, with class names from matching operations
-     * in the `$collection` replacing the originals.
-     */
-    public function replaceClassNames(HandlerCollection $collection): HandlerCollection
-    {
-        $merged = new HandlerCollection();
-
-        foreach ($this->handlers as $handler) {
-            foreach ($collection->handlers as $new) {
-                if ($handler->matches($new->getOperation())) {
-                    $handler = new HandlerClass($new->getClassName(), $handler->getOperation());
-                    break;
-                }
-            }
-            $merged->add($handler);
-        }
-
-        return $merged;
-    }
-
-    /**
      * Returns true if collection contains matching handler
      *
      * Handlers match if either the class names are the same, the path and methods are the same or if the operationId
@@ -67,18 +44,20 @@ final class HandlerCollection implements Iterator, Countable
      */
     public function has(HandlerClass $handler): bool
     {
-        $operation = $handler->getOperation();
+        $operation = $handler->getRoute()->getOperation();
         foreach ($this->handlers as $existing) {
             if ($existing->getClassName() === $handler->getClassName()) {
                 return true;
             }
-            if ($existing->matches($operation)) {
+            if ($existing->matches($handler)) {
                 return true;
             }
-            if ($existing->getOperation()->getOperationId() === null && $operation->getOperationId() === null) {
-                continue;
+
+            $existingOp = $existing->getRoute()->getOperation();
+            if (empty($existingOp->operationId) && empty($operation->operationId)) {
+                return false;
             }
-            if ($existing->getOperation()->getOperationId() === $handler->getOperation()->getOperationId()) {
+            if ($existingOp->operationId === $operation->operationId) {
                 return true;
             }
         }

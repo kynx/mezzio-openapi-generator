@@ -8,10 +8,10 @@ use cebe\openapi\Reader;
 use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Mezzio\OpenApiGenerator\Handler\FlatNamer;
-use Kynx\Mezzio\OpenApiGenerator\Handler\OpenApiLocator;
-use Kynx\Mezzio\OpenApiGenerator\Route\DotSnakeCaseNamer;
-use Kynx\Mezzio\OpenApiGenerator\Route\FastRouteConverter;
+use Kynx\Mezzio\OpenApiGenerator\Handler\Namer\FlatNamer;
+use Kynx\Mezzio\OpenApiGenerator\Handler\OpenApiParser;
+use Kynx\Mezzio\OpenApiGenerator\Route\Converter\FastRouteConverter;
+use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamer;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Stub\RouteDelegator;
 use Laminas\Code\Generator\ClassGenerator;
@@ -42,11 +42,11 @@ final class RouteDelegatorGeneratorTest extends TestCase
         self::assertTrue($openApi->validate(), "Invalid openapi schema");
 
         $labeler    = new UniqueClassLabeler(new ClassNameNormalizer('Handler'), new NumberSuffix());
-        $locator    = new OpenApiLocator(
+        $locator    = new OpenApiParser(
             $openApi,
             new FlatNamer(self::NAMESPACE, $labeler)
         );
-        $handlers   = $locator->create();
+        $handlers   = $locator->getHandlerCollection();
         $reflection = new ClassReflection(RouteDelegator::class);
 
         $generator = ClassGenerator::fromReflection($reflection);

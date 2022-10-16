@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
+use cebe\openapi\spec\Operation;
 use Exception;
-use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerException;
+use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -31,7 +32,7 @@ final class HandlerExceptionTest extends TestCase
     public function testHandlerExists(): void
     {
         $expected     = "Handler class '\Foo' already exists";
-        $handlerClass = new HandlerClass('\Foo', new OpenApiOperation(null, '/foo', 'get'));
+        $handlerClass = new HandlerClass('\Foo', new OpenApiRoute('/foo', 'get', new Operation([])));
 
         $actual = HandlerException::handlerExists($handlerClass);
 

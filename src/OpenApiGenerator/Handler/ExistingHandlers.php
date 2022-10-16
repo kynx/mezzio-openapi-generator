@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Handler;
 
+use cebe\openapi\spec\Operation;
 use Kynx\Mezzio\OpenApi\OpenApiOperation;
+use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
 use Psr\Http\Server\RequestHandlerInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -17,6 +19,7 @@ use Throwable;
 use function assert;
 use function current;
 use function in_array;
+use function iterator_to_array;
 use function str_replace;
 use function strlen;
 use function substr;
@@ -24,23 +27,30 @@ use function substr;
 use const DIRECTORY_SEPARATOR;
 
 /**
- * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\FileSystemLocatorTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\ExistingHandlersTest
  */
-final class FileSystemLocator implements HandlerLocatorInterface
+final class ExistingHandlers
 {
-    public function __construct(private string $namespace, private string $path)
+    public function __construct(private readonly string $namespace, private readonly string $path)
     {
     }
 
-    public function create(): HandlerCollection
+    public function updateClassNames(HandlerCollection $collection): HandlerCollection
     {
-        $collection = new HandlerCollection();
+        $updated  = new HandlerCollection();
+        $existing = $this->getHandlerClasses();
 
-        foreach ($this->getHandlerClasses() as $handlerFile) {
-            $collection->add($handlerFile);
+        foreach (iterator_to_array($collection) as $handlerClass) {
+            foreach ($existing as $existingHandler) {
+                if ($handlerClass->matches($existingHandler)) {
+                    $handlerClass = new HandlerClass($existingHandler->getClassName(), $handlerClass->getRoute());
+                    break;
+                }
+            }
+            $updated->add($handlerClass);
         }
 
-        return $collection;
+        return $updated;
     }
 
     /**
@@ -48,9 +58,29 @@ final class FileSystemLocator implements HandlerLocatorInterface
      */
     private function getHandlerClasses(): array
     {
-        $handlers  = [];
-        $directory = $this->getDirectoryIterator();
-        $iterator  = new RegexIterator(new RecursiveIteratorIterator($directory), '|\.php$|');
+        $handlers = [];
+        foreach ($this->getOpenApiOperations() as $className => $operation) {
+            $handlers[] = new HandlerClass(
+                $className,
+                new OpenApiRoute(
+                    $operation->getPath(),
+                    $operation->getMethod(),
+                    new Operation(['operationId' => $operation->getOperationId()])
+                )
+            );
+        }
+
+        return $handlers;
+    }
+
+    /**
+     * @return array<class-string, OpenApiOperation>
+     */
+    private function getOpenApiOperations(): array
+    {
+        $operations = [];
+        $directory  = $this->getDirectoryIterator();
+        $iterator   = new RegexIterator(new RecursiveIteratorIterator($directory), '|\.php$|');
 
         /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
@@ -64,11 +94,10 @@ final class FileSystemLocator implements HandlerLocatorInterface
             if ($operation === null) {
                 continue;
             }
-
-            $handlers[] = new HandlerClass($reflection->getName(), $operation);
+            $operations[$reflection->getName()] = $operation;
         }
 
-        return $handlers;
+        return $operations;
     }
 
     private function getDirectoryIterator(): RecursiveDirectoryIterator

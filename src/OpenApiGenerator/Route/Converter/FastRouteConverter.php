@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Route;
+namespace Kynx\Mezzio\OpenApiGenerator\Route\Converter;
 
-use Kynx\Mezzio\OpenApi\OpenApiOperation;
-use Kynx\Mezzio\OpenApi\OpenApiSchema;
-use Kynx\Mezzio\OpenApi\SchemaType;
+use cebe\openapi\spec\Parameter;
+use cebe\openapi\spec\Reference;
+use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
+use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
+use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
 
+use function array_filter;
 use function iterator_to_array;
 use function sprintf;
 use function str_replace;
@@ -18,9 +21,9 @@ use function usort;
 
 /**
  * @see https://github.com/OAI/OpenAPI-Specification/issues/93 for optional param broohaha
- * @see \KynxTest\Mezzio\OpenApiGenerator\Route\FastRouteConverterTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Route\Converter\FastRouteConverterTest
  */
-final class FastRouteConverter implements RouteConverterInterface
+final class FastRouteConverter implements ConverterInterface
 {
     /**
      * @see https://spec.openapis.org/oas/v3.1.0#path-templating-matching
@@ -35,7 +38,7 @@ final class FastRouteConverter implements RouteConverterInterface
         $handlers = iterator_to_array($collection);
         usort(
             $handlers,
-            fn (HandlerClass $a, HandlerClass $b): int => $this->sortOperations($a->getOperation(), $b->getOperation())
+            fn (HandlerClass $a, HandlerClass $b): int => $this->sortRoutes($a->getRoute(), $b->getRoute())
         );
 
         $sorted = new HandlerCollection();
@@ -46,24 +49,30 @@ final class FastRouteConverter implements RouteConverterInterface
         return $sorted;
     }
 
-    public function convert(OpenApiOperation $operation): string
+    public function convert(OpenApiRoute $route): string
     {
-        $search = $replace = [];
+        $operation = $route->getOperation();
 
+        /** @var Parameter $pathParams */
+        $pathParams = array_filter($operation->parameters, function (Parameter|Reference $param): bool {
+            return $param instanceof Parameter && $param->in === 'path';
+        });
+
+        $search = $replace = [];
         // The spec does _not_ support optional params
-        foreach ($operation->getRouteParameters() as $parameter) {
-            $search[]  = '{' . $parameter->getName() . '}';
+        foreach ($pathParams as $parameter) {
+            $search[]  = '{' . $parameter->name . '}';
             $replace[] = sprintf(
                 '{%s:%s}',
-                $parameter->getName(),
-                $this->getRegexp($parameter->getSchema())
+                $parameter->name,
+                $this->getRegexp($parameter->schema)
             );
         }
 
-        return str_replace($search, $replace, Util::encodePath($operation->getPath()));
+        return str_replace($search, $replace, Util::encodePath($route->getPath()));
     }
 
-    private function sortOperations(OpenApiOperation $first, OpenApiOperation $second): int
+    private function sortRoutes(OpenApiRoute $first, OpenApiRoute $second): int
     {
         // replace '~' with space so '{' and '}' are sorted after it
         $firstPath  = str_replace('~', ' ', trim($first->getPath()));
@@ -79,14 +88,14 @@ final class FastRouteConverter implements RouteConverterInterface
      * @see https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-00#section-4.2.1
      * @see https://spec.openapis.org/oas/v3.1.0#data-types
      */
-    private function getRegexp(OpenApiSchema $schema): string
+    private function getRegexp(Schema $schema): string
     {
         // Do we need to support `null`, `array` and `object`?
         // @fixme: We need to support different serialization styles: 'label' / 'matrix'
-        return match ($schema->getType()) {
-            SchemaType::Boolean => '(true|false)', // + (1|0|yes|no) ?
-            SchemaType::Integer => '\d+',
-            SchemaType::Number  => '[\d.]+',
+        return match ($schema->type) {
+            'boolean' => '(true|false)', // + (1|0|yes|no) ?
+            'integer' => '\d+',
+            'number'  => '[\d.]+',
             default => '.+',
         };
     }

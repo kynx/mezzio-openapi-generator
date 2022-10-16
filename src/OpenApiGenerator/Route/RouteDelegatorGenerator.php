@@ -8,6 +8,8 @@ use cebe\openapi\spec\OpenApi;
 use Kynx\Mezzio\OpenApi\RouteOptionInterface;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
+use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
+use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\MethodGenerator;
 use Laminas\Code\Generator\ParameterGenerator;
@@ -23,8 +25,8 @@ use function sprintf;
 final class RouteDelegatorGenerator
 {
     public function __construct(
-        private RouteConverterInterface $routeConverter,
-        private RouteNamerInterface $routeNamer
+        private ConverterInterface $routeConverter,
+        private NamerInterface $routeNamer
     ) {
     }
 
@@ -63,16 +65,17 @@ final class RouteDelegatorGenerator
 
     private function getRoute(HandlerClass $handler): string
     {
-        $operation = $handler->getOperation();
-        $route     = $this->routeConverter->convert($handler->getOperation());
+        $route     = $handler->getRoute();
+        $operation = $route->getOperation();
+        $converted = $this->routeConverter->convert($handler->getRoute());
         return sprintf(
             "\$app->%s('%s', \\%s::class, '%s')->setOptions([\\%s::PATH => '%s']);",
-            $operation->getMethod(),
-            $route,
+            $route->getMethod(),
+            $converted,
             $handler->getClassName(),
-            $this->routeNamer->getName($operation),
+            $this->routeNamer->getName($route),
             RouteOptionInterface::class,
-            $operation->getPath()
+            $route->getPath()
         );
     }
 }

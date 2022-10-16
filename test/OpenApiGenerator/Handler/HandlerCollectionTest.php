@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
-use Kynx\Mezzio\OpenApi\OpenApiOperation;
+use cebe\openapi\spec\Operation;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerException;
+use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,10 +24,7 @@ final class HandlerCollectionTest extends TestCase
         parent::setUp();
 
         $this->collection = new HandlerCollection();
-        $this->handler    = new HandlerClass(
-            'FooHandler',
-            new OpenApiOperation('getFoo', 'foo', 'get')
-        );
+        $this->handler    = new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', 'getFoo'));
     }
 
     public function testAddMatchingThrowsException(): void
@@ -34,49 +32,13 @@ final class HandlerCollectionTest extends TestCase
         $this->collection->add($this->handler);
 
         self::expectException(HandlerException::class);
-        self::expectExceptionMessage("Handler class 'FooHandler' already exists");
+        self::expectExceptionMessage("Handler class '\\FooHandler' already exists");
         $this->collection->add(clone $this->handler);
     }
 
     public function testAddAddsHandler(): void
     {
         $this->collection->add($this->handler);
-
-        self::assertCount(1, $this->collection);
-        $actual = $this->collection->current();
-        self::assertSame($this->handler, $actual);
-    }
-
-    public function testReplaceClassNamesPreservesOperation(): void
-    {
-        $this->collection->add($this->handler);
-
-        $new           = new HandlerClass(
-            'BarHandler',
-            new OpenApiOperation('getBar', 'foo', 'get')
-        );
-        $newCollection = new HandlerCollection();
-        $newCollection->add($new);
-
-        $replaced = $this->collection->replaceClassNames($newCollection);
-
-        self::assertCount(1, $replaced);
-        $actual = $replaced->current();
-        self::assertSame($new->getClassName(), $actual->getClassName());
-        self::assertSame($this->handler->getOperation(), $actual->getOperation());
-    }
-
-    public function testReplaceNonMatchingDoesNothing(): void
-    {
-        $this->collection->add($this->handler);
-        $new           = new HandlerClass(
-            'FooHandler',
-            new OpenApiOperation('getFoo', 'foo', 'post')
-        );
-        $newCollection = new HandlerCollection();
-        $newCollection->add($new);
-
-        $this->collection->replaceClassNames($newCollection);
 
         self::assertCount(1, $this->collection);
         $actual = $this->collection->current();
@@ -98,23 +60,23 @@ final class HandlerCollectionTest extends TestCase
     {
         return [
             'class_matches'     => [
-                new HandlerClass('FooHandler', new OpenApiOperation(null, 'foo', 'get')),
-                new HandlerClass('FooHandler', new OpenApiOperation('opId', 'bar', 'get')),
+                new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', null)),
+                new HandlerClass('\\FooHandler', $this->makeRoute('/bar', 'get', 'opId')),
                 true,
             ],
             'path_matches'      => [
-                new HandlerClass('FooHandler', new OpenApiOperation(null, 'foo', 'get')),
-                new HandlerClass('BarHandler', new OpenApiOperation('opId', 'foo', 'get')),
+                new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', null)),
+                new HandlerClass('\\BarHandler', $this->makeRoute('/foo', 'get', 'opId')),
                 true,
             ],
             'operation_matches' => [
-                new HandlerClass('FooHandler', new OpenApiOperation('opId', 'foo', 'get')),
-                new HandlerClass('BarHandler', new OpenApiOperation('opId', 'bar', 'get')),
+                new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', 'opId')),
+                new HandlerClass('\\BarHandler', $this->makeRoute('/var', 'get', 'opId')),
                 true,
             ],
             'no_match'          => [
-                new HandlerClass('FooHandler', new OpenApiOperation(null, 'foo', 'get')),
-                new HandlerClass('BarHandler', new OpenApiOperation(null, 'bar', 'get')),
+                new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', null)),
+                new HandlerClass('\\BarHandler', $this->makeRoute('/bar', 'get', null)),
                 false,
             ],
         ];
@@ -123,8 +85,8 @@ final class HandlerCollectionTest extends TestCase
     public function testCollectionIsIterable(): void
     {
         $handlers = [
-            new HandlerClass('FooHandler', new OpenApiOperation('getFoo', 'foo', 'get')),
-            new HandlerClass('BarHandler', new OpenApiOperation('getBar', 'bar', 'get')),
+            new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', 'getFoo')),
+            new HandlerClass('\\BarHandler', $this->makeRoute('/bar', 'get', 'getBar')),
         ];
         foreach ($handlers as $handler) {
             $this->collection->add($handler);
@@ -133,5 +95,11 @@ final class HandlerCollectionTest extends TestCase
         foreach ($this->collection as $i => $handler) {
             self::assertEquals($handlers[$i], $handler);
         }
+    }
+
+    private function makeRoute(string $path, string $method, ?string $operationId): OpenApiRoute
+    {
+        $operation = $operationId === null ? new Operation([]) : new Operation(['operationId' => $operationId]);
+        return new OpenApiRoute($path, $method, $operation);
     }
 }

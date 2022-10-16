@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Route;
+namespace Kynx\Mezzio\OpenApiGenerator\Route\Converter;
 
-use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
+use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
 
-interface RouteConverterInterface
+interface ConverterInterface
 {
     /**
      * Returns sorted collection
@@ -17,5 +17,5 @@ interface RouteConverterInterface
     /**
      * Returns path string to pass to `$router->route()`
      */
-    public function convert(OpenApiOperation $operation): string;
+    public function convert(OpenApiRoute $route): string;
 }
