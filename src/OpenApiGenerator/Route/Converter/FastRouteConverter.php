@@ -9,8 +9,9 @@ use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
-use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
+
+use Kynx\Mezzio\OpenApiGenerator\Route\Util;
 
 use function array_filter;
 use function iterator_to_array;

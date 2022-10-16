@@ -9,7 +9,7 @@ use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
 interface NamerInterface
 {
     /**
-     * @param OpenApiRoute $routes
+     * @param list<OpenApiRoute> $routes
      * @return array<class-string, OpenApiRoute>
      */
     public function keyByUniqueName(array $routes): array;

@@ -13,11 +13,11 @@ use Kynx\Mezzio\OpenApiGenerator\Handler\OpenApiParser;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\FastRouteConverter;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamer;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Stub\RouteDelegator;
-use Laminas\Code\Generator\ClassGenerator;
-use Laminas\Code\Reflection\ClassReflection;
+use Nette\PhpGenerator\PhpFile;
+use Nette\PhpGenerator\PsrPrinter;
 use PHPUnit\Framework\TestCase;
 
+use function file_get_contents;
 use function trim;
 
 /**
@@ -47,14 +47,12 @@ final class RouteDelegatorGeneratorTest extends TestCase
             new FlatNamer(self::NAMESPACE, $labeler)
         );
         $handlers   = $locator->getHandlerCollection();
-        $reflection = new ClassReflection(RouteDelegator::class);
 
-        $generator = ClassGenerator::fromReflection($reflection);
-        $generator->setNamespaceName(self::NAMESPACE);
-        $generator->setFinal(true);
+        $file = PhpFile::fromCode(file_get_contents('src/OpenApiGenerator/Stub/RouteDelegator.php'));
 
         $expected = trim($this->getExpectedCode());
-        $actual   = trim($this->generator->generate($openApi, $handlers, $generator));
+        $generated   = $this->generator->generate($handlers, $file);
+        $actual = trim((new PsrPrinter())->printFile($generated));
 
         self::assertSame($expected, $actual);
     }
@@ -63,18 +61,34 @@ final class RouteDelegatorGeneratorTest extends TestCase
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return <<<EXPECTED
-        namespace KynxTest\Mezzio\OpenApiGenerator\Route\Asset;
+        <?php
+        
+        declare(strict_types=1);
+        
+        namespace Kynx\Mezzio\OpenApiGenerator\Stub;
+        
+        use Kynx\Mezzio\OpenApi\RouteOptionInterface;
+        use KynxTest\Mezzio\OpenApiGenerator\Route\Asset\GetMulti;
+        use KynxTest\Mezzio\OpenApiGenerator\Route\Asset\PostMulti;
+        use KynxTest\Mezzio\OpenApiGenerator\Route\Asset\TestGetTestIdGet;
+        use Mezzio\Application;
+        use Psr\Container\ContainerInterface;
+        
+        use function assert;
         
         final class RouteDelegator
         {
-            public function __invoke(\Psr\Container\ContainerInterface \$container, string \$serviceName, callable \$callback) : \Mezzio\Application
+            public function __invoke(ContainerInterface \$container, string \$serviceName, callable \$callback): Application
             {
                 \$app = \$callback();
-                assert(\$app instanceof \Mezzio\Application::class);
+                assert(\$app instanceof Application);
         
-                \$app->get('/test-get/{testId:\d+}', \KynxTest\Mezzio\OpenApiGenerator\Route\Asset\TestGetTestIdGet::class, 'api.test-get.test_id.get')->setOptions([\Kynx\Mezzio\OpenApi\RouteOptionInterface::PATH => '/test-get/{testId}']);
-                \$app->get('/test-multi', \KynxTest\Mezzio\OpenApiGenerator\Route\Asset\GetMulti::class, 'api.get_multi')->setOptions([\Kynx\Mezzio\OpenApi\RouteOptionInterface::PATH => '/test-multi']);
-                \$app->post('/test-multi', \KynxTest\Mezzio\OpenApiGenerator\Route\Asset\PostMulti::class, 'api.post_multi')->setOptions([\Kynx\Mezzio\OpenApi\RouteOptionInterface::PATH => '/test-multi']);
+                \$app->get('/test-get/{testId:\d+}', TestGetTestIdGet::class, 'api.test-get.test_id.get')
+                    ->setOptions([RouteOptionInterface::PATH => '/test-get/{testId}']);
+                \$app->get('/test-multi', GetMulti::class, 'api.get_multi')
+                    ->setOptions([RouteOptionInterface::PATH => '/test-multi']);
+                \$app->post('/test-multi', PostMulti::class, 'api.post_multi')
+                    ->setOptions([RouteOptionInterface::PATH => '/test-multi']);
         
                 return \$app;
             }

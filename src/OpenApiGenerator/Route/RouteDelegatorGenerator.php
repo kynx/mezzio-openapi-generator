@@ -14,6 +14,11 @@ use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\MethodGenerator;
 use Laminas\Code\Generator\ParameterGenerator;
 use Mezzio\Application;
+use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\Literal;
+use Nette\PhpGenerator\Method;
+use Nette\PhpGenerator\PhpFile;
+use Nette\PhpGenerator\PhpNamespace;
 use Psr\Container\ContainerInterface;
 
 use function implode;
@@ -25,57 +30,68 @@ use function sprintf;
 final class RouteDelegatorGenerator
 {
     public function __construct(
-        private ConverterInterface $routeConverter,
-        private NamerInterface $routeNamer
+        private readonly ConverterInterface $routeConverter,
+        private readonly NamerInterface $routeNamer
     ) {
     }
 
-    public function generate(OpenApi $openApi, HandlerCollection $handlers, ClassGenerator $generator): string
+    public function generate(HandlerCollection $handlers, PhpFile $file): PhpFile
     {
-        $lines = [
-            '$app = $callback();',
-            sprintf('assert($app instanceof \\%s::class);', Application::class),
-            '',
-        ];
+        $namespaces = $file->getNamespaces();
+        $namespace = current($namespaces);
+        assert($namespace instanceof PhpNamespace);
+
+        $classes = $file->getClasses();
+        $delegator = current($classes);
+        assert($delegator instanceof ClassType);
+
+        $namespace->addUse(Application::class);
+        $namespace->addUse(RouteOptionInterface::class);
+
+        if ($delegator->hasMethod('__invoke')) {
+            $delegator->removeMethod('__invoke');
+        }
+
+        $invoke = $delegator->addMethod('__invoke');
+        $invoke->addParameter('container')
+            ->setType(ContainerInterface::class);
+        $invoke->addParameter('serviceName')
+            ->setType('string');
+        $invoke->addParameter('callback')
+            ->setType('callable');
+        $invoke->setReturnType(Application::class);
+
+        $invoke->addBody('$app = $callback();');
+        $invoke->addBody('assert($app instanceof ?);', [
+            new Literal($namespace->simplifyName(Application::class))
+        ]);
+        $invoke->addBody('');
 
         foreach ($handlers as $handler) {
-            $lines[] = $this->getRoute($handler);
+            $this->addRoute($namespace, $invoke, $handler);
         }
 
-        $lines[] = '';
-        $lines[] = 'return $app;';
+        $invoke->addBody('');
+        $invoke->addBody('return $app;');
 
-        if ($generator->hasMethod('__invoke')) {
-            $generator->removeMethod('__invoke');
-        }
-
-        $parameters = [
-            new ParameterGenerator('container', ContainerInterface::class),
-            new ParameterGenerator('serviceName', 'string'),
-            new ParameterGenerator('callback', 'callable'),
-        ];
-        $invoke     = new MethodGenerator('__invoke');
-        $invoke->setParameters($parameters)
-            ->setReturnType(Application::class)
-            ->setBody(implode("\n", $lines));
-        $generator->addMethodFromGenerator($invoke);
-
-        return $generator->generate();
+        return $file;
     }
 
-    private function getRoute(HandlerClass $handler): string
+    private function addRoute(PhpNamespace $namespace, Method $invoke, HandlerClass $handler): void
     {
         $route     = $handler->getRoute();
-        $operation = $route->getOperation();
-        $converted = $this->routeConverter->convert($handler->getRoute());
-        return sprintf(
-            "\$app->%s('%s', \\%s::class, '%s')->setOptions([\\%s::PATH => '%s']);",
-            $route->getMethod(),
+        $converted = $this->routeConverter->convert($route);
+
+        $namespace->addUse($handler->getClassName());
+        $invoke->addBody('$app?(?, ?, ?)', [
+            new Literal('->' . $route->getMethod()),
             $converted,
-            $handler->getClassName(),
+            new Literal($namespace->simplifyName($handler->getClassName()) . '::class'),
             $this->routeNamer->getName($route),
-            RouteOptionInterface::class,
-            $route->getPath()
-        );
+        ]);
+        $invoke->addBody('    ->setOptions([? => ?]);', [
+            new Literal($namespace->simplifyName(RouteOptionInterface::class) . '::PATH'),
+            $route->getPath(),
+        ]);
     }
 }
