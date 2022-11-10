@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: Test OpenAPI
+  description: Test OpenAPI
+  version: 1.0.0
+servers:
+  - url: 'https://localhost'
+paths:
+  /query-schema:
+    get:
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: array
+      responses:
+        '200':
+          description: successful operation
+components:
+  schemas:
+    First:
+      type: object
+      properties:
+        enum:
+          $ref: '#/components/schemas/AnEnum'
+    AnEnum:
+      type: string
+      enum:
+        - first val
+        - second val
