@@ -54,12 +54,20 @@ final class OpenApiParser
         }
 
         $unresolved = $this->getUnresolved();
-        $names = $unresolved->getNames();
-        $classNames = array_combine(array_keys($names), array_keys($this->classNamer->keyByUniqueName($names)));
+        $classes = $unresolved->getClassNames();
+        $interfaces = $unresolved->getInterfaceNames($classes);
+        $classNames = array_combine(
+            array_keys($classes),
+            array_keys($this->classNamer->keyByUniqueName($classes))
+        );
+        $interfaceNames = array_combine(
+            array_keys($interfaces),
+            array_keys($this->classNamer->keyByUniqueName($interfaces))
+        );
 
         $resolved = [];
-        foreach ($unresolved->getDependents() as $dependent) {
-            $resolved[] = $this->resolve($dependent, $classNames);
+        foreach ($unresolved->resolve() as $model) {
+            $resolved = array_merge($resolved, $this->resolve($model, $classNames, $interfaceNames));
         }
 
         return $resolved;
@@ -155,8 +163,9 @@ final class OpenApiParser
 
     /**
      * @param array<string, string> $classNames
+     * @return list<ClassModel|EnumModel|InterfaceModel>
      */
-    private function resolve(UnresolvedModel $unresolved, array $classNames): EnumModel|ClassModel
+    private function resolve(UnresolvedModel $unresolved, array $classNames, array $interfaceNames): array
     {
         $jsonPointer = $unresolved->getJsonPointer();
         assert(isset($classNames[$jsonPointer]));
@@ -165,14 +174,53 @@ final class OpenApiParser
         assert($schema instanceof Schema);
 
         if (Util::isEnum($schema)) {
-            return new EnumModel($className, $jsonPointer, ...$this->getCases($schema));
+            return [new EnumModel($className, $jsonPointer, ...$this->getCases($schema))];
         }
 
-        return new ClassModel(
+        $models = [];
+        $properties = $this->getProperties($schema, $classNames, $schema->required);
+
+        if (isset($interfaceNames[$jsonPointer])) {
+            $models[] = new InterfaceModel(
+                $interfaceNames[$jsonPointer],
+                $jsonPointer,
+                ...$properties
+            );
+        }
+
+        $models[] = new ClassModel(
             $className,
             $jsonPointer,
-            ...$this->getProperties($schema, $classNames, $schema->required)
+            $this->getImplements($unresolved, $interfaceNames),
+            ...$properties
         );
+
+        return $models;
+    }
+
+    private function getImplements(UnresolvedModel $unresolved, array $interfaceNames): array
+    {
+        $schema = $unresolved->getSchema();
+        if ($schema === null) {
+            return [];
+        }
+
+        if (! empty($schema->allOf)) {
+            $implements = [];
+            foreach ($schema->allOf as $component) {
+                $jsonPointer = Util::getJsonPointer($component);
+                if (isset($interfaceNames[$jsonPointer])) {
+                    $implements[] = $interfaceNames[$jsonPointer];
+                }
+            }
+            return $implements;
+        }
+
+        if (isset($interfaceNames[$unresolved->getJsonPointer()])) {
+            return [$interfaceNames[$unresolved->getJsonPointer()]];
+        }
+
+        return [];
     }
 
     /**

@@ -6,11 +6,6 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
 use cebe\openapi\spec\Schema;
 
-use function is_bool;
-use function is_float;
-use function is_int;
-use function is_string;
-
 enum PropertyType
 {
     private const ENUM_TYPES = ['integer', 'string'];

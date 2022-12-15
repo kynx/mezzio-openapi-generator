@@ -19,6 +19,9 @@ final class Util
         return $position->getPointer();
     }
 
+    /**
+     * @psalm-assert-if-true Schema $schema
+     */
     public static function isObject(Schema|Reference $schema): bool
     {
         if (! $schema instanceof Schema) {
@@ -30,6 +33,9 @@ final class Util
             || self::isEnum($schema);
     }
 
+    /**
+     * @psalm-assert-if-true Schema $schema
+     */
     public static function isEnum(Schema|Reference|null $schema): bool
     {
         if (! $schema instanceof Schema) {
@@ -39,6 +45,9 @@ final class Util
         return in_array($schema->type, ['integer', 'string'], true) && ! empty($schema->enum);
     }
 
+    /**
+     * @psalm-assert-if-true Schema $schema
+     */
     public static function isComposite(Schema|Reference $schema): bool
     {
         if (! $schema instanceof Schema) {
@@ -47,5 +56,17 @@ final class Util
 
         return ! empty($schema->allOf)
             || ! empty($schema->anyOf);
+    }
+
+    /**
+     * @psalm-assert-if-true Schema $schema
+     */
+    public static function isComponent(Schema|Reference $schema): bool
+    {
+        if (! $schema instanceof Schema) {
+            return false;
+        }
+
+        return $schema->getDocumentPosition()?->parent()?->getPointer() === '/components/schemas';
     }
 }

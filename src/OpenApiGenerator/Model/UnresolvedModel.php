@@ -8,6 +8,7 @@ use cebe\openapi\spec\Schema;
 
 /**
  * @internal
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\UnresolvedModelTest
  */
 final class UnresolvedModel
 {
@@ -36,18 +37,36 @@ final class UnresolvedModel
         return $this->schema;
     }
 
-    public function getNames(): array
+    public function getClassNames(): array
     {
         $jsonPointer = $this->getJsonPointer();
-        $names = $this->name === '' ? [] : [$jsonPointer => $this->baseName . ' ' . $this->name];
+        $names = $this->name === '' ? [] : [$jsonPointer => trim($this->baseName . ' ' . $this->name)];
         foreach ($this->dependents as $dependent) {
-            $names = array_merge($names, $dependent->getNames());
+            $names = array_merge($names, $dependent->getClassNames());
         }
 
         return $names;
     }
 
-    public function getDependents(array &$unresolved = []): array
+    public function getInterfaceNames(array $classNames): array
+    {
+        $names = [];
+        if ($this->schema instanceof Schema && ! empty($this->schema->allOf)) {
+            foreach ($this->schema->allOf as $schema) {
+                $jsonPointer = Util::getJsonPointer($schema);
+                if (Util::isComponent($schema) && isset($classNames[$jsonPointer])) {
+                    $names[$jsonPointer] = trim($classNames[$jsonPointer] . ' Interface');
+                }
+            }
+        }
+        foreach ($this->dependents as $dependent) {
+            $names = array_merge($names, $dependent->getInterfaceNames($classNames));
+        }
+
+        return $names;
+    }
+
+    public function resolve(array &$unresolved = []): array
     {
         $jsonPointer = $this->getJsonPointer();
         $unresolved[$jsonPointer] = $this;
@@ -70,7 +89,7 @@ final class UnresolvedModel
                 if (isset($unresolved[$jsonPointer])) {
                     throw ModelException::circularReference($this, $dependent);
                 }
-                $resolved = array_merge($resolved, $dependent->getDependents($unresolved));
+                $resolved = array_merge($resolved, $dependent->resolve($unresolved));
             }
         }
         return $resolved;

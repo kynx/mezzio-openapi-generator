@@ -33,7 +33,10 @@ final class Property
         return $this->required;
     }
 
-    public function getType(): PropertyType|string
+    /**
+     * @return list<Type>|Type $type
+     */
+    public function getType(): array|string|PropertyType
     {
         return $this->type;
     }

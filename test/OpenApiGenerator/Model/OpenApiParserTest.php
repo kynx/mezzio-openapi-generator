@@ -16,6 +16,7 @@ use Kynx\Code\Normalizer\WordCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\Namer\FlatNamer;
 use Kynx\Mezzio\OpenApiGenerator\Model\OpenApiParser;
@@ -70,8 +71,8 @@ final class OpenApiParserTest extends TestCase
         ];
 
         $models = [
-            new ClassModel(self::ASSET_NAMESPACE . '\\First', $firstPointer, ...$firstProperties),
-            new ClassModel(self::ASSET_NAMESPACE . '\\Second', $secondPointer, ...$secondProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\First', $firstPointer, [], ...$firstProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\Second', $secondPointer, [], ...$secondProperties),
         ];
         $expected = new ModelCollection();
         foreach ($models as $model) {
@@ -99,8 +100,8 @@ final class OpenApiParserTest extends TestCase
         ];
 
         $models = [
-            new ClassModel(self::ASSET_NAMESPACE . '\\FirstAnon', $anonPointer, ...$anonProperties),
-            new ClassModel(self::ASSET_NAMESPACE . '\\First', $firstPointer, ...$firstProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\FirstAnon', $anonPointer, [], ...$anonProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\First', $firstPointer, [], ...$firstProperties),
         ];
         $expected = new ModelCollection();
         foreach ($models as $model) {
@@ -129,7 +130,7 @@ final class OpenApiParserTest extends TestCase
 
         $models = [
             new EnumModel($enumClass, $enumPointer, ...$enumCases),
-            new ClassModel(self::ASSET_NAMESPACE . '\\First', $firstPointer, ...$firstProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\First', $firstPointer, [], ...$firstProperties),
         ];
         $expected = new ModelCollection();
         foreach ($models as $model) {
@@ -148,6 +149,7 @@ final class OpenApiParserTest extends TestCase
         $petProperties = [
             'petType' => new Property('$petType', true, PropertyType::String),
         ];
+        $petInterface = self::ASSET_NAMESPACE . '\\PetInterface';
         $catPointer = '/components/schemas/Cat';
         $catProperties = [
             'petType' => new Property('$petType', true, PropertyType::String),
@@ -160,9 +162,10 @@ final class OpenApiParserTest extends TestCase
         ];
 
         $models = [
-            new ClassModel(self::ASSET_NAMESPACE . '\\Pet', $petPointer, ...$petProperties),
-            new ClassModel(self::ASSET_NAMESPACE . '\\Cat', $catPointer, ...$catProperties),
-            new ClassModel(self::ASSET_NAMESPACE . '\\Dog', $dogPointer, ...$dogProperties),
+            new InterfaceModel($petInterface, $petPointer, ...$petProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\Pet', $petPointer, [$petInterface], ...$petProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\Cat', $catPointer, [$petInterface], ...$catProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\Dog', $dogPointer, [$petInterface], ...$dogProperties),
         ];
         $expected = new ModelCollection();
         foreach ($models as $model) {
@@ -203,9 +206,9 @@ final class OpenApiParserTest extends TestCase
 
         $models = [
             new EnumModel($enumClass, $enumPointer, ...$enumCases),
-            new ClassModel(self::ASSET_NAMESPACE . '\\PetRequest', $requestPointer, ...$requestProperties),
-            new ClassModel(self::ASSET_NAMESPACE . '\\PetByAge', $agePointer, ...$ageProperties),
-            new ClassModel(self::ASSET_NAMESPACE . '\\PetByType', $typePointer, ...$typeProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\PetRequest', $requestPointer, [], ...$requestProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\PetByAge', $agePointer, [], ...$ageProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\PetByType', $typePointer, [], ...$typeProperties),
         ];
         $expected = new ModelCollection();
         foreach ($models as $model) {
@@ -232,7 +235,7 @@ final class OpenApiParserTest extends TestCase
             'foo' => new Property('$foo', false, $types)
         ];
         $models = [
-            new ClassModel(self::ASSET_NAMESPACE . '\\Untyped', $untypedPointer, ...$untypedProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\Untyped', $untypedPointer, [], ...$untypedProperties),
         ];
         $expected = new ModelCollection();
         foreach ($models as $model) {
@@ -252,7 +255,7 @@ final class OpenApiParserTest extends TestCase
             'foo' => new Property('$foo', false, [PropertyType::String, PropertyType::Float]),
         ];
         $models = [
-            new ClassModel(self::ASSET_NAMESPACE . '\\Scalar', $scalarPointer, ...$scalarProperties),
+            new ClassModel(self::ASSET_NAMESPACE . '\\Scalar', $scalarPointer, [], ...$scalarProperties),
         ];
         $expected = new ModelCollection();
         foreach ($models as $model) {
