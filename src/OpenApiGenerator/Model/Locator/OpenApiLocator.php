@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
 
 use cebe\openapi\spec\OpenApi;
-
 use cebe\openapi\spec\Paths;
-
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 
 use function array_values;
@@ -16,7 +14,7 @@ use function assert;
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\OpenApiLocatorTest
  */
-final class OpenApiLocator implements LocatorInterface
+final class OpenApiLocator
 {
     private PathsLocator $pathsLocator;
 

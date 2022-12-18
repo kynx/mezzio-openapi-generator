@@ -17,7 +17,12 @@ use function explode;
 use function ucfirst;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\MediaTypeLocatorTest
+ *
+ * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
  */
 final class MediaTypeLocator
 {

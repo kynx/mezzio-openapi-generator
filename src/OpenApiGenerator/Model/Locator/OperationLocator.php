@@ -7,14 +7,21 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\RequestBody;
+use cebe\openapi\spec\Response;
 use cebe\openapi\spec\Responses;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 
 use function array_merge;
+use function assert;
 use function is_numeric;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\OperationLocatorTest
+ *
+ * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
  */
 final class OperationLocator
 {
@@ -55,9 +62,11 @@ final class OperationLocator
                 if ($response instanceof Reference) {
                     throw ModelException::unresolvedReference($response);
                 }
-                if ($response === null) {
-                    continue;
-                }
+
+                // The docblock says it can be null, but normally that'll throw TypeErrorException in the constructor.
+                // The only way to do it is to manually `Responses::addResponse($status, null)`, which psalm / your IDE
+                // should flag anyway...
+                assert($response instanceof Response);
 
                 if (is_numeric($code)) {
                     $name = $baseName . ' Status' . $code;

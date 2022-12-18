@@ -10,7 +10,12 @@ use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocatorTest
+ *
+ * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
  */
 final class ParameterLocator
 {

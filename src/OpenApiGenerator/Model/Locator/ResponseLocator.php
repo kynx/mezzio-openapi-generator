@@ -10,18 +10,17 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 
 use function array_map;
 use function array_merge;
-use function exp;
-use function explode;
 use function implode;
-use function mb_convert_case;
 use function preg_split;
-use function str_repeat;
-use function str_replace;
 use function strtolower;
-use function ucfirst;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\ResponseLocatorTest
+ *
+ * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
  */
 final class ResponseLocator
 {

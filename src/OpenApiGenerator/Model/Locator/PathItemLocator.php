@@ -10,7 +10,12 @@ use function array_merge;
 use function count;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\PathItemLocatorTest
+ *
+ * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
  */
 final class PathItemLocator
 {

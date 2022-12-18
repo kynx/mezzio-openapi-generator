@@ -7,12 +7,18 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 
 use function array_merge;
 use function array_pop;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocatorTest
+ *
+ * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
  */
 final class SchemaLocator
 {
@@ -34,19 +40,19 @@ final class SchemaLocator
         }
 
         $models = [];
-        if ($schema->type === 'object' || $schema->allOf || $schema->anyOf) {
+        if ($this->isModel($schema)) {
             $pointer          = $schema->getDocumentPosition()?->getPointer() ?? '';
             $models[$pointer] = new Model($name, $schema);
         }
 
         if (! empty($schema->allOf)) {
-            return array_merge($models, $this->getComposedModels($name, $schema->allOf));
+            return array_merge($models, $this->getAllOfModels($name, $schema->allOf));
         }
         if (! empty($schema->anyOf)) {
-            return array_merge($models, $this->getComposedModels($name, $schema->anyOf));
+            return array_merge($models, $this->getAnyOfModels($name, $schema->anyOf));
         }
         if (! empty($schema->oneOf)) {
-            return array_merge($models, $this->getComposedModels($name, $schema->oneOf));
+            return array_merge($models, $this->getOneOfModels($name, $schema->oneOf));
         }
 
         foreach ($schema->properties as $propertyName => $property) {
@@ -60,29 +66,86 @@ final class SchemaLocator
     }
 
     /**
+     * Only returns models for $composed schema if they are referenced
+     *
      * @param array<array-key, Schema|Reference> $composed
      * @return array<string, Model>
      */
-    private function getComposedModels(string $name, array $composed): array
+    private function getAllOfModels(string $name, array $composed): array
     {
-        $schemas = [];
+        $models = [];
         foreach ($composed as $i => $schema) {
             if ($schema instanceof Reference) {
                 throw ModelException::unresolvedReference($schema);
             }
 
-            $schemas = array_merge($schemas, $this->getModels($name . $i, $schema));
+            $allOf = $this->getModels($name . $i, $schema);
+            if (! $this->isReferenced($schema)) {
+                $pointer = $schema->getDocumentPosition()?->getPointer() ?? '';
+                unset($allOf[$pointer]);
+            }
+
+            $models = array_merge($models, $allOf);
         }
 
-        return $schemas;
+        return $models;
+    }
+
+    /**
+     * Does not return models for any of the $composed schemas: `anyOf` is just a bag of non-required properties
+     *
+     * @param array<array-key, Schema|Reference> $composed
+     * @return array<string, Model>
+     */
+    private function getAnyOfModels(string $name, array $composed): array
+    {
+        $models = [];
+        foreach ($composed as $i => $schema) {
+            if ($schema instanceof Reference) {
+                throw ModelException::unresolvedReference($schema);
+            }
+
+            $pointer = $schema->getDocumentPosition()?->getPointer() ?? '';
+            $anyOf   = $this->getModels($name . $i, $schema);
+            unset($anyOf[$pointer]);
+
+            $models = array_merge($models, $anyOf);
+        }
+
+        return $models;
+    }
+
+    /**
+     * Returns models for all $composed schemas, referenced or not
+     *
+     * @param array<array-key, Schema|Reference> $composed
+     * @return array<string, Model>
+     */
+    private function getOneOfModels(string $name, array $composed): array
+    {
+        $models = [];
+        foreach ($composed as $i => $schema) {
+            if ($schema instanceof Reference) {
+                throw ModelException::unresolvedReference($schema);
+            }
+
+            $models = array_merge($models, $this->getModels($name . $i, $schema));
+        }
+
+        return $models;
     }
 
     private function isReferenced(Schema $schema): bool
     {
-        if ($schema->type !== 'object') {
+        if (! $this->isModel($schema)) {
             return false;
         }
 
         return $schema->getDocumentPosition()?->parent()?->getPointer() === '/components/schemas';
+    }
+
+    private function isModel(Schema $schema): bool
+    {
+        return $schema->type === 'object' || $schema->allOf || $schema->anyOf || ModelUtil::isEnum($schema);
     }
 }
