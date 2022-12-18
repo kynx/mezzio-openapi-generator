@@ -11,6 +11,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model;
 use Kynx\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocator;
 use PHPUnit\Framework\TestCase;
 
+use function implode;
+
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model
  *
@@ -98,7 +100,20 @@ final class SchemaLocatorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsAllOfModels(): void
+    public function testGetModelsReturnsEnumModel(): void
+    {
+        $schema   = new Schema([
+            'type' => 'string',
+            'enum' => ['cat', 'dog', 'lizard'],
+        ]);
+        $expected = ['' => new Model('Foo', $schema)];
+
+        self::assertTrue($schema->validate(), implode("\n", $schema->getErrors()));
+        $actual = $this->locator->getModels('Foo', $schema);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testGetModelsReturnsAllOfModel(): void
     {
         $pointer = '/components/schemas/Foo';
         $first   = new Schema([
@@ -109,8 +124,7 @@ final class SchemaLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $first->setDocumentContext(new OpenApi([]), new JsonPointer($pointer . '/allOf/0'));
-        $second = new Schema([
+        $second  = new Schema([
             'type'       => 'object',
             'properties' => [
                 'name' => [
@@ -118,15 +132,47 @@ final class SchemaLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $first->setDocumentContext(new OpenApi([]), new JsonPointer($pointer . '/allOf/1'));
-        $schema = new Schema([
+        $schema  = new Schema([
             'allOf' => [$first, $second],
         ]);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
         $expected = [
-            $pointer              => new Model('Foo', $schema),
-            $pointer . '/allOf/0' => new Model("Foo0", $first),
-            $pointer . '/allOf/1' => new Model("Foo1", $second),
+            $pointer => new Model('Foo', $schema),
+        ];
+
+        self::assertTrue($schema->validate());
+        $actual = $this->locator->getModels('Foo', $schema);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testGetModelsReturnsReferencedAllOfModels(): void
+    {
+        $pointer      = '/components/schemas/Foo';
+        $first        = new Schema([
+            'type'       => 'object',
+            'properties' => [
+                'id' => [
+                    'type' => 'string',
+                ],
+            ],
+        ]);
+        $firstPointer = '/components/schemas/Bar';
+        $second       = new Schema([
+            'type'       => 'object',
+            'properties' => [
+                'name' => [
+                    'type' => 'string',
+                ],
+            ],
+        ]);
+        $schema       = new Schema([
+            'allOf' => [$first, $second],
+        ]);
+        $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
+        $first->setDocumentContext(new OpenApi([]), new JsonPointer($firstPointer));
+        $expected = [
+            $pointer      => new Model('Foo', $schema),
+            $firstPointer => new Model('Bar', $first),
         ];
 
         self::assertTrue($schema->validate());
@@ -136,8 +182,8 @@ final class SchemaLocatorTest extends TestCase
 
     public function testGetModelsReturnsAnyOfModels(): void
     {
-        $pointer = '/components/schemas/Foo';
-        $first   = new Schema([
+        $pointer      = '/components/schemas/Foo';
+        $first        = new Schema([
             'type'       => 'object',
             'properties' => [
                 'id' => [
@@ -145,8 +191,8 @@ final class SchemaLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $first->setDocumentContext(new OpenApi([]), new JsonPointer($pointer . '/anyOf/0'));
-        $second = new Schema([
+        $firstPointer = '/components/schemas/Bar';
+        $second       = new Schema([
             'type'       => 'object',
             'properties' => [
                 'name' => [
@@ -154,15 +200,13 @@ final class SchemaLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $first->setDocumentContext(new OpenApi([]), new JsonPointer($pointer . '/anyOf/1'));
-        $schema = new Schema([
+        $schema       = new Schema([
             'anyOf' => [$first, $second],
         ]);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
+        $first->setDocumentContext(new OpenApi([]), new JsonPointer($firstPointer));
         $expected = [
-            $pointer              => new Model('Foo', $schema),
-            $pointer . '/anyOf/0' => new Model("Foo0", $first),
-            $pointer . '/anyOf/1' => new Model("Foo1", $second),
+            $pointer => new Model('Foo', $schema),
         ];
 
         self::assertTrue($schema->validate());
@@ -181,8 +225,7 @@ final class SchemaLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $first->setDocumentContext(new OpenApi([]), new JsonPointer($pointer . '/anyOf/0'));
-        $second = new Schema([
+        $second  = new Schema([
             'type'       => 'object',
             'properties' => [
                 'name' => [
@@ -190,8 +233,7 @@ final class SchemaLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $first->setDocumentContext(new OpenApi([]), new JsonPointer($pointer . '/anyOf/1'));
-        $schema = new Schema([
+        $schema  = new Schema([
             'oneOf' => [$first, $second],
         ]);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
@@ -216,8 +258,7 @@ final class SchemaLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $propertySchema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer . '/properties/pet'));
-        $schema = new Schema([
+        $schema         = new Schema([
             'type'       => 'object',
             'properties' => [
                 'pet' => $propertySchema,

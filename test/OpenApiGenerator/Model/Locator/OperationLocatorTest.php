@@ -6,7 +6,6 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Locator;
 
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Reference;
-use cebe\openapi\spec\Responses;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model;
 use Kynx\Mezzio\OpenApiGenerator\Model\Locator\OperationLocator;
@@ -160,20 +159,6 @@ final class OperationLocatorTest extends TestCase
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
         $this->locator->getModels('', $operation);
-    }
-
-    public function testGetModelsNullResponseReturnsEmpty(): void
-    {
-        $responses = new Responses([]);
-        // kind of artificial - in reality there would be an TypeErrorException if the response is null
-        $responses->addResponse('200', null);
-        $operation = new Operation([
-            'responses' => $responses,
-        ]);
-
-        self::assertTrue($operation->validate());
-        $actual = $this->locator->getModels('Foo', $operation);
-        self::assertEmpty($actual);
     }
 
     public function testGetModelsReturnsResponse(): void

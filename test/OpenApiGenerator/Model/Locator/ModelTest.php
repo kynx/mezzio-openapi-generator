@@ -17,9 +17,9 @@ final class ModelTest extends TestCase
 {
     public function testConstructorSetsProperties(): void
     {
-        $name = 'Foo';
+        $name   = 'Foo';
         $schema = new Schema([]);
-        $model = new Model($name, $schema);
+        $model  = new Model($name, $schema);
         self::assertSame($name, $model->getName());
         self::assertSame($schema, $model->getSchema());
     }
@@ -33,7 +33,7 @@ final class ModelTest extends TestCase
     public function testGetJsonPointerReturnsPointer(): void
     {
         $expected = '/components/schemas/Foo';
-        $schema = new Schema([]);
+        $schema   = new Schema([]);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($expected));
         $model = new Model('Foo', $schema);
         self::assertSame($expected, $model->getJsonPointer());

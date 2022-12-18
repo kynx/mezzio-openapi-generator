@@ -41,7 +41,7 @@ final class OpenApiLocatorTest extends TestCase
 
     public function testGetModelsReturnsList(): void
     {
-        $schema   = new Schema([
+        $schema  = new Schema([
             'type'       => 'object',
             'properties' => [
                 'id' => [
@@ -49,7 +49,7 @@ final class OpenApiLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $openApi  = new OpenApi([
+        $openApi = new OpenApi([
             'openapi' => '3.0.3',
             'info'    => [
                 'title'       => 'Title',
