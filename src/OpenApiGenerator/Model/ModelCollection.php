@@ -9,9 +9,6 @@ use Iterator;
 
 use function count;
 
-/**
- * @internal
- */
 final class ModelCollection implements Iterator, Countable
 {
     /** @var list<ClassModel|EnumModel|InterfaceModel> */
@@ -27,7 +24,7 @@ final class ModelCollection implements Iterator, Countable
     public function add(ClassModel|EnumModel|InterfaceModel $member): void
     {
         if ($this->has($member)) {
-            throw ModelException::schemaExists($member);
+            throw ModelException::modelExists($member);
         }
 
         $this->members[] = $member;

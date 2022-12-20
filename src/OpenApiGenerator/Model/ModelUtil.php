@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
 use cebe\openapi\json\JsonPointer;
-use cebe\openapi\spec\Parameter;
 use cebe\openapi\spec\Reference;
-use cebe\openapi\spec\RequestBody;
-use cebe\openapi\spec\Response;
 use cebe\openapi\spec\Schema;
 
 use function assert;
-use function in_array;
 
+/**
+ * @internal
+ *
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ModelUtilTest
+ *
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ */
 final class ModelUtil
 {
     private function __construct()

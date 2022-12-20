@@ -1,0 +1,75 @@
+<?php
+
+declare(strict_types=1);
+
+namespace KynxTest\Mezzio\OpenApiGenerator\Model;
+
+use cebe\openapi\spec\Reference;
+use Exception;
+use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use stdClass;
+
+/**
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
+ */
+final class ModelExceptionTest extends TestCase
+{
+    public function testInvalidModelPath(): void
+    {
+        $expected  = "'/foo' is not a valid path";
+        $exception = ModelException::invalidModelPath('/foo');
+        self::assertSame($expected, $exception->getMessage());
+    }
+
+    public function testSchemaExists(): void
+    {
+        $expected  = "Model '\\Foo' already exists";
+        $model     = new InterfaceModel('\\Foo', '/Foo');
+        $exception = ModelException::modelExists($model);
+        self::assertSame($expected, $exception->getMessage());
+    }
+
+    public function testUnrecognizedType(): void
+    {
+        $expected  = "Unrecognized type 'foo'";
+        $exception = ModelException::unrecognizedType('foo');
+        self::assertSame($expected, $exception->getMessage());
+    }
+
+    public function testUnrecognizedValue(): void
+    {
+        $expected  = "Unrecognized value 'stdClass'";
+        $value     = new stdClass();
+        $exception = ModelException::unrecognizedValue($value);
+        self::assertSame($expected, $exception->getMessage());
+    }
+
+    public function testInvalidOpenApiSchema(): void
+    {
+        $expected   = "Invalid OpenApiSchema attribute for class 'stdClass'";
+        $class      = new stdClass();
+        $reflection = new ReflectionClass($class);
+        $previous   = new Exception();
+        $exception  = ModelException::invalidOpenApiSchema($reflection, $previous);
+        self::assertSame($expected, $exception->getMessage());
+        self::assertSame($previous, $exception->getPrevious());
+    }
+
+    public function testMissingDocumentContext(): void
+    {
+        $expected  = "Specification is missing a document context";
+        $exception = ModelException::missingDocumentContext();
+        self::assertSame($expected, $exception->getMessage());
+    }
+
+    public function testUnresolvedReference(): void
+    {
+        $expected  = "Unresolved reference: '/foo'";
+        $reference = new Reference(['$ref' => '/foo']);
+        $exception = ModelException::unresolvedReference($reference);
+        self::assertSame($expected, $exception->getMessage());
+    }
+}

@@ -4,9 +4,17 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
+/**
+ * @internal
+ *
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\EnumModelTest
+ *
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ */
 final class EnumModel
 {
-    /** @var array<string, EnumCase> */
+    /** @var list<EnumCase> */
     private readonly array $cases;
 
     public function __construct(
@@ -14,7 +22,7 @@ final class EnumModel
         private readonly string $jsonPointer,
         EnumCase ...$cases
     ) {
-        $this->cases = $cases;
+        $this->cases = array_values($cases);
     }
 
     public function matches(ClassModel|EnumModel|InterfaceModel $toMatch): bool
@@ -36,7 +44,7 @@ final class EnumModel
     }
 
     /**
-     * @return array<string, EnumCase>
+     * @return list<EnumCase>
      */
     public function getCases(): array
     {

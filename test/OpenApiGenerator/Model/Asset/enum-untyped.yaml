@@ -6,16 +6,15 @@ info:
 servers:
   - url: 'https://localhost'
 paths:
-  /query-schema:
+  /first:
     get:
-      parameters:
-        - name: status
-          in: query
-          schema:
-            type: array
       responses:
         '200':
-          description: successful operation
+          description: "First response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Untyped'
 components:
   schemas:
     Untyped:

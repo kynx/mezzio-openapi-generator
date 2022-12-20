@@ -6,25 +6,17 @@ info:
 servers:
   - url: 'https://localhost'
 paths:
-  /query-schema:
+  /first:
     get:
-      parameters:
-        - name: status
-          in: query
-          schema:
-            type: array
       responses:
         '200':
-          description: successful operation
-components:
-  schemas:
-    First:
-      type: object
-      properties:
-        anon:
-          type: object
-          properties:
-            id:
-              type: integer
-            name:
-              type: string
+          description: First response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string

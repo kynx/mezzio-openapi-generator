@@ -4,20 +4,29 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
+
+use function array_values;
+
 /**
  * @internal
+ *
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\InterfaceModelTest
+ *
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
 final class InterfaceModel
 {
-    /** @var array<string, Property> */
+    /** @var list<PropertyInterface> */
     private readonly array $properties;
 
     public function __construct(
         private readonly string $className,
         private readonly string $jsonPointer,
-        Property ...$properties
+        PropertyInterface ...$properties
     ) {
-        $this->properties = $properties;
+        $this->properties = array_values($properties);
     }
 
     public function matches(ClassModel|EnumModel|InterfaceModel $toMatch): bool
@@ -38,9 +47,6 @@ final class InterfaceModel
         return $this->jsonPointer;
     }
 
-    /**
-     * @return array<string, Property>
-     */
     public function getProperties(): array
     {
         return $this->properties;

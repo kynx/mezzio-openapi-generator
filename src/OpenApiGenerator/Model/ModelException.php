@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
+use cebe\openapi\spec\Reference;
 use ReflectionClass;
 use RuntimeException;
-
 use Throwable;
 
 use function get_debug_type;
 use function sprintf;
 
+/**
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ModelExceptionTest
+ */
 final class ModelException extends RuntimeException
 {
     public static function invalidModelPath(string $path): self
@@ -19,11 +22,11 @@ final class ModelException extends RuntimeException
         return new self(sprintf("'%s' is not a valid path", $path));
     }
 
-    public static function schemaExists(ClassModel $schemaClass): self
+    public static function modelExists(ClassModel|EnumModel|InterfaceModel $model): self
     {
         return new self(sprintf(
-            "Model class '%s' already exists",
-            $schemaClass->getClassName()
+            "Model '%s' already exists",
+            $model->getClassName()
         ));
     }
 
@@ -45,12 +48,16 @@ final class ModelException extends RuntimeException
         ), 0, $e);
     }
 
-    public static function circularReference(UnresolvedModel $node, UnresolvedModel $dependent): self
+    public static function missingDocumentContext(): self
+    {
+        return new self("Specification is missing a document context");
+    }
+
+    public static function unresolvedReference(Reference $reference): self
     {
         return new self(sprintf(
-            "Circular reference detected %s -> %s",
-            $node->getJsonPointer(),
-            $dependent->getJsonPointer()
+            "Unresolved reference: '%s'",
+            $reference->getReference()
         ));
     }
 }

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
-use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property;
-use Kynx\Mezzio\OpenApiGenerator\Model\PropertyType;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use KynxTest\Mezzio\OpenApiGenerator\Model\Asset\Model;
 use KynxTest\Mezzio\OpenApiGenerator\Model\Asset\Subdir\SubModel;
 use PHPUnit\Framework\TestCase;
@@ -27,8 +27,8 @@ final class ModelCollectionTest extends TestCase
         parent::setUp();
 
         $this->collection = new ModelCollection();
-        $property = new Property('bar', false, PropertyType::String);
-        $this->class = new ClassModel(Model::class, 'Foo', $property);
+        $property         = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::String);
+        $this->class      = new ClassModel(Model::class, 'Foo', [], $property);
     }
 
     public function testAddMatchingThrowsException(): void
@@ -36,7 +36,7 @@ final class ModelCollectionTest extends TestCase
         $this->collection->add($this->class);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Model class '" . Model::class . "' already exists");
+        self::expectExceptionMessage("Model '" . Model::class . "' already exists");
         $this->collection->add(clone $this->class);
     }
 
@@ -52,23 +52,25 @@ final class ModelCollectionTest extends TestCase
 
     public function hasProvider(): array
     {
+        $property = new SimpleProperty('$bar', 'bar', new PropertyMetadata(), PropertyType::String);
         return [
-            'matches' => [
-                new ClassModel(Model::class, 'Foo', new Property('bar', false, PropertyType::String)),
-                true
+            'matches'  => [
+                new ClassModel(Model::class, 'Foo', [], $property),
+                true,
             ],
             'no_match' => [
-                new ClassModel(SubModel::class, 'Bar', new Property('bar', false, PropertyType::String)),
-                false
+                new ClassModel(SubModel::class, 'Bar', [], $property),
+                false,
             ],
         ];
     }
 
     public function testCollectionIsIterable(): void
     {
-        $models = [
-            new ClassModel(Model::class, 'Foo', new Property('bar', false, PropertyType::String)),
-            new ClassModel(SubModel::class, 'Bar', new Property('bar', false, PropertyType::String)),
+        $property = new SimpleProperty('$bar', 'bar', new PropertyMetadata(), PropertyType::String);
+        $models   = [
+            new ClassModel(Model::class, 'Foo', [], $property),
+            new ClassModel(SubModel::class, 'Bar', [], $property),
         ];
         foreach ($models as $model) {
             $this->collection->add($model);

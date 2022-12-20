@@ -12,7 +12,6 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocator;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
-use function join;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema
@@ -253,7 +252,7 @@ final class SchemaLocatorTest extends TestCase
             ''            => new NamedSchema('Baz', $schema),
         ];
 
-        self::assertTrue($schema->validate(), join("\n", $schema->getErrors()));
+        self::assertTrue($schema->validate(), implode("\n", $schema->getErrors()));
         $actual = $this->locator->getModels('Baz', $schema);
         self::assertEquals($expected, $actual);
     }
