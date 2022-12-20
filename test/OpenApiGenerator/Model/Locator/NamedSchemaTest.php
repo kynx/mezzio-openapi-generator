@@ -7,26 +7,26 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Locator;
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model;
+use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema
  */
-final class ModelTest extends TestCase
+final class NamedSchemaTest extends TestCase
 {
     public function testConstructorSetsProperties(): void
     {
         $name   = 'Foo';
         $schema = new Schema([]);
-        $model  = new Model($name, $schema);
+        $model  = new NamedSchema($name, $schema);
         self::assertSame($name, $model->getName());
         self::assertSame($schema, $model->getSchema());
     }
 
     public function testGetJsonPointerReturnsEmptyString(): void
     {
-        $model = new Model('Foo', new Schema([]));
+        $model = new NamedSchema('Foo', new Schema([]));
         self::assertSame('', $model->getJsonPointer());
     }
 
@@ -35,7 +35,7 @@ final class ModelTest extends TestCase
         $expected = '/components/schemas/Foo';
         $schema   = new Schema([]);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($expected));
-        $model = new Model('Foo', $schema);
+        $model = new NamedSchema('Foo', $schema);
         self::assertSame($expected, $model->getJsonPointer());
     }
 }

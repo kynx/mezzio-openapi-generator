@@ -21,8 +21,8 @@ use function ucfirst;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\MediaTypeLocatorTest
  *
- * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
- * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model\Locator
  */
 final class MediaTypeLocator
 {
@@ -35,7 +35,7 @@ final class MediaTypeLocator
 
     /**
      * @param array<array-key, MediaType> $mediaTypes
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     public function getModels(string $baseName, array $mediaTypes): array
     {

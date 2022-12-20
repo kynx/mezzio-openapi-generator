@@ -19,8 +19,8 @@ use function strtolower;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\ResponseLocatorTest
  *
- * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
- * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
 final class ResponseLocator
 {
@@ -34,7 +34,7 @@ final class ResponseLocator
     }
 
     /**
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     public function getModels(string $baseName, Response $response): array
     {

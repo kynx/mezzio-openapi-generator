@@ -23,7 +23,7 @@ use function array_pop;
 final class SchemaLocator
 {
     /**
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     public function getModels(string $name, Schema $schema): array
     {
@@ -42,7 +42,7 @@ final class SchemaLocator
         $models = [];
         if ($this->isModel($schema)) {
             $pointer          = $schema->getDocumentPosition()?->getPointer() ?? '';
-            $models[$pointer] = new Model($name, $schema);
+            $models[$pointer] = new NamedSchema($name, $schema);
         }
 
         if (! empty($schema->allOf)) {
@@ -69,7 +69,7 @@ final class SchemaLocator
      * Only returns models for $composed schema if they are referenced
      *
      * @param array<array-key, Schema|Reference> $composed
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     private function getAllOfModels(string $name, array $composed): array
     {
@@ -95,7 +95,7 @@ final class SchemaLocator
      * Does not return models for any of the $composed schemas: `anyOf` is just a bag of non-required properties
      *
      * @param array<array-key, Schema|Reference> $composed
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     private function getAnyOfModels(string $name, array $composed): array
     {
@@ -119,7 +119,7 @@ final class SchemaLocator
      * Returns models for all $composed schemas, referenced or not
      *
      * @param array<array-key, Schema|Reference> $composed
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     private function getOneOfModels(string $name, array $composed): array
     {

@@ -8,7 +8,7 @@ use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\PathItem;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model;
+use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Locator\PathItemLocator;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +47,7 @@ final class PathItemLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected = ['' => new Model('Foo defaultResponse', $schema)];
+        $expected = ['' => new NamedSchema('Foo defaultResponse', $schema)];
 
         self::assertTrue($pathItem->validate(), implode("\n", $pathItem->getErrors()));
         $actual = $this->locator->getModels('Foo', $pathItem);
@@ -87,8 +87,8 @@ final class PathItemLocatorTest extends TestCase
         $pathItem->setDocumentContext(new OpenApi([]), new JsonPointer('/paths/pet'));
         $subPointer = '/responses/default/content/application~1json/schema';
         $expected   = [
-            '/paths/pet/get' . $subPointer  => new Model('Foo get defaultResponse', $getSchema),
-            '/paths/pet/post' . $subPointer => new Model('Foo post defaultResponse', $postSchema),
+            '/paths/pet/get' . $subPointer  => new NamedSchema('Foo get defaultResponse', $getSchema),
+            '/paths/pet/post' . $subPointer => new NamedSchema('Foo post defaultResponse', $postSchema),
         ];
 
         self::assertTrue($pathItem->validate(), implode("\n", $pathItem->getErrors()));

@@ -6,7 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Locator;
 
 use cebe\openapi\spec\RequestBody;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model;
+use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Locator\RequestBodyLocator;
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +45,7 @@ final class RequestBodyLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected    = ['' => new Model('Foo RequestBody', $schema)];
+        $expected    = ['' => new NamedSchema('Foo RequestBody', $schema)];
 
         self::assertTrue($requestBody->validate(), implode("\n", $requestBody->getErrors()));
         $actual = $this->locator->getModels('Foo', $requestBody);

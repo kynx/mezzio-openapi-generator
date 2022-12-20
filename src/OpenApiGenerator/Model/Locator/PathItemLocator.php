@@ -14,8 +14,8 @@ use function count;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\PathItemLocatorTest
  *
- * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
- * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
 final class PathItemLocator
 {
@@ -27,7 +27,7 @@ final class PathItemLocator
     }
 
     /**
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     public function getModels(string $baseName, PathItem $pathItem): array
     {

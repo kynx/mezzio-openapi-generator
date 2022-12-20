@@ -11,8 +11,8 @@ use cebe\openapi\spec\RequestBody;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\RequestBodyLocatorTest
  *
- * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
- * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
 final class RequestBodyLocator
 {
@@ -24,7 +24,7 @@ final class RequestBodyLocator
     }
 
     /**
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     public function getModels(string $baseName, RequestBody $requestBody): array
     {

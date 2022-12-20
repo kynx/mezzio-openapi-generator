@@ -7,7 +7,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Locator;
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model;
+use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Locator\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use PHPUnit\Framework\TestCase;
@@ -74,7 +74,7 @@ final class OpenApiLocatorTest extends TestCase
             ],
         ]);
         $openApi->setDocumentContext($openApi, new JsonPointer(''));
-        $expected = [new Model('my pets defaultResponse', $schema)];
+        $expected = [new NamedSchema('my pets defaultResponse', $schema)];
 
         self::assertTrue($openApi->validate(), implode("\n", $openApi->getErrors()));
         $actual = $this->locator->getModels($openApi);

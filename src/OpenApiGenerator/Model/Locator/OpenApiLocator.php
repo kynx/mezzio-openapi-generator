@@ -12,7 +12,12 @@ use function array_values;
 use function assert;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\OpenApiLocatorTest
+ *
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
 final class OpenApiLocator
 {

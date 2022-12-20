@@ -15,8 +15,8 @@ use function implode;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\PathsLocatorTest
  *
- * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
- * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
 final class PathsLocator
 {
@@ -28,7 +28,7 @@ final class PathsLocator
     }
 
     /**
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     public function getModels(Paths $paths): array
     {

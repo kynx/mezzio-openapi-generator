@@ -7,13 +7,13 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Locator;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model;
+use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Locator\OperationLocator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\RequestBodyLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ResponseLocator
@@ -93,7 +93,7 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new Model("Foo idParam", $schema)];
+        $expected  = ['' => new NamedSchema("Foo idParam", $schema)];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getModels('Foo', $operation);
@@ -140,7 +140,7 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new Model("Foo RequestBody", $schema)];
+        $expected  = ['' => new NamedSchema("Foo RequestBody", $schema)];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getModels('Foo', $operation);
@@ -176,7 +176,7 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new Model("Foo Status200Response", $schema)];
+        $expected  = ['' => new NamedSchema("Foo Status200Response", $schema)];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getModels('Foo', $operation);
@@ -198,7 +198,7 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new Model("Foo defaultResponse", $schema)];
+        $expected  = ['' => new NamedSchema("Foo defaultResponse", $schema)];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getModels('Foo', $operation);

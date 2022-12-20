@@ -20,8 +20,8 @@ use function is_numeric;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\OperationLocatorTest
  *
- * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
- * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
 final class OperationLocator
 {
@@ -37,7 +37,7 @@ final class OperationLocator
     }
 
     /**
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     public function getModels(string $baseName, Operation $operation): array
     {

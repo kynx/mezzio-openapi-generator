@@ -14,8 +14,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocatorTest
  *
- * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
- * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
 final class ParameterLocator
 {
@@ -29,7 +29,7 @@ final class ParameterLocator
     }
 
     /**
-     * @return array<string, Model>
+     * @return array<string, NamedSchema>
      */
     public function getModels(string $baseName, Parameter $parameter): array
     {

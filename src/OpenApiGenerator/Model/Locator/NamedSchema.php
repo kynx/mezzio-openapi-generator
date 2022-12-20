@@ -7,9 +7,14 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
 use cebe\openapi\spec\Schema;
 
 /**
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\ModelTest
+ * @internal
+ *
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\NamedSchemaTest
+ *
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
-final class Model
+final class NamedSchema
 {
     public function __construct(private readonly string $name, private readonly Schema $schema)
     {

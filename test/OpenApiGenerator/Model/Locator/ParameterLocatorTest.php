@@ -7,7 +7,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Locator;
 use cebe\openapi\spec\Parameter;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model;
+use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +16,7 @@ use function implode;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\Model
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocator
  *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocator
@@ -52,7 +52,7 @@ final class ParameterLocatorTest extends TestCase
             'in'     => 'query',
             'schema' => $schema,
         ]);
-        $expected  = ['' => new Model('Foo barParam', $schema)];
+        $expected  = ['' => new NamedSchema('Foo barParam', $schema)];
 
         self::assertTrue($parameter->validate(), implode("\n", $parameter->getErrors()));
         $actual = $this->locator->getModels('Foo', $parameter);
@@ -71,7 +71,7 @@ final class ParameterLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new Model('Foo barParam', $schema)];
+        $expected  = ['' => new NamedSchema('Foo barParam', $schema)];
 
         self::assertTrue($parameter->validate(), implode("\n", $parameter->getErrors()));
         $actual = $this->locator->getModels('Foo', $parameter);
