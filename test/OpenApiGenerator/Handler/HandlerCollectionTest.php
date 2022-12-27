@@ -9,6 +9,8 @@ use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerException;
 use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
+use KynxTest\Mezzio\OpenApiGenerator\Handler\Asset\Valid\Handler;
+use KynxTest\Mezzio\OpenApiGenerator\Handler\Asset\Valid\Subdir\SubdirHandler;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -24,7 +26,7 @@ final class HandlerCollectionTest extends TestCase
         parent::setUp();
 
         $this->collection = new HandlerCollection();
-        $this->handler    = new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', 'getFoo'));
+        $this->handler    = new HandlerClass(Handler::class, $this->makeRoute('/foo', 'get', 'getFoo'));
     }
 
     public function testAddMatchingThrowsException(): void
@@ -32,7 +34,7 @@ final class HandlerCollectionTest extends TestCase
         $this->collection->add($this->handler);
 
         self::expectException(HandlerException::class);
-        self::expectExceptionMessage("Handler class '\\FooHandler' already exists");
+        self::expectExceptionMessage("Handler class '" . Handler::class . "' already exists");
         $this->collection->add(clone $this->handler);
     }
 
@@ -60,23 +62,23 @@ final class HandlerCollectionTest extends TestCase
     {
         return [
             'class_matches'     => [
-                new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', null)),
-                new HandlerClass('\\FooHandler', $this->makeRoute('/bar', 'get', 'opId')),
+                new HandlerClass(Handler::class, $this->makeRoute('/foo', 'get', null)),
+                new HandlerClass(Handler::class, $this->makeRoute('/bar', 'get', 'opId')),
                 true,
             ],
             'path_matches'      => [
-                new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', null)),
-                new HandlerClass('\\BarHandler', $this->makeRoute('/foo', 'get', 'opId')),
+                new HandlerClass(Handler::class, $this->makeRoute('/foo', 'get', null)),
+                new HandlerClass(SubdirHandler::class, $this->makeRoute('/foo', 'get', 'opId')),
                 true,
             ],
             'operation_matches' => [
-                new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', 'opId')),
-                new HandlerClass('\\BarHandler', $this->makeRoute('/var', 'get', 'opId')),
+                new HandlerClass(Handler::class, $this->makeRoute('/foo', 'get', 'opId')),
+                new HandlerClass(SubdirHandler::class, $this->makeRoute('/var', 'get', 'opId')),
                 true,
             ],
             'no_match'          => [
-                new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', null)),
-                new HandlerClass('\\BarHandler', $this->makeRoute('/bar', 'get', null)),
+                new HandlerClass(Handler::class, $this->makeRoute('/foo', 'get', null)),
+                new HandlerClass(SubdirHandler::class, $this->makeRoute('/bar', 'get', null)),
                 false,
             ],
         ];
@@ -85,8 +87,8 @@ final class HandlerCollectionTest extends TestCase
     public function testCollectionIsIterable(): void
     {
         $handlers = [
-            new HandlerClass('\\FooHandler', $this->makeRoute('/foo', 'get', 'getFoo')),
-            new HandlerClass('\\BarHandler', $this->makeRoute('/bar', 'get', 'getBar')),
+            new HandlerClass(Handler::class, $this->makeRoute('/foo', 'get', 'getFoo')),
+            new HandlerClass(SubdirHandler::class, $this->makeRoute('/bar', 'get', 'getBar')),
         ];
         foreach ($handlers as $handler) {
             $this->collection->add($handler);

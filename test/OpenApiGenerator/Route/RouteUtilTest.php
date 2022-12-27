@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
-use Kynx\Mezzio\OpenApiGenerator\Route\Util;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\Util
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil
  */
-final class UtilTest extends TestCase
+final class RouteUtilTest extends TestCase
 {
     /**
      * @dataProvider pathProvider
      */
     public function testEncodePath(string $path, string $expected): void
     {
-        $actual = Util::encodePath($path);
+        $actual = RouteUtil::encodePath($path);
         self::assertSame($expected, $actual);
     }
 

@@ -35,7 +35,6 @@ final class InterfaceGenerator extends AbstractGenerator
         return $interface;
     }
 
-
     /**
      * @param UsesArray $aliases
      */

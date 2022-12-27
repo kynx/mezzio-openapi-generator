@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Handler\Namer;
 
 use Kynx\Code\Normalizer\UniqueClassLabeler;
-use Kynx\Mezzio\OpenApiGenerator\Handler\Namer\NamerInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil;
 
 use function array_combine;
 use function array_map;
-use function array_slice;
-use function explode;
 use function implode;
-use function preg_replace;
 
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\Namer\FlatNamerTest
@@ -38,11 +35,7 @@ final class FlatNamer implements NamerInterface
             return $this->baseNamespace . '\\' . $route->getOperation()->operationId;
         }
 
-        $parts   = array_slice(explode('/', $route->getPath()), 1);
-        $parts   = array_map(
-            fn (string $part): string => preg_replace('/\{(.*)}/Uu', '$1', $part),
-            $parts
-        );
+        $parts   = RouteUtil::getPathParts($route->getPath());
         $parts[] = $route->getMethod();
 
         return $this->baseNamespace . '\\' . implode(' ', $parts);

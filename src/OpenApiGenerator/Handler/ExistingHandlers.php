@@ -74,7 +74,7 @@ final class ExistingHandlers
     }
 
     /**
-     * @return array<class-string, OpenApiOperation>
+     * @return array<string, OpenApiOperation>
      */
     private function getOpenApiOperations(): array
     {

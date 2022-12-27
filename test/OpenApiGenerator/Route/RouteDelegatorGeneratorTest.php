@@ -41,18 +41,18 @@ final class RouteDelegatorGeneratorTest extends TestCase
         $openApi = Reader::readFromYamlFile(__DIR__ . '/Asset/route-delegator.yaml');
         self::assertTrue($openApi->validate(), "Invalid openapi schema");
 
-        $labeler    = new UniqueClassLabeler(new ClassNameNormalizer('Handler'), new NumberSuffix());
-        $locator    = new OpenApiParser(
+        $labeler  = new UniqueClassLabeler(new ClassNameNormalizer('Handler'), new NumberSuffix());
+        $locator  = new OpenApiParser(
             $openApi,
             new FlatNamer(self::NAMESPACE, $labeler)
         );
-        $handlers   = $locator->getHandlerCollection();
+        $handlers = $locator->getHandlerCollection();
 
         $file = PhpFile::fromCode(file_get_contents('src/OpenApiGenerator/Stub/RouteDelegator.php'));
 
-        $expected = trim($this->getExpectedCode());
-        $generated   = $this->generator->generate($handlers, $file);
-        $actual = trim((new PsrPrinter())->printFile($generated));
+        $expected  = trim($this->getExpectedCode());
+        $generated = $this->generator->generate($handlers, $file);
+        $actual    = trim((new PsrPrinter())->printFile($generated));
 
         self::assertSame($expected, $actual);
     }

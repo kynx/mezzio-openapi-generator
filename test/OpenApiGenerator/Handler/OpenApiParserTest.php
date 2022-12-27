@@ -37,7 +37,7 @@ final class OpenApiParserTest extends TestCase
         $this->namer = new FlatNamer(__NAMESPACE__, $labeler);
     }
 
-    public function testCreateCreatesHandlersWithClassNames(): void
+    public function testGetHandlerCollectionSetsClassNames(): void
     {
         $expected   = [
             __NAMESPACE__ . '\\OpId1',
@@ -60,9 +60,9 @@ final class OpenApiParserTest extends TestCase
     }
 
     /**
-     * @dataProvider createHandlerProvider
+     * @dataProvider getHandlerCollectionProvider
      */
-    public function testCreateCreatesHandlersWithRoute(?string $operationId, string $path, string $method): void
+    public function testGetHandlerCollectionSetsRoute(?string $operationId, string $path, string $method): void
     {
         $handler   = $this->getHandlerClass($path, $method);
         $route     = $handler->getRoute();
@@ -72,7 +72,7 @@ final class OpenApiParserTest extends TestCase
         self::assertSame($method, $route->getMethod());
     }
 
-    public function createHandlerProvider(): array
+    public function getHandlerCollectionProvider(): array
     {
         return [
             '/op-id'                               => ['opId', '/op-id', 'post'],
@@ -85,7 +85,7 @@ final class OpenApiParserTest extends TestCase
         ];
     }
 
-    public function testCreateAddsPathParams(): void
+    public function testGetHandlerCollectionAddsPathParams(): void
     {
         $parameter = new Parameter([
             'name'     => 'paramId',
@@ -107,7 +107,7 @@ final class OpenApiParserTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testCreateAddsPathParamsForReferencedSchema(): void
+    public function testGetHandlerClassAddsPathParamsForReferencedSchema(): void
     {
         $parameter = new Parameter([
             'name'     => 'name',
@@ -130,7 +130,7 @@ final class OpenApiParserTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testCreateAddsPathParamsForReferencedParam(): void
+    public function testGetHandlerCollectionAddsPathParamsForReferencedParam(): void
     {
         $parameter = new Parameter([
             'name'     => 'referencedParam',
@@ -155,8 +155,8 @@ final class OpenApiParserTest extends TestCase
 
     private function getHandlerClass(string $path, string $method = 'get'): HandlerClass
     {
-        $locator    = new OpenApiParser($this->openApi, $this->namer);
-        $collection = $locator->getHandlerCollection();
+        $parser     = new OpenApiParser($this->openApi, $this->namer);
+        $collection = $parser->getHandlerCollection();
         foreach ($collection as $handlerClass) {
             $route = $handlerClass->getRoute();
             if ($route->getPath() === $path && $route->getMethod() === $method) {

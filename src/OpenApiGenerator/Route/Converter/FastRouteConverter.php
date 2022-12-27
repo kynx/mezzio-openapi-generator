@@ -10,8 +10,7 @@ use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
-
-use Kynx\Mezzio\OpenApiGenerator\Route\Util;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil;
 
 use function array_filter;
 use function iterator_to_array;
@@ -70,7 +69,7 @@ final class FastRouteConverter implements ConverterInterface
             );
         }
 
-        return str_replace($search, $replace, Util::encodePath($route->getPath()));
+        return str_replace($search, $replace, RouteUtil::encodePath($route->getPath()));
     }
 
     private function sortRoutes(OpenApiRoute $first, OpenApiRoute $second): int

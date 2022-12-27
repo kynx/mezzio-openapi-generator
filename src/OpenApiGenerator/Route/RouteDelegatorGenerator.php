@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Route;
 
-use cebe\openapi\spec\OpenApi;
 use Kynx\Mezzio\OpenApi\RouteOptionInterface;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
-use Laminas\Code\Generator\ClassGenerator;
-use Laminas\Code\Generator\MethodGenerator;
-use Laminas\Code\Generator\ParameterGenerator;
 use Mezzio\Application;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Literal;
@@ -21,8 +17,8 @@ use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
 use Psr\Container\ContainerInterface;
 
-use function implode;
-use function sprintf;
+use function assert;
+use function current;
 
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorTest
@@ -38,10 +34,10 @@ final class RouteDelegatorGenerator
     public function generate(HandlerCollection $handlers, PhpFile $file): PhpFile
     {
         $namespaces = $file->getNamespaces();
-        $namespace = current($namespaces);
+        $namespace  = current($namespaces);
         assert($namespace instanceof PhpNamespace);
 
-        $classes = $file->getClasses();
+        $classes   = $file->getClasses();
         $delegator = current($classes);
         assert($delegator instanceof ClassType);
 
@@ -63,7 +59,7 @@ final class RouteDelegatorGenerator
 
         $invoke->addBody('$app = $callback();');
         $invoke->addBody('assert($app instanceof ?);', [
-            new Literal($namespace->simplifyName(Application::class))
+            new Literal($namespace->simplifyName(Application::class)),
         ]);
         $invoke->addBody('');
 
