@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
+use function array_values;
+
 /**
  * @internal
  *

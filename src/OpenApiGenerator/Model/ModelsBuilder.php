@@ -9,6 +9,7 @@ use Kynx\Code\Normalizer\UniqueConstantLabeler;
 use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 
+use function array_map;
 use function assert;
 
 /**
@@ -100,7 +101,7 @@ final class ModelsBuilder
     private function getCases(Schema $schema): array
     {
         $cases = [];
-        $enum = array_map(fn (mixed $value): string => (string) $value, $schema->enum);
+        $enum  = array_map(fn (mixed $value): string => (string) $value, $schema->enum);
         /** @var array<string, string> $names */
         $names = $this->caseLabeler->getUnique($enum);
         foreach ($names as $original => $case) {

@@ -13,9 +13,12 @@ use RegexIterator;
 use SplFileInfo;
 use Throwable;
 
+use function current;
 use function str_replace;
 use function strlen;
 use function substr;
+
+use const DIRECTORY_SEPARATOR;
 
 final class ExistingModels
 {
@@ -25,7 +28,7 @@ final class ExistingModels
 
     public function updateClassNames(ModelCollection $collection): ModelCollection
     {
-        $updated = new ModelCollection();
+        $updated  = new ModelCollection();
         $existing = $this->getOpenApiSchemas();
 
         foreach ($collection as $model) {
@@ -46,9 +49,9 @@ final class ExistingModels
      */
     public function getOpenApiSchemas(): array
     {
-        $schemas = [];
+        $schemas   = [];
         $directory = $this->getDirectoryIterator();
-        $iterator = new RegexIterator(new RecursiveIteratorIterator($directory), '|\.php$|');
+        $iterator  = new RegexIterator(new RecursiveIteratorIterator($directory), '|\.php$|');
 
         /** @var SplFileInfo $file */
         foreach ($iterator as $file) {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 
+use function array_values;
+
 /**
  * @internal
  *
@@ -14,6 +16,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
  */
 final class UnionProperty extends AbstractProperty
 {
+    /** @var list<PropertyType|string> */
     private array $members;
 
     public function __construct(
@@ -22,9 +25,12 @@ final class UnionProperty extends AbstractProperty
         protected readonly PropertyMetadata $metadata,
         PropertyType|string ...$members
     ) {
-        $this->members = $members;
+        $this->members = array_values($members);
     }
 
+    /**
+     * @return list<PropertyType|string>
+     */
     public function getMembers(): array
     {
         return $this->members;

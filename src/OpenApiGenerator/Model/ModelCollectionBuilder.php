@@ -49,7 +49,7 @@ final class ModelCollectionBuilder
      */
     private function getModels(array $namedSchemas): array
     {
-        $classNames     = $this->getClassNames($namedSchemas);
+        $classNames = $this->getClassNames($namedSchemas);
         /** @var array<string, string> $interfaceNames */
         $interfaceNames = $this->getInterfaceNames($namedSchemas, $classNames);
 

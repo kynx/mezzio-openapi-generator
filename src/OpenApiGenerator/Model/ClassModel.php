@@ -53,6 +53,9 @@ final class ClassModel
         return $this->implements;
     }
 
+    /**
+     * @return list<PropertyInterface>
+     */
     public function getProperties(): array
     {
         return $this->properties;

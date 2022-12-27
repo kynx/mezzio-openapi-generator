@@ -10,8 +10,6 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
-use KynxTest\Mezzio\OpenApiGenerator\Model\Asset\Model;
-use KynxTest\Mezzio\OpenApiGenerator\Model\Asset\Subdir\SubModel;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,7 +26,7 @@ final class ModelCollectionTest extends TestCase
 
         $this->collection = new ModelCollection();
         $property         = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::String);
-        $this->class      = new ClassModel(Model::class, 'Foo', [], $property);
+        $this->class      = new ClassModel('\\Foo', '/Foo', [], $property);
     }
 
     public function testAddMatchingThrowsException(): void
@@ -36,7 +34,7 @@ final class ModelCollectionTest extends TestCase
         $this->collection->add($this->class);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Model '" . Model::class . "' already exists");
+        self::expectExceptionMessage("Model '\\Foo' already exists");
         $this->collection->add(clone $this->class);
     }
 
@@ -54,14 +52,8 @@ final class ModelCollectionTest extends TestCase
     {
         $property = new SimpleProperty('$bar', 'bar', new PropertyMetadata(), PropertyType::String);
         return [
-            'matches'  => [
-                new ClassModel(Model::class, 'Foo', [], $property),
-                true,
-            ],
-            'no_match' => [
-                new ClassModel(SubModel::class, 'Bar', [], $property),
-                false,
-            ],
+            'matches'  => [new ClassModel('\\Foo', '/foo', [], $property), true],
+            'no_match' => [new ClassModel('\\Bar', '/Bar', [], $property), false],
         ];
     }
 
@@ -69,8 +61,8 @@ final class ModelCollectionTest extends TestCase
     {
         $property = new SimpleProperty('$bar', 'bar', new PropertyMetadata(), PropertyType::String);
         $models   = [
-            new ClassModel(Model::class, 'Foo', [], $property),
-            new ClassModel(SubModel::class, 'Bar', [], $property),
+            $this->class,
+            new ClassModel('\\Bar', '/Bar', [], $property),
         ];
         foreach ($models as $model) {
             $this->collection->add($model);

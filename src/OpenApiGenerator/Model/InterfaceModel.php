@@ -47,6 +47,9 @@ final class InterfaceModel
         return $this->jsonPointer;
     }
 
+    /**
+     * @return list<PropertyInterface>
+     */
     public function getProperties(): array
     {
         return $this->properties;
