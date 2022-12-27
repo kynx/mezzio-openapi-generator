@@ -29,7 +29,7 @@ final class PathItemLocator
     /**
      * @return array<string, NamedSchema>
      */
-    public function getModels(string $baseName, PathItem $pathItem): array
+    public function getNamedSchemas(string $baseName, PathItem $pathItem): array
     {
         $models        = [];
         $operations    = $pathItem->getOperations();
@@ -41,7 +41,7 @@ final class PathItemLocator
             } else {
                 $name = $baseName;
             }
-            $models = array_merge($models, $this->operationLocator->getModels($name, $operation));
+            $models = array_merge($models, $this->operationLocator->getNamedSchemas($name, $operation));
         }
 
         return $models;

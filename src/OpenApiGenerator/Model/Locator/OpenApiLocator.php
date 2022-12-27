@@ -28,7 +28,10 @@ final class OpenApiLocator
         $this->pathsLocator = new PathsLocator();
     }
 
-    public function getModels(OpenApi $openApi): array
+    /**
+     * @return list<NamedSchema>
+     */
+    public function getNamedSchemas(OpenApi $openApi): array
     {
         if ($openApi->getDocumentPosition() === null) {
             throw ModelException::missingDocumentContext();
@@ -36,6 +39,6 @@ final class OpenApiLocator
 
         // Upstream typehint is confused...
         assert($openApi->paths instanceof Paths);
-        return array_values($this->pathsLocator->getModels($openApi->paths));
+        return array_values($this->pathsLocator->getNamedSchemas($openApi->paths));
     }
 }

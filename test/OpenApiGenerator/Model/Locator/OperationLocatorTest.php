@@ -32,7 +32,7 @@ final class OperationLocatorTest extends TestCase
         $this->locator = new OperationLocator();
     }
 
-    public function testGetModelsReferencedParameterThrowsException(): void
+    public function testGetNamedSchemasReferencedParameterThrowsException(): void
     {
         $ref       = '#/components/parameters/Pet';
         $operation = new Operation([
@@ -43,10 +43,10 @@ final class OperationLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getModels('', $operation);
+        $this->locator->getNamedSchemas('', $operation);
     }
 
-    public function testGetModelsReturnsEmpty(): void
+    public function testGetNamedSchemasReturnsEmpty(): void
     {
         $operation = new Operation([
             'parameters' => [
@@ -69,11 +69,11 @@ final class OperationLocatorTest extends TestCase
         ]);
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getModels('', $operation);
+        $actual = $this->locator->getNamedSchemas('', $operation);
         self::assertEmpty($actual);
     }
 
-    public function testGetModelsReturnsParameterSchema(): void
+    public function testGetNamedSchemasReturnsParameterSchema(): void
     {
         $schema    = $this->getSchema();
         $operation = new Operation([
@@ -96,11 +96,11 @@ final class OperationLocatorTest extends TestCase
         $expected  = ['' => new NamedSchema("Foo idParam", $schema)];
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getModels('Foo', $operation);
+        $actual = $this->locator->getNamedSchemas('Foo', $operation);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReferencedRequestBodyThrowsException(): void
+    public function testGetNamedSchemasReferencedRequestBodyThrowsException(): void
     {
         $ref       = '#/components/requestBodies/Foo';
         $operation = new Operation([
@@ -117,10 +117,10 @@ final class OperationLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getModels('', $operation);
+        $this->locator->getNamedSchemas('', $operation);
     }
 
-    public function testGetModelsReturnsRequestBody(): void
+    public function testGetNamedSchemasReturnsRequestBody(): void
     {
         $schema    = $this->getSchema();
         $operation = new Operation([
@@ -143,11 +143,11 @@ final class OperationLocatorTest extends TestCase
         $expected  = ['' => new NamedSchema("Foo RequestBody", $schema)];
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getModels('Foo', $operation);
+        $actual = $this->locator->getNamedSchemas('Foo', $operation);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReferencedResponseThrowsException(): void
+    public function testGetNamedSchemasReferencedResponseThrowsException(): void
     {
         $ref       = '#/components/responses/Foo';
         $operation = new Operation([
@@ -158,10 +158,10 @@ final class OperationLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getModels('', $operation);
+        $this->locator->getNamedSchemas('', $operation);
     }
 
-    public function testGetModelsReturnsResponse(): void
+    public function testGetNamedSchemasReturnsResponse(): void
     {
         $schema    = $this->getSchema();
         $operation = new Operation([
@@ -179,11 +179,11 @@ final class OperationLocatorTest extends TestCase
         $expected  = ['' => new NamedSchema("Foo Status200Response", $schema)];
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getModels('Foo', $operation);
+        $actual = $this->locator->getNamedSchemas('Foo', $operation);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsUsesDefaultStatusForName(): void
+    public function testGetNamedSchemasUsesDefaultStatusForName(): void
     {
         $schema    = $this->getSchema();
         $operation = new Operation([
@@ -201,7 +201,7 @@ final class OperationLocatorTest extends TestCase
         $expected  = ['' => new NamedSchema("Foo defaultResponse", $schema)];
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getModels('Foo', $operation);
+        $actual = $this->locator->getNamedSchemas('Foo', $operation);
         self::assertEquals($expected, $actual);
     }
 

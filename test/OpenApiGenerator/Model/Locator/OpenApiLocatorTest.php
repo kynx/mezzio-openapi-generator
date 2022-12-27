@@ -30,16 +30,16 @@ final class OpenApiLocatorTest extends TestCase
         $this->locator = new OpenApiLocator();
     }
 
-    public function testGetModelsNoDocumentContextThrowsException(): void
+    public function testGetNamedSchemasNoDocumentContextThrowsException(): void
     {
         $openApi = new OpenApi([]);
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage('Specification is missing a document context');
-        $this->locator->getModels($openApi);
+        $this->locator->getNamedSchemas($openApi);
     }
 
-    public function testGetModelsReturnsList(): void
+    public function testGetNamedSchemasReturnsList(): void
     {
         $schema  = new Schema([
             'type'       => 'object',
@@ -77,7 +77,7 @@ final class OpenApiLocatorTest extends TestCase
         $expected = [new NamedSchema('my pets defaultResponse', $schema)];
 
         self::assertTrue($openApi->validate(), implode("\n", $openApi->getErrors()));
-        $actual = $this->locator->getModels($openApi);
+        $actual = $this->locator->getNamedSchemas($openApi);
         self::assertEquals($expected, $actual);
     }
 }

@@ -33,7 +33,7 @@ final class ResponseLocatorTest extends TestCase
         $this->locator = new ResponseLocator();
     }
 
-    public function testGetModelsReturnsContentSchema(): void
+    public function testGetNamedSchemasReturnsContentSchema(): void
     {
         $schema   = $this->getSchema();
         $response = new Response([
@@ -47,11 +47,11 @@ final class ResponseLocatorTest extends TestCase
         $expected = ['' => new NamedSchema('FooResponse', $schema)];
 
         self::assertTrue($response->validate(), implode("\n", $response->getErrors()));
-        $actual = $this->locator->getModels('Foo', $response);
+        $actual = $this->locator->getNamedSchemas('Foo', $response);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReferencedHeaderThrowsException(): void
+    public function testGetNamedSchemasReferencedHeaderThrowsException(): void
     {
         $ref      = '#/components/headers/Foo';
         $response = new Response([
@@ -66,10 +66,10 @@ final class ResponseLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getModels('', $response);
+        $this->locator->getNamedSchemas('', $response);
     }
 
-    public function testGetModelsReferencedHeaderSchemaThrowsException(): void
+    public function testGetNamedSchemasReferencedHeaderSchemaThrowsException(): void
     {
         $ref      = '#/components/headers/Foo';
         $response = new Response([
@@ -86,10 +86,10 @@ final class ResponseLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getModels('', $response);
+        $this->locator->getNamedSchemas('', $response);
     }
 
-    public function testGetModelsSkipsNullSpecification(): void
+    public function testGetNamedSchemasSkipsNullSpecification(): void
     {
         $response = new Response([
             'description' => 'Foo response',
@@ -104,11 +104,11 @@ final class ResponseLocatorTest extends TestCase
         ]);
 
         self::assertTrue($response->validate(), implode("\n", $response->getErrors()));
-        $actual = $this->locator->getModels('Foo', $response);
+        $actual = $this->locator->getNamedSchemas('Foo', $response);
         self::assertEmpty($actual);
     }
 
-    public function testGetModelsNormalisesHeaderName(): void
+    public function testGetNamedSchemasNormalisesHeaderName(): void
     {
         $schema   = $this->getSchema();
         $response = new Response([
@@ -125,7 +125,7 @@ final class ResponseLocatorTest extends TestCase
         $expected = ['' => new NamedSchema('FooSetCookieHeader', $schema)];
 
         self::assertTrue($response->validate(), implode("\n", $response->getErrors()));
-        $actual = $this->locator->getModels('Foo', $response);
+        $actual = $this->locator->getNamedSchemas('Foo', $response);
         self::assertEquals($expected, $actual);
     }
 

@@ -29,17 +29,17 @@ final class SchemaLocatorTest extends TestCase
         $this->locator = new SchemaLocator();
     }
 
-    public function testGetModelsReturnsEmptyForScalarSchema(): void
+    public function testGetNamedSchemasReturnsEmptyForScalarSchema(): void
     {
         $schema = new Schema([
             'type' => 'integer',
         ]);
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getModels('Foo', $schema);
+        $actual = $this->locator->getNamedSchemas('Foo', $schema);
         self::assertEmpty($actual);
     }
 
-    public function testGetModelsReferencedSchemaUsesPointerName(): void
+    public function testGetNamedSchemasReferencedSchemaUsesPointerName(): void
     {
         $schema  = new Schema([
             'type'       => 'object',
@@ -54,11 +54,11 @@ final class SchemaLocatorTest extends TestCase
         $expected = [$pointer => new NamedSchema('Foo', $schema)];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getModels('Bar', $schema);
+        $actual = $this->locator->getNamedSchemas('Bar', $schema);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsArrayItemModel(): void
+    public function testGetNamedSchemasReturnsArrayItemSchema(): void
     {
         $itemSchema = [
             'type'       => 'object',
@@ -75,11 +75,11 @@ final class SchemaLocatorTest extends TestCase
         $expected   = ['' => new NamedSchema('FooItem', new Schema($itemSchema))];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getModels('Foo', $schema);
+        $actual = $this->locator->getNamedSchemas('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsAdditionalPropertiesModel(): void
+    public function testGetNamedSchemasReturnsAdditionalPropertiesSchema(): void
     {
         $itemSchema = [
             'type'       => 'object',
@@ -96,11 +96,11 @@ final class SchemaLocatorTest extends TestCase
         $expected   = ['' => new NamedSchema('FooItem', new Schema($itemSchema))];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getModels('Foo', $schema);
+        $actual = $this->locator->getNamedSchemas('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsEnumModel(): void
+    public function testGetNamedSchemasReturnsEnumSchema(): void
     {
         $schema   = new Schema([
             'type' => 'string',
@@ -109,11 +109,11 @@ final class SchemaLocatorTest extends TestCase
         $expected = ['' => new NamedSchema('Foo', $schema)];
 
         self::assertTrue($schema->validate(), implode("\n", $schema->getErrors()));
-        $actual = $this->locator->getModels('Foo', $schema);
+        $actual = $this->locator->getNamedSchemas('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsAllOfModel(): void
+    public function testGetNamedSchemasReturnsAllOfSchema(): void
     {
         $pointer = '/components/schemas/Foo';
         $first   = new Schema([
@@ -141,11 +141,11 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getModels('Foo', $schema);
+        $actual = $this->locator->getNamedSchemas('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsReferencedAllOfModels(): void
+    public function testGetNamedSchemasReturnsReferencedAllOfSchemas(): void
     {
         $pointer      = '/components/schemas/Foo';
         $first        = new Schema([
@@ -176,11 +176,11 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getModels('Foo', $schema);
+        $actual = $this->locator->getNamedSchemas('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsAnyOfModel(): void
+    public function testGetNamedSchemasReturnsAnyOfSchema(): void
     {
         $pointer      = '/components/schemas/Foo';
         $first        = new Schema([
@@ -210,11 +210,11 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getModels('Foo', $schema);
+        $actual = $this->locator->getNamedSchemas('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsSubsequentlyReferencedAnyOfModels(): void
+    public function testGetNamedSchemasReturnsSubsequentlyReferencedAnyOfSchemas(): void
     {
         $pointer      = '/components/schemas/Foo';
         $first        = new Schema([
@@ -253,11 +253,11 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate(), implode("\n", $schema->getErrors()));
-        $actual = $this->locator->getModels('Baz', $schema);
+        $actual = $this->locator->getNamedSchemas('Baz', $schema);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsOneOfModels(): void
+    public function testGetNamedSchemasReturnsOneOfSchemas(): void
     {
         $pointer = '/components/schemas/Foo';
         $first   = new Schema([
@@ -286,11 +286,11 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getModels('Foo', $schema);
+        $actual = $this->locator->getNamedSchemas('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsRecursesProperties(): void
+    public function testGetNamedSchemasRecursesProperties(): void
     {
         $pointer        = '/components/schemas/Foo';
         $propertySchema = new Schema([
@@ -314,7 +314,7 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getModels('Foo', $schema);
+        $actual = $this->locator->getNamedSchemas('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 }

@@ -30,13 +30,13 @@ final class MediaTypeLocatorTest extends TestCase
         $this->locator = new MediaTypeLocator();
     }
 
-    public function testGetModelsReturnsEmpty(): void
+    public function testGetNamedSchemasReturnsEmpty(): void
     {
-        $actual = $this->locator->getModels('Foo', []);
+        $actual = $this->locator->getNamedSchemas('Foo', []);
         self::assertEmpty($actual);
     }
 
-    public function testGetModelsUnresolvedReferenceThrowsException(): void
+    public function testGetNamedSchemasUnresolvedReferenceThrowsException(): void
     {
         $ref        = '#/components/schemas/Pet';
         $mediaTypes = [
@@ -45,20 +45,20 @@ final class MediaTypeLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getModels('', $mediaTypes);
+        $this->locator->getNamedSchemas('', $mediaTypes);
     }
 
-    public function testGetModelsIgnoresNullSchemas(): void
+    public function testGetNamedSchemasIgnoresNullSchemas(): void
     {
         $mediaTypes = [
             'application/json' => new MediaType(['schema' => null]),
         ];
 
-        $actual = $this->locator->getModels('', $mediaTypes);
+        $actual = $this->locator->getNamedSchemas('', $mediaTypes);
         self::assertEmpty($actual);
     }
 
-    public function testGetModelsRemovesDuplicates(): void
+    public function testGetNamedSchemasRemovesDuplicates(): void
     {
         $pointer   = '/components/schemas/Pet';
         $duplicate = new Schema([
@@ -83,11 +83,11 @@ final class MediaTypeLocatorTest extends TestCase
         foreach ($mediaTypes as $mediaType) {
             self::assertTrue($mediaType->validate());
         }
-        $actual = $this->locator->getModels('', $mediaTypes);
+        $actual = $this->locator->getNamedSchemas('', $mediaTypes);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsAppendsType(): void
+    public function testGetNamedSchemasAppendsType(): void
     {
         $json = new Schema([
             'type'       => 'object',
@@ -116,7 +116,7 @@ final class MediaTypeLocatorTest extends TestCase
             '/a/b/d' => new NamedSchema('FooXml', $xml),
         ];
 
-        $actual = $this->locator->getModels('Foo', $mediaTypes);
+        $actual = $this->locator->getNamedSchemas('Foo', $mediaTypes);
         self::assertEquals($expected, $actual);
     }
 }

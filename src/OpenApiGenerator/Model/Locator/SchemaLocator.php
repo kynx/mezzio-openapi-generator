@@ -25,7 +25,7 @@ final class SchemaLocator
     /**
      * @return array<string, NamedSchema>
      */
-    public function getModels(string $name, Schema $schema): array
+    public function getNamedSchemas(string $name, Schema $schema): array
     {
         if ($this->isReferenced($schema)) {
             $paths = $schema->getDocumentPosition()?->getPath() ?? [];
@@ -33,33 +33,33 @@ final class SchemaLocator
         }
 
         if ($schema->type === 'array' && $schema->items instanceof Schema) {
-            return $this->getModels($name . 'Item', $schema->items);
+            return $this->getNamedSchemas($name . 'Item', $schema->items);
         }
         if ($schema->additionalProperties instanceof Schema) {
-            return $this->getModels($name . 'Item', $schema->additionalProperties);
+            return $this->getNamedSchemas($name . 'Item', $schema->additionalProperties);
         }
 
         $models = [];
-        if ($this->isModel($schema)) {
+        if ($this->isNamedSchema($schema)) {
             $pointer          = $schema->getDocumentPosition()?->getPointer() ?? '';
             $models[$pointer] = new NamedSchema($name, $schema);
         }
 
         if (! empty($schema->allOf)) {
-            return array_merge($models, $this->getAllOfModels($name, $schema->allOf));
+            return array_merge($models, $this->getAllOfSchemas($name, $schema->allOf));
         }
         if (! empty($schema->anyOf)) {
-            return array_merge($models, $this->getAnyOfModels($name, $schema->anyOf));
+            return array_merge($models, $this->getAnyOfSchemas($name, $schema->anyOf));
         }
         if (! empty($schema->oneOf)) {
-            return array_merge($models, $this->getOneOfModels($name, $schema->oneOf));
+            return array_merge($models, $this->getOneOfSchemas($name, $schema->oneOf));
         }
 
         foreach ($schema->properties as $propertyName => $property) {
             if (! $property instanceof Schema) {
                 continue;
             }
-            $models = array_merge($models, $this->getModels("$name $propertyName", $property));
+            $models = array_merge($models, $this->getNamedSchemas("$name $propertyName", $property));
         }
 
         return $models;
@@ -71,7 +71,7 @@ final class SchemaLocator
      * @param array<array-key, Schema|Reference> $composed
      * @return array<string, NamedSchema>
      */
-    private function getAllOfModels(string $name, array $composed): array
+    private function getAllOfSchemas(string $name, array $composed): array
     {
         $models = [];
         foreach ($composed as $i => $schema) {
@@ -79,7 +79,7 @@ final class SchemaLocator
                 throw ModelException::unresolvedReference($schema);
             }
 
-            $allOf = $this->getModels($name . $i, $schema);
+            $allOf = $this->getNamedSchemas($name . $i, $schema);
             if (! $this->isReferenced($schema)) {
                 $pointer = $schema->getDocumentPosition()?->getPointer() ?? '';
                 unset($allOf[$pointer]);
@@ -97,7 +97,7 @@ final class SchemaLocator
      * @param array<array-key, Schema|Reference> $composed
      * @return array<string, NamedSchema>
      */
-    private function getAnyOfModels(string $name, array $composed): array
+    private function getAnyOfSchemas(string $name, array $composed): array
     {
         $models = [];
         foreach ($composed as $i => $schema) {
@@ -106,7 +106,7 @@ final class SchemaLocator
             }
 
             $pointer = $schema->getDocumentPosition()?->getPointer() ?? '';
-            $anyOf   = $this->getModels($name . $i, $schema);
+            $anyOf   = $this->getNamedSchemas($name . $i, $schema);
             unset($anyOf[$pointer]);
 
             $models = array_merge($models, $anyOf);
@@ -121,7 +121,7 @@ final class SchemaLocator
      * @param array<array-key, Schema|Reference> $composed
      * @return array<string, NamedSchema>
      */
-    private function getOneOfModels(string $name, array $composed): array
+    private function getOneOfSchemas(string $name, array $composed): array
     {
         $models = [];
         foreach ($composed as $i => $schema) {
@@ -129,7 +129,7 @@ final class SchemaLocator
                 throw ModelException::unresolvedReference($schema);
             }
 
-            $models = array_merge($models, $this->getModels($name . $i, $schema));
+            $models = array_merge($models, $this->getNamedSchemas($name . $i, $schema));
         }
 
         return $models;
@@ -137,14 +137,14 @@ final class SchemaLocator
 
     private function isReferenced(Schema $schema): bool
     {
-        if (! $this->isModel($schema)) {
+        if (! $this->isNamedSchema($schema)) {
             return false;
         }
 
         return $schema->getDocumentPosition()?->parent()?->getPointer() === '/components/schemas';
     }
 
-    private function isModel(Schema $schema): bool
+    private function isNamedSchema(Schema $schema): bool
     {
         return $schema->type === 'object' || $schema->allOf || $schema->anyOf || ModelUtil::isEnum($schema);
     }

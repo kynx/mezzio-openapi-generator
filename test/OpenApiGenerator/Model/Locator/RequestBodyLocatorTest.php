@@ -28,7 +28,7 @@ final class RequestBodyLocatorTest extends TestCase
         $this->locator = new RequestBodyLocator();
     }
 
-    public function testGetModelsAppendsRequestBodyToName(): void
+    public function testGetNamedSchemasAppendsRequestBodyToName(): void
     {
         $schema      = new Schema([
             'type'       => 'object',
@@ -48,7 +48,7 @@ final class RequestBodyLocatorTest extends TestCase
         $expected    = ['' => new NamedSchema('Foo RequestBody', $schema)];
 
         self::assertTrue($requestBody->validate(), implode("\n", $requestBody->getErrors()));
-        $actual = $this->locator->getModels('Foo', $requestBody);
+        $actual = $this->locator->getNamedSchemas('Foo', $requestBody);
         self::assertEquals($expected, $actual);
     }
 }

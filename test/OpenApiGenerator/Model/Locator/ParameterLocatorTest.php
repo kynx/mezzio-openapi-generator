@@ -32,7 +32,7 @@ final class ParameterLocatorTest extends TestCase
         $this->locator = new ParameterLocator();
     }
 
-    public function testGetModelsReferencedSchemaThrowsException(): void
+    public function testGetNamedSchemasReferencedSchemaThrowsException(): void
     {
         $ref       = '#/components/parameters/Foo';
         $parameter = new Parameter([
@@ -41,10 +41,10 @@ final class ParameterLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getModels('', $parameter);
+        $this->locator->getNamedSchemas('', $parameter);
     }
 
-    public function testGetModelsReturnsSchema(): void
+    public function testGetNamedSchemasReturnsSchema(): void
     {
         $schema    = $this->getSchema();
         $parameter = new Parameter([
@@ -55,11 +55,11 @@ final class ParameterLocatorTest extends TestCase
         $expected  = ['' => new NamedSchema('Foo barParam', $schema)];
 
         self::assertTrue($parameter->validate(), implode("\n", $parameter->getErrors()));
-        $actual = $this->locator->getModels('Foo', $parameter);
+        $actual = $this->locator->getNamedSchemas('Foo', $parameter);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsReturnsContent(): void
+    public function testGetNamedSchemasReturnsContent(): void
     {
         $schema    = $this->getSchema();
         $parameter = new Parameter([
@@ -74,7 +74,7 @@ final class ParameterLocatorTest extends TestCase
         $expected  = ['' => new NamedSchema('Foo barParam', $schema)];
 
         self::assertTrue($parameter->validate(), implode("\n", $parameter->getErrors()));
-        $actual = $this->locator->getModels('Foo', $parameter);
+        $actual = $this->locator->getNamedSchemas('Foo', $parameter);
         self::assertEquals($expected, $actual);
     }
 

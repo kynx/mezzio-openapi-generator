@@ -30,7 +30,7 @@ final class PathItemLocatorTest extends TestCase
         $this->locator = new PathItemLocator();
     }
 
-    public function testGetModelsSingleOperationUsesBaseName(): void
+    public function testGetNamedSchemasSingleOperationUsesBaseName(): void
     {
         $schema   = $this->getSchema();
         $pathItem = new PathItem([
@@ -50,11 +50,11 @@ final class PathItemLocatorTest extends TestCase
         $expected = ['' => new NamedSchema('Foo defaultResponse', $schema)];
 
         self::assertTrue($pathItem->validate(), implode("\n", $pathItem->getErrors()));
-        $actual = $this->locator->getModels('Foo', $pathItem);
+        $actual = $this->locator->getNamedSchemas('Foo', $pathItem);
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetModelsAppendsOperationMethod(): void
+    public function testGetNamedSchemasAppendsOperationMethod(): void
     {
         $getSchema  = $this->getSchema();
         $postSchema = $this->getSchema();
@@ -92,7 +92,7 @@ final class PathItemLocatorTest extends TestCase
         ];
 
         self::assertTrue($pathItem->validate(), implode("\n", $pathItem->getErrors()));
-        $actual = $this->locator->getModels('Foo', $pathItem);
+        $actual = $this->locator->getNamedSchemas('Foo', $pathItem);
         self::assertEquals($expected, $actual);
     }
 

@@ -31,7 +31,7 @@ final class ParameterLocator
     /**
      * @return array<string, NamedSchema>
      */
-    public function getModels(string $baseName, Parameter $parameter): array
+    public function getNamedSchemas(string $baseName, Parameter $parameter): array
     {
         $name = $baseName . ' ' . $parameter->name . 'Param';
 
@@ -39,9 +39,9 @@ final class ParameterLocator
             throw ModelException::unresolvedReference($parameter->schema);
         }
         if ($parameter->schema instanceof Schema) {
-            return $this->schemaLocator->getModels($name, $parameter->schema);
+            return $this->schemaLocator->getNamedSchemas($name, $parameter->schema);
         }
 
-        return $this->mediaTypeLocator->getModels($name, $parameter->content);
+        return $this->mediaTypeLocator->getNamedSchemas($name, $parameter->content);
     }
 }

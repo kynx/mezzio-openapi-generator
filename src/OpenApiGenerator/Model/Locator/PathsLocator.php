@@ -30,7 +30,7 @@ final class PathsLocator
     /**
      * @return array<string, NamedSchema>
      */
-    public function getModels(Paths $paths): array
+    public function getNamedSchemas(Paths $paths): array
     {
         $models = [];
         foreach ($paths->getPaths() as $path => $pathItem) {
@@ -40,7 +40,7 @@ final class PathsLocator
             }
 
             $name   = implode(' ', RouteUtil::getPathParts((string) $path));
-            $models = array_merge($models, $this->pathItemLocator->getModels($name, $pathItem));
+            $models = array_merge($models, $this->pathItemLocator->getNamedSchemas($name, $pathItem));
         }
 
         return $models;

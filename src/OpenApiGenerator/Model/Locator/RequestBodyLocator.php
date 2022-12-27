@@ -26,8 +26,8 @@ final class RequestBodyLocator
     /**
      * @return array<string, NamedSchema>
      */
-    public function getModels(string $baseName, RequestBody $requestBody): array
+    public function getNamedSchemas(string $baseName, RequestBody $requestBody): array
     {
-        return $this->mediaTypeLocator->getModels($baseName . ' RequestBody', $requestBody->content);
+        return $this->mediaTypeLocator->getNamedSchemas($baseName . ' RequestBody', $requestBody->content);
     }
 }

@@ -29,18 +29,18 @@ final class PathsLocatorTest extends TestCase
         $this->locator = new PathsLocator();
     }
 
-    public function testGetModelsSkipsNullPath(): void
+    public function testGetNamedSchemasSkipsNullPath(): void
     {
         $paths = new Paths([
             '/pets' => null,
         ]);
 
         self::assertTrue($paths->validate(), implode("\n", $paths->getErrors()));
-        $actual = $this->locator->getModels($paths);
+        $actual = $this->locator->getNamedSchemas($paths);
         self::assertEmpty($actual);
     }
 
-    public function testGetModelsReturnsModel(): void
+    public function testGetNamedSchemasReturnsSchema(): void
     {
         $schema   = new Schema([
             'type'       => 'object',
@@ -69,7 +69,7 @@ final class PathsLocatorTest extends TestCase
         $expected = ['' => new NamedSchema('my pets defaultResponse', $schema)];
 
         self::assertTrue($paths->validate(), implode("\n", $paths->getErrors()));
-        $actual = $this->locator->getModels($paths);
+        $actual = $this->locator->getNamedSchemas($paths);
         self::assertEquals($expected, $actual);
     }
 }

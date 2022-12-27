@@ -36,9 +36,9 @@ final class ResponseLocator
     /**
      * @return array<string, NamedSchema>
      */
-    public function getModels(string $baseName, Response $response): array
+    public function getNamedSchemas(string $baseName, Response $response): array
     {
-        $models = $this->mediaTypeLocator->getModels($baseName . 'Response', $response->content);
+        $models = $this->mediaTypeLocator->getNamedSchemas($baseName . 'Response', $response->content);
         foreach ($response->headers as $headerName => $header) {
             if ($header instanceof Reference) {
                 throw ModelException::unresolvedReference($header);
@@ -51,7 +51,7 @@ final class ResponseLocator
             }
 
             $name   = $baseName . $this->normalizeHeaderName((string) $headerName);
-            $models = array_merge($models, $this->schemaLocator->getModels($name, $header->schema));
+            $models = array_merge($models, $this->schemaLocator->getNamedSchemas($name, $header->schema));
         }
 
         return $models;

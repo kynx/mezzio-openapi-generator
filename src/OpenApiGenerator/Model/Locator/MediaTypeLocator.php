@@ -37,7 +37,7 @@ final class MediaTypeLocator
      * @param array<array-key, MediaType> $mediaTypes
      * @return array<string, NamedSchema>
      */
-    public function getModels(string $baseName, array $mediaTypes): array
+    public function getNamedSchemas(string $baseName, array $mediaTypes): array
     {
         $models   = [];
         $pointers = [];
@@ -67,7 +67,7 @@ final class MediaTypeLocator
                 $name = $baseName;
             }
 
-            $models = array_merge($models, $this->schemaLocator->getModels($name, $mediaType->schema));
+            $models = array_merge($models, $this->schemaLocator->getNamedSchemas($name, $mediaType->schema));
         }
 
         return $models;

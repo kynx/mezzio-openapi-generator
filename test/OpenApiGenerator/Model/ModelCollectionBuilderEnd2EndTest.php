@@ -281,6 +281,6 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         $openApi = Reader::readFromYamlFile(__DIR__ . '/Asset/' . $file);
         self::assertTrue($openApi->validate(), "Invalid openapi schema: " . implode("\n", $openApi->getErrors()));
 
-        return $this->locator->getModels($openApi);
+        return $this->locator->getNamedSchemas($openApi);
     }
 }

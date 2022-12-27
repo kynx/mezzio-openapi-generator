@@ -39,7 +39,7 @@ final class OperationLocator
     /**
      * @return array<string, NamedSchema>
      */
-    public function getModels(string $baseName, Operation $operation): array
+    public function getNamedSchemas(string $baseName, Operation $operation): array
     {
         $models = [];
         foreach ($operation->parameters as $parameter) {
@@ -47,14 +47,14 @@ final class OperationLocator
                 throw ModelException::unresolvedReference($parameter);
             }
 
-            $models = array_merge($models, $this->parameterLocator->getModels($baseName, $parameter));
+            $models = array_merge($models, $this->parameterLocator->getNamedSchemas($baseName, $parameter));
         }
 
         if ($operation->requestBody instanceof Reference) {
             throw ModelException::unresolvedReference($operation->requestBody);
         }
         if ($operation->requestBody instanceof RequestBody) {
-            $models = array_merge($models, $this->requestBodyLocator->getModels($baseName, $operation->requestBody));
+            $models = array_merge($models, $this->requestBodyLocator->getNamedSchemas($baseName, $operation->requestBody));
         }
 
         if ($operation->responses instanceof Responses) {
@@ -73,7 +73,7 @@ final class OperationLocator
                 } else {
                     $name = $baseName . ' ' . $code;
                 }
-                $models = array_merge($models, $this->responseLocator->getModels($name, $response));
+                $models = array_merge($models, $this->responseLocator->getNamedSchemas($name, $response));
             }
         }
 
