@@ -4,12 +4,10 @@ Generate Mezzio REST APIs from OpenAPI specifications
 
 ## Goals
 
-* Generate routes from spec
-* Handle validation of incoming request
-* Handle authentication of incoming request
-* Map incoming request to component objects
-* Pass parsed components to user-defined operation classes and return results
-
+* Generate route delegator config from spec
+* Generate models from spec
+* Generate handlers from spec
+* Generate model hydrators from spec (or just use constructor property promotion + JsonSerializable?)
 
 ## Notes
 

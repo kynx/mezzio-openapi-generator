@@ -1,0 +1,65 @@
+{
+    "name": "kynx/mezzio-openapi-generator",
+    "description": "Generate a Mezzio application from an OpenAPI specification",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "mezzio",
+        "openapi",
+        "psr-15"
+    ],
+    "authors": [
+        {
+            "name": "Matt Kynaston",
+            "email": "matt@kynx.org"
+        }
+    ],
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "require": {
+        "php": "~8.1 || ~8.2",
+        "cebe/php-openapi": "^1.7",
+        "kynx/code-utils": "^2.0",
+        "kynx/mezzio-openapi": "dev-main",
+        "laminas/laminas-filter": "^2.30",
+        "nette/php-generator": "^v4.0"
+    },
+    "require-dev": {
+        "laminas/laminas-coding-standard": "^2.4",
+        "phpunit/phpunit": "^9.5.11",
+        "roave/security-advisories": "dev-master",
+        "vimeo/psalm": "^4.28"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kynx\\Mezzio\\OpenApiGenerator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "KynxTest\\Mezzio\\OpenApiGenerator\\": "test/"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@static-analysis",
+            "@test"
+        ],
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "static-analysis": "psalm --shepherd --stats",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:kynx/mezzio-openapi.git"
+        }
+    ]
+}

@@ -54,7 +54,10 @@ final class OperationLocator
             throw ModelException::unresolvedReference($operation->requestBody);
         }
         if ($operation->requestBody instanceof RequestBody) {
-            $models = array_merge($models, $this->requestBodyLocator->getNamedSchemas($baseName, $operation->requestBody));
+            $models = array_merge(
+                $models,
+                $this->requestBodyLocator->getNamedSchemas($baseName, $operation->requestBody)
+            );
         }
 
         if ($operation->responses instanceof Responses) {
