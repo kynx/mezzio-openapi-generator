@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 
 use cebe\openapi\spec\Schema;
+use DateInterval;
+use DateTimeImmutable;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\UriInterface;
 use stdClass;
 
 use function implode;
@@ -116,6 +119,33 @@ final class PropertyTypeTest extends TestCase
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unrecognized value 'stdClass'");
         PropertyType::fromValue($value);
+    }
+
+    /**
+     * @dataProvider toPhpTypeProvider
+     */
+    public function testToPhpType(PropertyType $type, string $expected): void
+    {
+        $actual = $type->toPhpType();
+        self::assertSame($expected, $actual);
+    }
+
+    public function toPhpTypeProvider(): array
+    {
+        return [
+            'array'    => [PropertyType::Array, 'array'],
+            'bool'     => [PropertyType::Boolean, 'bool'],
+            'date'     => [PropertyType::Date, DateTimeImmutable::class],
+            'datetime' => [PropertyType::Date, DateTimeImmutable::class],
+            'duration' => [PropertyType::Duration, DateInterval::class],
+            'int'      => [PropertyType::Integer, 'int'],
+            'float'    => [PropertyType::Number, 'float'],
+            'null'     => [PropertyType::Null, 'null'],
+            'object'   => [PropertyType::Object, 'object'],
+            'string'   => [PropertyType::String, 'string'],
+            'uri'      => [PropertyType::Uri, UriInterface::class],
+            'other'    => [PropertyType::JsonPointer, 'string'],
+        ];
     }
 
     private function getSchema(array $spec): Schema

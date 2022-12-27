@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 
 use cebe\openapi\spec\Schema;
+use DateInterval;
+use DateTimeImmutable;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Psr\Http\Message\UriInterface;
 
 use function gettype;
 
@@ -103,6 +106,22 @@ enum PropertyType
             'uri-template'          => self::UriTemplate,
             'uuid'                  => self::Uuid,
             default                 => self::String,
+        };
+    }
+
+    public function toPhpType(): string
+    {
+        return match ($this) {
+            self::Array                => 'array',
+            self::Boolean              => 'bool',
+            self::Date, self::DateTime => DateTimeImmutable::class,
+            self::Duration             => DateInterval::class,
+            self::Integer              => 'int',
+            self::Null                 => 'null',
+            self::Number               => 'float',
+            self::Object               => 'object',
+            self::Uri                  => UriInterface::class,
+            default                    => 'string',
         };
     }
 }

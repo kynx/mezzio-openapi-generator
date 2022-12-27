@@ -4,75 +4,51 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\WordCase;
 use Kynx\Mezzio\OpenApi\OpenApiSchema;
-use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\EnumType;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\EnumGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator;
 use Nette\PhpGenerator\PhpFile;
-use Nette\PhpGenerator\PhpNamespace;
 
+use function array_slice;
+use function explode;
+use function implode;
+
+/**
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ModelGeneratorTest
+ */
 final class ModelGenerator
 {
-    public function __construct(private UniqueVariableLabeler $variableLabeler)
-    {
+    public function __construct(
+        private readonly ClassGenerator $classGenerator = new ClassGenerator(),
+        private readonly EnumGenerator $enumGenerator = new EnumGenerator(),
+        private readonly InterfaceGenerator $interfaceGenerator = new InterfaceGenerator()
+    ) {
     }
 
-    /**
-     * @return list<PhpFile>
-     */
-    public function generate(ModelCollection $collection): array
-    {
-        $files = [];
-        foreach ($collection as $modelClass) {
-            $files[] = $this->generateModel($modelClass);
-        }
-
-        return $files;
-    }
-
-    private function generateModel(ClassModel $modelClass): PhpFile
+    public function generate(ClassModel|EnumModel|InterfaceModel $modelClass): PhpFile
     {
         $file = new PhpFile();
-        $file->setStrictTypes(true);
+        $file->setStrictTypes();
 
-        $schema = $modelClass->getSchema();
-        if (Util::isEnum($schema)) {
-            $added = $this->addEnumClass($file, $modelClass);
+        $namespace = $file->addNamespace($this->getNamespace($modelClass));
+
+        if ($modelClass instanceof ClassModel) {
+            $added = $this->classGenerator->addClass($namespace, $modelClass);
+        } elseif ($modelClass instanceof EnumModel) {
+            $added = $this->enumGenerator->addEnum($namespace, $modelClass);
         } else {
-            $added = $this->addModelClass($file, $modelClass);
+            $added = $this->interfaceGenerator->addInterface($namespace, $modelClass);
         }
+
+        $namespace->addUse(OpenApiSchema::class);
         $added->addAttribute(OpenApiSchema::class, [$modelClass->getJsonPointer()]);
 
         return $file;
     }
 
-    private function addModelClass(PhpFile $file, ClassModel $model): ClassType
+    private function getNamespace(ClassModel|EnumModel|InterfaceModel $modelClass): string
     {
-        $class = $file->addClass($model->getClassName());
-        $constructor = $class->addMethod('__construct');
-    }
-
-    private function addEnumClass(PhpFile $file, ClassModel $model): EnumType
-    {
-        $schema = $model->getSchema();
-        assert(! empty($schema->enum));
-        assert(in_array($schema->type, ['integer', 'string'], true));
-
-        $enum = $file->addEnum($model->getClassName());
-        $enum->setType($schema->type === 'integer' ? 'int' : 'string');
-
-        foreach ($schema->enum as $value) {
-
-        }
-
-    }
-
-    private function getProperties(ClassModel $modelClass): array
-    {
-        $properties = [];
-        foreach ($modelClass->getSchema()->properties as $property) {
-
-        }
+        return implode('\\', array_slice(explode('\\', $modelClass->getClassName()), 0, -1));
     }
 }
