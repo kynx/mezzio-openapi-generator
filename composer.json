@@ -25,6 +25,7 @@
         "cebe/php-openapi": "^1.7",
         "kynx/code-utils": "^2.0",
         "kynx/mezzio-openapi": "dev-main",
+        "laminas/laminas-diactoros": "^2.24",
         "laminas/laminas-filter": "^2.30",
         "nette/php-generator": "^v4.0"
     },
