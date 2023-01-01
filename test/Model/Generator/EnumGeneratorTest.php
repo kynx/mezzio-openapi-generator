@@ -14,6 +14,10 @@ use PHPUnit\Framework\TestCase;
 use function array_map;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumCase
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Generator\EnumGenerator
  */
 final class EnumGeneratorTest extends TestCase

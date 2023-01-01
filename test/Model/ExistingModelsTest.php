@@ -19,6 +19,18 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumCase
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels
  */
 final class ExistingModelsTest extends TestCase

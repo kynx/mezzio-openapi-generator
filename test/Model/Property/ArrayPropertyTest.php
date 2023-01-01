@@ -10,6 +10,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
  */
 final class ArrayPropertyTest extends TestCase

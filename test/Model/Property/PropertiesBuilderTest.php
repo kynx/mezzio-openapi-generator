@@ -19,6 +19,12 @@ use PHPUnit\Framework\TestCase;
 use function implode;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  */
 final class PropertiesBuilderTest extends TestCase

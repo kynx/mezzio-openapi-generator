@@ -10,6 +10,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
  */
 final class SimplePropertyTest extends TestCase

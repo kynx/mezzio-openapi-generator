@@ -28,6 +28,18 @@ use PHPUnit\Framework\TestCase;
 use function implode;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumCase
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
  */
 final class ModelsBuilderTest extends TestCase

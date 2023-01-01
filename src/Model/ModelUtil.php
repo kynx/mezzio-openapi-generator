@@ -20,6 +20,9 @@ use function assert;
  */
 final class ModelUtil
 {
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }

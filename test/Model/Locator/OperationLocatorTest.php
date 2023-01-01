@@ -13,11 +13,14 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\MediaTypeLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\RequestBodyLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ResponseLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Locator\OperationLocator
  */

@@ -11,6 +11,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumCase
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\EnumModel
  */
 final class EnumModelTest extends TestCase

@@ -17,6 +17,14 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
  * @psalm-suppress InaccessibleMethod
  */

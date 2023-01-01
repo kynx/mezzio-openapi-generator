@@ -56,8 +56,8 @@ final class SchemaLocator
         }
 
         foreach ($schema->properties as $propertyName => $property) {
-            if (! $property instanceof Schema) {
-                continue;
+            if ($property instanceof Reference) {
+                throw ModelException::unresolvedReference($property);
             }
             $models = array_merge($models, $this->getNamedSchemas("$name $propertyName", $property));
         }

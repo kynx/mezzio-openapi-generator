@@ -14,6 +14,14 @@ use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator
  */
 final class InterfaceGeneratorTest extends TestCase

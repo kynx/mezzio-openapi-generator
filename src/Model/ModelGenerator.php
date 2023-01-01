@@ -13,6 +13,7 @@ use Nette\PhpGenerator\PhpFile;
 use function array_slice;
 use function explode;
 use function implode;
+use function ltrim;
 
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ModelGeneratorTest
@@ -49,6 +50,7 @@ final class ModelGenerator
 
     private function getNamespace(ClassModel|EnumModel|InterfaceModel $modelClass): string
     {
-        return implode('\\', array_slice(explode('\\', $modelClass->getClassName()), 0, -1));
+        $namespace = implode('\\', array_slice(explode('\\', $modelClass->getClassName()), 0, -1));
+        return ltrim($namespace, '\\');
     }
 }

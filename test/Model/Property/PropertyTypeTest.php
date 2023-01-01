@@ -16,6 +16,8 @@ use stdClass;
 use function implode;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
  */
 final class PropertyTypeTest extends TestCase

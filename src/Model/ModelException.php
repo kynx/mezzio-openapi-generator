@@ -60,12 +60,4 @@ final class ModelException extends RuntimeException
             $reference->getReference()
         ));
     }
-
-    public static function classCannotBeAliased(string $fqn): self
-    {
-        return new self(sprintf(
-            "Cannot create alias for '%s': possibly duplicate name",
-            $fqn
-        ));
-    }
 }

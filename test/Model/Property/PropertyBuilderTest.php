@@ -19,6 +19,14 @@ use function array_combine;
 use function implode;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
  */
 final class PropertyBuilderTest extends TestCase

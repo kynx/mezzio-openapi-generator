@@ -9,6 +9,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
  */
 final class AbstractPropertyTest extends TestCase

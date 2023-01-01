@@ -13,6 +13,11 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection
  */
 final class ModelCollectionTest extends TestCase
@@ -67,6 +72,8 @@ final class ModelCollectionTest extends TestCase
         foreach ($models as $model) {
             $this->collection->add($model);
         }
+
+        self::assertCount(2, $this->collection);
 
         foreach ($this->collection as $i => $actual) {
             self::assertSame($models[$i], $actual);

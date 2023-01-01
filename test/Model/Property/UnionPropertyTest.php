@@ -10,6 +10,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
  */
 final class UnionPropertyTest extends TestCase
