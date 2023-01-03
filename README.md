@@ -2,12 +2,14 @@
 
 Generate Mezzio REST APIs from OpenAPI specifications
 
+**This is a Work in Progress**
+
 ## Goals
 
-* Generate route delegator config from spec
-* Generate models from spec
-* Generate handlers from spec
-* Generate model hydrators from spec (or just use constructor property promotion + JsonSerializable?)
+* [ ] Generate route delegator config from spec (needs some refactoring)
+* [x] Generate models from spec
+* [ ] Generate handlers from spec
+* [ ] Generate model hydrators from spec (or just use constructor property promotion + JsonSerializable?)
 
 ## Notes
 
