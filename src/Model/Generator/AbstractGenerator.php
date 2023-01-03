@@ -9,11 +9,13 @@ use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 
 use function array_combine;
+use function array_filter;
 use function array_pad;
 use function array_pop;
 use function array_slice;
@@ -46,10 +48,7 @@ abstract class AbstractGenerator
     {
         $properties = $model->getProperties();
         usort($properties, function (PropertyInterface $a, PropertyInterface $b): int {
-            $aMeta = $a->getMetadata();
-            $bMeta = $b->getMetadata();
-            $sort  = ($aMeta->isNullable() || $aMeta->getDefault()) <=> ($bMeta->isNullable() || $bMeta->getDefault());
-
+            $sort = $this->getOrder($a->getMetadata()) <=> $this->getOrder($b->getMetadata());
             if ($sort === 0) {
                 return $a->getName() <=> $b->getName();
             }
@@ -58,6 +57,17 @@ abstract class AbstractGenerator
         });
 
         return $properties;
+    }
+
+    private function getOrder(PropertyMetadata $metadata): int
+    {
+        if ($metadata->getDefault() !== null) {
+            return 1;
+        }
+        if ($metadata->isNullable()) {
+            return 2;
+        }
+        return $metadata->isRequired() ? 0 : 2;
     }
 
     protected function getClassLikeName(ClassModel|EnumModel|InterfaceModel $modelClass): string

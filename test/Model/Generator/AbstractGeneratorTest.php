@@ -83,16 +83,22 @@ final class AbstractGeneratorTest extends TestCase
 
     public function orderedParametersProvider(): array
     {
-        $nullable = new SimpleProperty('$a', 'a', new PropertyMetadata(...['nullable' => true]), PropertyType::String);
-        $default  = new SimpleProperty('$b', 'b', new PropertyMetadata(...['default' => 'foo']), PropertyType::String);
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        $nullable = new SimpleProperty('$a', 'a', new PropertyMetadata(...['required' => true, 'nullable' => true]), PropertyType::String);
+        $default  = new SimpleProperty('$b', 'b', new PropertyMetadata(...['required' => true, 'default' => 'foo']), PropertyType::String);
         $required = new SimpleProperty('$c', 'c', new PropertyMetadata(...['required' => true]), PropertyType::String);
         $none     = new SimpleProperty('$d', 'd', new PropertyMetadata(), PropertyType::String);
+        $another  = new SimpleProperty('$e', 'e', new PropertyMetadata(), PropertyType::String);
+        // phpcs:enable
 
         return [
-            'nullable_none'    => [$nullable, $none, [$none, $nullable]],
-            'default_none'     => [$default, $none, [$none, $default]],
-            'default_nullable' => [$default, $nullable, [$nullable, $default]],
-            'none_required'    => [$none, $required, [$required, $none]],
+            'nullable_none'     => [$none, $nullable, [$nullable, $none]],
+            'default_none'      => [$none, $default, [$default, $none]],
+            'default_nullable'  => [$nullable, $default, [$default, $nullable]],
+            'required_none'     => [$none, $required, [$required, $none]],
+            'required_default'  => [$default, $required, [$required, $default]],
+            'required_nullable' => [$nullable, $required, [$required, $nullable]],
+            'none_another'      => [$another, $none, [$none, $another]],
         ];
     }
 
