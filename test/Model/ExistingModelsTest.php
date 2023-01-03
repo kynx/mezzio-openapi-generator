@@ -116,15 +116,14 @@ final class ExistingModelsTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testUpdateClassNamesInvalidDirectoryThrowsException(): void
+    public function testUpdateClassNamesInvalidDirectoryReturnsUnaltered(): void
     {
         $path     = __DIR__ . '/Assets/NonExistent';
-        $expected = "'$path' is not a valid path";
+        $expected = new ModelCollection();
         $existing = new ExistingModels(self::NAMESPACE, $path);
 
-        self::expectException(ModelException::class);
-        self::expectExceptionMessage($expected);
-        $existing->updateClassNames(new ModelCollection());
+        $actual = $existing->updateClassNames($expected);
+        self::assertSame($expected, $actual);
     }
 
     public function testUpdateClassNamesBrokenAnnotationThrowsException(): void

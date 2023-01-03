@@ -20,6 +20,7 @@ use Throwable;
 
 use function array_map;
 use function current;
+use function is_dir;
 use function str_replace;
 use function strlen;
 use function substr;
@@ -43,6 +44,10 @@ final class ExistingModels
 
     public function updateClassNames(ModelCollection $collection): ModelCollection
     {
+        if (! is_dir($this->path)) {
+            return $collection;
+        }
+
         $updated  = new ModelCollection();
         $existing = $this->getOpenApiSchemas();
         $renames  = $this->getRenames($collection, $existing);
