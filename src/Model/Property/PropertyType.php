@@ -124,4 +124,12 @@ enum PropertyType
             default                    => 'string',
         };
     }
+
+    public function isClassType(): bool
+    {
+        return match ($this) {
+            self::Date, self::DateTime, self::Duration, self::Uri => true,
+            default                                               => false,
+        };
+    }
 }

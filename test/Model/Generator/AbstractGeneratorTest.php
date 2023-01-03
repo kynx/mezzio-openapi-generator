@@ -15,6 +15,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
@@ -56,9 +57,9 @@ final class AbstractGeneratorTest extends TestCase
                 return parent::getMethodName($property);
             }
 
-            public function getType(PropertyInterface $property, array $aliases): string
+            public function getType(PropertyInterface $property): string
             {
-                return parent::getType($property, $aliases);
+                return parent::getType($property);
             }
 
             public function getPropertyUses(array $properties): array
@@ -150,18 +151,8 @@ final class AbstractGeneratorTest extends TestCase
             'not_required' => [new SimpleProperty('$a', 'a', $notRequired, PropertyType::Boolean), 'bool|null'],
             'array'        => [new ArrayProperty('$a', 'a', $required, false, PropertyType::String), 'array'],
             'list'         => [new ArrayProperty('$a', 'a', $required, true, PropertyType::String), 'array'],
-            'union'        => [new UnionProperty('$a', 'a', $required, '\\A\\B', '\\A\\C'), 'B|C'],
+            'union'        => [new UnionProperty('$a', 'a', $required, '\\A\\B', '\\A\\C'), '\\A\\B|\\A\\C'],
         ];
-    }
-
-    public function testGetTypeUsesAliases(): void
-    {
-        $expected = 'AB';
-        $property = new SimpleProperty('$a', 'a', new PropertyMetadata('', '', true), '\\A\\B');
-        $aliases  = ['\\A\\B' => $expected];
-
-        $actual = $this->generator->getType($property, $aliases);
-        self::assertSame($expected, $actual);
     }
 
     /**
@@ -177,14 +168,19 @@ final class AbstractGeneratorTest extends TestCase
     public function getPropertyUsesProvider(): array
     {
         $metadata = new PropertyMetadata();
+        // phpcs:disable Generic.Files.LineLength.TooLong
         return [
             'array_php'  => [[new ArrayProperty('$a', 'a', $metadata, false, PropertyType::String)], []],
+            'array_uri'  => [[new ArrayProperty('$a', 'a', $metadata, false, PropertyType::Uri)], [UriInterface::class => null]],
             'array'      => [[new ArrayProperty('$a', 'a', $metadata, false, '\\A')], ['\\A' => null]],
             'simple_php' => [[new SimpleProperty('$a', 'a', $metadata, PropertyType::String)], []],
+            'simple_uri' => [[new SimpleProperty('$a', 'a', $metadata, PropertyType::Uri)], [UriInterface::class => null]],
             'simple'     => [[new SimpleProperty('$a', 'a', $metadata, '\\A')], ['\\A' => null]],
             'union_php'  => [[new UnionProperty('$a', 'a', $metadata, PropertyType::String)], []],
+            'union_uri'  => [[new UnionProperty('$a', 'a', $metadata, PropertyType::Uri)], [UriInterface::class => null]],
             'union'      => [[new UnionProperty('$a', 'a', $metadata, '\\A', '\\B')], ['\\A' => null, '\\B' => null]],
         ];
+        // phpcs:enable
     }
 
     public function testGetPropertyUsesOrdersUses(): void

@@ -87,16 +87,16 @@ abstract class AbstractGenerator
     /**
      * @param UsesArray $aliases
      */
-    protected function getType(PropertyInterface $property, array $aliases): string
+    protected function getType(PropertyInterface $property): string
     {
         $types = [];
         if ($property instanceof SimpleProperty) {
-            $types[] = $this->getTypeString($property->getType(), $aliases);
+            $types[] = $this->getTypeString($property->getType());
         } elseif ($property instanceof ArrayProperty) {
             $types[] = 'array';
         } elseif ($property instanceof UnionProperty) {
             foreach ($property->getMembers() as $member) {
-                $types[] = $this->getTypeString($member, $aliases);
+                $types[] = $this->getTypeString($member);
             }
         }
 
@@ -116,19 +116,18 @@ abstract class AbstractGenerator
     {
         $fqns = [];
         foreach ($properties as $property) {
-            if ($property instanceof ArrayProperty && ! $property->getMemberType() instanceof PropertyType) {
-                $fqns[] = $property->getMemberType();
-            } elseif ($property instanceof SimpleProperty && ! $property->getType() instanceof PropertyType) {
-                $fqns[] = $property->getType();
+            if ($property instanceof ArrayProperty) {
+                $fqns[] = $this->getPropertyUse($property->getMemberType());
+            } elseif ($property instanceof SimpleProperty) {
+                $fqns[] = $this->getPropertyUse($property->getType());
             } elseif ($property instanceof UnionProperty) {
                 foreach ($property->getMembers() as $member) {
-                    if (! $member instanceof PropertyType) {
-                        $fqns[] = $member;
-                    }
+                    $fqns[] = $this->getPropertyUse($member);
                 }
             }
         }
 
+        $fqns = array_filter($fqns);
         uksort(
             $fqns,
             fn (mixed $a, mixed $b): int => count(explode('\\', (string) $b)) <=> count(explode('\\', (string) $a))
@@ -137,6 +136,14 @@ abstract class AbstractGenerator
         ksort($aliased);
 
         return $aliased;
+    }
+
+    private function getPropertyUse(PropertyType|string $propertyType): string|null
+    {
+        if ($propertyType instanceof PropertyType) {
+            return $propertyType->isClassType() ? $propertyType->toPhpType() : null;
+        }
+        return $propertyType;
     }
 
     protected function normalizePropertyName(PropertyInterface $property): string
@@ -153,13 +160,13 @@ abstract class AbstractGenerator
     /**
      * @param UsesArray $aliases
      */
-    private function getTypeString(PropertyType|string $propertyType, array $aliases): string
+    private function getTypeString(PropertyType|string $propertyType): string
     {
         if ($propertyType instanceof PropertyType) {
             return $propertyType->toPhpType();
         }
 
-        return $aliases[$propertyType] ?? $this->getClassName($propertyType);
+        return $propertyType;
     }
 
     /**

@@ -150,6 +150,26 @@ final class PropertyTypeTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider isClassTypeProvider
+     */
+    public function testIsClassType(PropertyType $type, bool $expected): void
+    {
+        $actual = $type->isClassType();
+        self::assertSame($expected, $actual);
+    }
+
+    public function isClassTypeProvider(): array
+    {
+        return [
+            'datetime' => [PropertyType::DateTime, true],
+            'date'     => [PropertyType::Date, true],
+            'duration' => [PropertyType::Duration, true],
+            'uri'      => [PropertyType::Uri, true],
+            'string'   => [PropertyType::String, false],
+        ];
+    }
+
     private function getSchema(array $spec): Schema
     {
         $schema = new Schema($spec);

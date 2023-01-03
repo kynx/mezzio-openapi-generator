@@ -36,7 +36,7 @@ final class ClassGenerator extends AbstractGenerator
         $constructor = $class->addMethod('__construct');
         foreach ($this->getOrderedParameters($model) as $property) {
             $param = $constructor->addPromotedParameter($this->normalizePropertyName($property))
-                ->setType($this->getType($property, $aliases))
+                ->setType($this->getType($property))
                 ->setPrivate()
                 ->setReadOnly();
 

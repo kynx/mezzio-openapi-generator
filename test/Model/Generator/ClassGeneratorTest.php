@@ -86,6 +86,27 @@ final class ClassGeneratorTest extends TestCase
         self::assertTrue($parameter->isPrivate());
     }
 
+    public function testAddClassAddsFqnConstructorParameter(): void
+    {
+        $expected  = '\\A\\C';
+        $model     = new ClassModel(
+            '\\A\\B',
+            '/A/B',
+            [],
+            new SimpleProperty('$a', 'a', new PropertyMetadata('', '', true), $expected)
+        );
+        $namespace = new PhpNamespace('A');
+        $class     = $this->generator->addClass($namespace, $model);
+
+        $constructor = $class->getMethod('__construct');
+        $parameters  = $constructor->getParameters();
+        self::assertArrayHasKey('a', $parameters);
+        $parameter = $parameters['a'];
+        self::assertInstanceOf(PromotedParameter::class, $parameter);
+
+        self::assertSame($expected, $parameter->getType());
+    }
+
     /**
      * @dataProvider parameterDefaultProvider
      */
