@@ -30,7 +30,7 @@ final class InterfaceGenerator extends AbstractGenerator
             }
         }
 
-        $this->addMethods($interface, $model, $aliases);
+        $this->addMethods($interface, $model);
 
         return $interface;
     }
@@ -38,12 +38,12 @@ final class InterfaceGenerator extends AbstractGenerator
     /**
      * @param UsesArray $aliases
      */
-    private function addMethods(InterfaceType $type, InterfaceModel $model, array $aliases): void
+    private function addMethods(InterfaceType $type, InterfaceModel $model): void
     {
         foreach ($this->getOrderedParameters($model) as $property) {
             $method = $type->addMethod($this->getMethodName($property));
             $method->setPublic()
-                ->setReturnType($this->getType($property, $aliases));
+                ->setReturnType($this->getType($property));
         }
     }
 }

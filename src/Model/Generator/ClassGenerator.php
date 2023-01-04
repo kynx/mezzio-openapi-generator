@@ -48,7 +48,7 @@ final class ClassGenerator extends AbstractGenerator
             }
         }
 
-        $this->addMethods($class, $model, $aliases);
+        $this->addMethods($class, $model);
 
         return $class;
     }
@@ -56,12 +56,12 @@ final class ClassGenerator extends AbstractGenerator
     /**
      * @param UsesArray $aliases
      */
-    private function addMethods(ClassType $type, ClassModel $model, array $aliases): void
+    private function addMethods(ClassType $type, ClassModel $model): void
     {
         foreach ($model->getProperties() as $property) {
             $method = $type->addMethod($this->getMethodName($property));
             $method->setPublic()
-                ->setReturnType($this->getType($property, $aliases))
+                ->setReturnType($this->getType($property))
                 ->setBody(sprintf('return $this->%s;', $this->normalizePropertyName($property)));
         }
     }
