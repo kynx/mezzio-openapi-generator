@@ -22,4 +22,8 @@
             </errorLevel>
         </PropertyNotSetInConstructor>
     </issueHandlers>
+
+    <stubs>
+        <file name=".psr-container.php.stub" preloadClasses="true" />
+    </stubs>
 </psalm>
