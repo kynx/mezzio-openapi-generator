@@ -14,6 +14,9 @@
             "email": "matt@kynx.org"
         }
     ],
+    "bin": [
+        "bin/mezzio-openapi"
+    ],
     "config": {
         "sort-packages": true,
         "allow-plugins": {
@@ -22,9 +25,12 @@
     },
     "require": {
         "php": "~8.1 || ~8.2",
+        "ext-fileinfo": "*",
+        "composer-runtime-api": "^2.2",
         "cebe/php-openapi": "^1.7",
         "kynx/code-utils": "^2.0",
         "kynx/mezzio-openapi": "dev-main",
+        "laminas/laminas-cli": "^1.7",
         "laminas/laminas-diactoros": "^2.24",
         "laminas/laminas-filter": "^2.30",
         "nette/php-generator": "^v4.0"

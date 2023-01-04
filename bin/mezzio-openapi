@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Composer\InstalledVersions;
+use Kynx\Mezzio\OpenApiGenerator\Console\ApplicationFactory;
+use Kynx\Mezzio\OpenApiGenerator\ConfigurationLoader;
+
+/** @var string $autoload */
+$autoload = $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
+if (! file_exists($autoload)) {
+    fwrite(STDERR, 'Cannot locate autoloader; please run "composer install"' . PHP_EOL);
+    exit(1);
+}
+
+require $autoload;
+
+$package       = InstalledVersions::getRootPackage();
+$installPath   = realpath($package['install_path']);
+$configuration = ConfigurationLoader::load($installPath);
+
+chdir($configuration->getProjectDir());
+
+$app = (new ApplicationFactory())($configuration);
+$exitCode = $app->run();
+
+exit($exitCode);
