@@ -136,7 +136,7 @@ final class AbstractGeneratorTest extends TestCase
      */
     public function testGetType(PropertyInterface $property, string $expected): void
     {
-        $actual = $this->generator->getType($property, []);
+        $actual = $this->generator->getType($property);
         self::assertSame($expected, $actual);
     }
 
