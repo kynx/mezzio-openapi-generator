@@ -10,6 +10,7 @@ use KynxTest\Mezzio\OpenApiGenerator\Console\Asset\OtherCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Symfony\Component\Console\Command\Command;
 
 /**
  * @covers \Kynx\Mezzio\OpenApiGenerator\Console\CommandLoader
@@ -23,7 +24,7 @@ final class CommandLoaderTest extends TestCase
     {
         parent::setUp();
 
-        /** @var array<string, class-string> $commands */
+        /** @var array<string, class-string<Command>> $commands */
         $commands        = [
             'test'        => ContainerCommand::class,
             'other'       => OtherCommand::class,

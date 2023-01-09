@@ -4,32 +4,34 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
+
 use function array_values;
 
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\EnumModelTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModelTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
-final class EnumModel
+abstract class AbstractClassLikeModel
 {
-    /** @var list<EnumCase> */
-    private readonly array $cases;
+    /** @var list<PropertyInterface> */
+    protected readonly array $properties;
 
     public function __construct(
-        private readonly string $className,
-        private readonly string $jsonPointer,
-        EnumCase ...$cases
+        protected readonly string $className,
+        protected readonly string $jsonPointer,
+        PropertyInterface ...$properties
     ) {
-        $this->cases = array_values($cases);
+        $this->properties = array_values($properties);
     }
 
     public function matches(AbstractClassLikeModel|EnumModel $toMatch): bool
     {
-        if ($toMatch::class !== self::class) {
+        if ($toMatch::class !== static::class) {
             return false;
         }
         return $this->className === $toMatch->getClassName();
@@ -46,10 +48,10 @@ final class EnumModel
     }
 
     /**
-     * @return list<EnumCase>
+     * @return list<PropertyInterface>
      */
-    public function getCases(): array
+    public function getProperties(): array
     {
-        return $this->cases;
+        return $this->properties;
     }
 }

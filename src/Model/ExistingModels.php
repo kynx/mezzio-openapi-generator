@@ -19,6 +19,7 @@ use SplFileInfo;
 use Throwable;
 
 use function array_map;
+use function assert;
 use function current;
 use function is_dir;
 use function str_replace;
@@ -164,10 +165,10 @@ final class ExistingModels
      * @param array<string, string> $renames
      */
     private function getRenamedModel(
-        ClassModel|EnumModel|InterfaceModel $model,
+        AbstractClassLikeModel|EnumModel $model,
         array $existing,
         array $renames
-    ): ClassModel|EnumModel|InterfaceModel {
+    ): AbstractClassLikeModel|EnumModel {
         $className = $this->getExistingName($model, $existing);
         if ($className === null) {
             return $model;
@@ -182,6 +183,7 @@ final class ExistingModels
             return new InterfaceModel($className, $model->getJsonPointer(), ...$properties);
         }
 
+        assert($model instanceof ClassModel);
         $implements = array_map(fn (string $orig): string => $renames[$orig] ?? $orig, $model->getImplements());
         return new ClassModel(
             $className,
@@ -194,7 +196,7 @@ final class ExistingModels
     /**
      * @param ExistingArray $existing
      */
-    private function getExistingName(ClassModel|EnumModel|InterfaceModel $model, array $existing): string|null
+    private function getExistingName(AbstractClassLikeModel|EnumModel $model, array $existing): string|null
     {
         $type = $this->getType($model);
         foreach ($existing[$type] as $className => $schema) {
@@ -210,7 +212,7 @@ final class ExistingModels
      * @param array<string, string> $renames
      * @return list<PropertyInterface>
      */
-    private function getRenamedProperties(ClassModel|InterfaceModel $model, array $renames): array
+    private function getRenamedProperties(AbstractClassLikeModel $model, array $renames): array
     {
         $properties = [];
         foreach ($model->getProperties() as $property) {
@@ -254,7 +256,7 @@ final class ExistingModels
         return $properties;
     }
 
-    private function getType(ClassModel|EnumModel|InterfaceModel $model): string
+    private function getType(AbstractClassLikeModel|EnumModel $model): string
     {
         if ($model instanceof ClassModel) {
             return 'class';

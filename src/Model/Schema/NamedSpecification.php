@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\SpecBaseObject;
-use cebe\openapi\SpecObjectInterface;
 
 /**
  * @internal
@@ -26,7 +25,7 @@ final class NamedSpecification
         return $this->name;
     }
 
-    public function getSpecification(): SpecObjectInterface
+    public function getSpecification(): SpecBaseObject
     {
         return $this->specification;
     }

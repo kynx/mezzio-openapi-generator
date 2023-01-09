@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Generator;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
@@ -42,12 +42,12 @@ final class AbstractGeneratorTest extends TestCase
          * @psalm-suppress InternalMethod
          */
         $this->generator = new class extends AbstractGenerator {
-            public function getOrderedParameters(ClassModel|InterfaceModel $model): array
+            public function getOrderedParameters(AbstractClassLikeModel $model): array
             {
                 return parent::getOrderedParameters($model);
             }
 
-            public function getClassLikeName(ClassModel|EnumModel|InterfaceModel $modelClass): string
+            public function getClassLikeName(AbstractClassLikeModel|EnumModel $modelClass): string
             {
                 return parent::getClassLikeName($modelClass);
             }

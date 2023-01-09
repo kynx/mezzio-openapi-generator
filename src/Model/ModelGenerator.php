@@ -11,6 +11,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator;
 use Nette\PhpGenerator\PhpFile;
 
 use function array_slice;
+use function assert;
 use function explode;
 use function implode;
 use function ltrim;
@@ -27,7 +28,7 @@ final class ModelGenerator
     ) {
     }
 
-    public function generate(ClassModel|EnumModel|InterfaceModel $modelClass): PhpFile
+    public function generate(AbstractClassLikeModel|EnumModel $modelClass): PhpFile
     {
         $file = new PhpFile();
         $file->setStrictTypes();
@@ -39,6 +40,7 @@ final class ModelGenerator
         } elseif ($modelClass instanceof EnumModel) {
             $added = $this->enumGenerator->addEnum($namespace, $modelClass);
         } else {
+            assert($modelClass instanceof InterfaceModel);
             $added = $this->interfaceGenerator->addInterface($namespace, $modelClass);
         }
 
@@ -48,7 +50,7 @@ final class ModelGenerator
         return $file;
     }
 
-    private function getNamespace(ClassModel|EnumModel|InterfaceModel $modelClass): string
+    private function getNamespace(AbstractClassLikeModel|EnumModel $modelClass): string
     {
         $namespace = implode('\\', array_slice(explode('\\', $modelClass->getClassName()), 0, -1));
         return ltrim($namespace, '\\');

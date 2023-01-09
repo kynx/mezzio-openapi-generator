@@ -11,7 +11,7 @@ use function count;
 
 final class ModelCollection implements Iterator, Countable
 {
-    /** @var list<ClassModel|EnumModel|InterfaceModel> */
+    /** @var list<AbstractClassLikeModel|EnumModel> */
     private array $members;
     private int $index;
 
@@ -21,7 +21,7 @@ final class ModelCollection implements Iterator, Countable
         $this->index   = 0;
     }
 
-    public function add(ClassModel|EnumModel|InterfaceModel $member): void
+    public function add(AbstractClassLikeModel|EnumModel $member): void
     {
         if ($this->has($member)) {
             throw ModelException::modelExists($member);
@@ -30,7 +30,7 @@ final class ModelCollection implements Iterator, Countable
         $this->members[] = $member;
     }
 
-    public function has(ClassModel|EnumModel|InterfaceModel $schemaClass): bool
+    public function has(AbstractClassLikeModel|EnumModel $schemaClass): bool
     {
         foreach ($this->members as $existing) {
             if ($existing->matches($schemaClass)) {
@@ -40,7 +40,7 @@ final class ModelCollection implements Iterator, Countable
         return false;
     }
 
-    public function current(): ClassModel|EnumModel|InterfaceModel
+    public function current(): AbstractClassLikeModel|EnumModel
     {
         return $this->members[$this->index];
     }

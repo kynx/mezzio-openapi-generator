@@ -31,7 +31,7 @@ final class ModelsBuilder
     /**
      * @param array<string, string> $classNames
      * @param array<string, string> $interfaceNames
-     * @return list<ClassModel|EnumModel|InterfaceModel>
+     * @return list<AbstractClassLikeModel|EnumModel>
      */
     public function getModels(NamedSpecification $namedSpec, array $classNames, array $interfaceNames): array
     {
@@ -73,6 +73,7 @@ final class ModelsBuilder
     private function getImplements(NamedSpecification $namedSpec, array $interfaceNames): array
     {
         $schema = $namedSpec->getSpecification();
+        assert($schema instanceof Schema);
 
         $implements = [];
 

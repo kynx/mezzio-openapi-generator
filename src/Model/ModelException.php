@@ -22,7 +22,7 @@ final class ModelException extends RuntimeException
         return new self(sprintf("'%s' is not a valid path", $path));
     }
 
-    public static function modelExists(ClassModel|EnumModel|InterfaceModel $model): self
+    public static function modelExists(AbstractClassLikeModel|EnumModel $model): self
     {
         return new self(sprintf(
             "Model '%s' already exists",

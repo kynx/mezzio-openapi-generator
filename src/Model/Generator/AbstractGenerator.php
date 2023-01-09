@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Generator;
 
-use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
-use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
@@ -44,7 +43,7 @@ abstract class AbstractGenerator
     /**
      * @return list<PropertyInterface> $property
      */
-    protected function getOrderedParameters(ClassModel|InterfaceModel $model): array
+    protected function getOrderedParameters(AbstractClassLikeModel $model): array
     {
         $properties = $model->getProperties();
         usort($properties, function (PropertyInterface $a, PropertyInterface $b): int {
@@ -70,7 +69,7 @@ abstract class AbstractGenerator
         return $metadata->isRequired() ? 0 : 2;
     }
 
-    protected function getClassLikeName(ClassModel|EnumModel|InterfaceModel $modelClass): string
+    protected function getClassLikeName(AbstractClassLikeModel|EnumModel $modelClass): string
     {
         return $this->getClassName($modelClass->getClassName());
     }

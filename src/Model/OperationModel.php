@@ -4,29 +4,26 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
+use Kynx\Mezzio\OpenApi\Request\OperationInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ClassModelTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\OperationModelTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
-final class ClassModel extends AbstractClassLikeModel
+final class OperationModel extends AbstractClassLikeModel
 {
-    public function __construct(
-        string $className,
-        string $jsonPointer,
-        private array $implements,
-        PropertyInterface ...$properties
-    ) {
+    public function __construct(string $className, string $jsonPointer, PropertyInterface ...$properties)
+    {
         parent::__construct($className, $jsonPointer, ...$properties);
     }
 
     public function getImplements(): array
     {
-        return $this->implements;
+        return [OperationInterface::class];
     }
 }

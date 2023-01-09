@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
+use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamerInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 
@@ -45,7 +46,7 @@ final class ModelCollectionBuilder
 
     /**
      * @param list<NamedSpecification> $namedSchemas
-     * @return list<ClassModel|EnumModel|InterfaceModel>
+     * @return list<AbstractClassLikeModel|EnumModel>
      */
     private function getModels(array $namedSchemas): array
     {
@@ -86,6 +87,9 @@ final class ModelCollectionBuilder
         $names = [];
         foreach ($namedSchemas as $namedSchema) {
             $schema = $namedSchema->getSpecification();
+            if (! $schema instanceof Schema) {
+                continue;
+            }
             if (empty($schema->allOf)) {
                 continue;
             }
