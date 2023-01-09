@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.30.0@d0bc6e25d89f649e4f36a534f330f8bb4643dd69">
+  <file src="src/Handler/ExistingHandlers.php">
+    <ArgumentTypeCoercion occurrences="2">
+      <code>$className</code>
+      <code>$existingHandler-&gt;getClassName()</code>
+    </ArgumentTypeCoercion>
+    <UndefinedClass occurrences="1">
+      <code>RequestHandlerInterface</code>
+    </UndefinedClass>
+  </file>
+  <file src="src/Route/Converter/FastRouteConverter.php">
+    <MixedArgument occurrences="2">
+      <code>$parameter-&gt;name</code>
+      <code>$parameter-&gt;schema</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="1">
+      <code>$parameter</code>
+    </MixedAssignment>
+    <MixedOperand occurrences="1">
+      <code>$parameter-&gt;name</code>
+    </MixedOperand>
+    <MixedPropertyFetch occurrences="2">
+      <code>$parameter-&gt;name</code>
+      <code>$parameter-&gt;schema</code>
+    </MixedPropertyFetch>
+    <RawObjectIteration occurrences="1">
+      <code>$pathParams</code>
+    </RawObjectIteration>
+  </file>
+  <file src="src/Route/RouteDelegatorGenerator.php">
+    <MixedArgument occurrences="3">
+      <code>Application::class</code>
+      <code>Application::class</code>
+      <code>Application::class</code>
+    </MixedArgument>
+    <UndefinedClass occurrences="3">
+      <code>Application</code>
+      <code>Application</code>
+      <code>Application</code>
+    </UndefinedClass>
+  </file>
+  <file src="src/Stub/RouteDelegator.php">
+    <MixedArgument occurrences="1">
+      <code>$app instanceof Application</code>
+    </MixedArgument>
+    <UndefinedClass occurrences="2">
+      <code>Application</code>
+      <code>Application</code>
+    </UndefinedClass>
+  </file>
+  <file src="test/Handler/ExistingHandlersTest.php">
+    <ArgumentTypeCoercion occurrences="4">
+      <code>$className</code>
+      <code>self::ASSET_NAMESPACE . '\\Handler'</code>
+      <code>self::ASSET_NAMESPACE . '\\NewHandler'</code>
+      <code>self::ASSET_NAMESPACE . '\\Subdir\\SubdirHandler'</code>
+    </ArgumentTypeCoercion>
+    <MissingDependency occurrences="1">
+      <code>BadOpenApiOperation</code>
+    </MissingDependency>
+    <MixedAssignment occurrences="1">
+      <code>$class</code>
+    </MixedAssignment>
+  </file>
+  <file src="test/Handler/HandlerClassTest.php">
+    <ArgumentTypeCoercion occurrences="3">
+      <code>$className</code>
+      <code>'\\Foo'</code>
+      <code>'\\Foo'</code>
+    </ArgumentTypeCoercion>
+    <UndefinedClass occurrences="2">
+      <code>'\\Foo'</code>
+      <code>'\\Foo'</code>
+    </UndefinedClass>
+  </file>
+  <file src="test/Handler/HandlerCollectionTest.php">
+    <MissingDependency occurrences="12">
+      <code>Handler</code>
+      <code>Handler</code>
+      <code>Handler</code>
+      <code>Handler</code>
+      <code>Handler</code>
+      <code>Handler</code>
+      <code>Handler</code>
+      <code>Handler</code>
+      <code>SubdirHandler</code>
+      <code>SubdirHandler</code>
+      <code>SubdirHandler</code>
+      <code>SubdirHandler</code>
+    </MissingDependency>
+    <MixedArgument occurrences="11">
+      <code>Handler::class</code>
+      <code>Handler::class</code>
+      <code>Handler::class</code>
+      <code>Handler::class</code>
+      <code>Handler::class</code>
+      <code>Handler::class</code>
+      <code>Handler::class</code>
+      <code>SubdirHandler::class</code>
+      <code>SubdirHandler::class</code>
+      <code>SubdirHandler::class</code>
+      <code>SubdirHandler::class</code>
+    </MixedArgument>
+    <MixedOperand occurrences="1">
+      <code>Handler::class</code>
+    </MixedOperand>
+  </file>
+  <file src="test/Handler/HandlerExceptionTest.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>'\Foo'</code>
+    </ArgumentTypeCoercion>
+    <UndefinedClass occurrences="1">
+      <code>'\Foo'</code>
+    </UndefinedClass>
+  </file>
+  <file src="test/Handler/Namer/FlatNamerTest.php">
+    <TypeDoesNotContainType occurrences="6">
+      <code>assertSame</code>
+      <code>assertSame</code>
+      <code>assertSame</code>
+      <code>assertSame</code>
+      <code>assertSame</code>
+      <code>assertSame</code>
+    </TypeDoesNotContainType>
+  </file>
+  <file src="test/Route/Converter/FastRouteConverterTest.php">
+    <ArgumentTypeCoercion occurrences="2">
+      <code>'Bar'</code>
+      <code>'Foo'</code>
+    </ArgumentTypeCoercion>
+    <MixedArgument occurrences="1">
+      <code>$type</code>
+    </MixedArgument>
+    <MixedArgumentTypeCoercion occurrences="1">
+      <code>$name</code>
+    </MixedArgumentTypeCoercion>
+    <MixedAssignment occurrences="1">
+      <code>$type</code>
+    </MixedAssignment>
+    <UndefinedClass occurrences="2">
+      <code>'Bar'</code>
+      <code>'Foo'</code>
+    </UndefinedClass>
+  </file>
+</files>
