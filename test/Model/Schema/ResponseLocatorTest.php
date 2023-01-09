@@ -8,7 +8,7 @@ use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Response;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ use function implode;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
@@ -45,7 +45,7 @@ final class ResponseLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected = ['' => new NamedSchema('FooResponse', $schema)];
+        $expected = ['' => new NamedSpecification('FooResponse', $schema)];
 
         self::assertTrue($response->validate(), implode("\n", $response->getErrors()));
         $actual = $this->locator->getNamedSchemas('Foo', $response);
@@ -123,7 +123,7 @@ final class ResponseLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected = ['' => new NamedSchema('FooSetCookieHeader', $schema)];
+        $expected = ['' => new NamedSpecification('FooSetCookieHeader', $schema)];
 
         self::assertTrue($response->validate(), implode("\n", $response->getErrors()));
         $actual = $this->locator->getNamedSchemas('Foo', $response);

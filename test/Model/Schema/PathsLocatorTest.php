@@ -6,7 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\Paths;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathsLocator;
 use PHPUnit\Framework\TestCase;
 
@@ -14,7 +14,7 @@ use function implode;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
@@ -74,7 +74,7 @@ final class PathsLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected = ['' => new NamedSchema('my pets defaultResponse', $schema)];
+        $expected = ['' => new NamedSpecification('my pets defaultResponse', $schema)];
 
         self::assertTrue($paths->validate(), implode("\n", $paths->getErrors()));
         $actual = $this->locator->getNamedSchemas($paths);

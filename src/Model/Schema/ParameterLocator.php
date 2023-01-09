@@ -29,7 +29,7 @@ final class ParameterLocator
     }
 
     /**
-     * @return array<string, NamedSchema>
+     * @return array<string, NamedSpecification>
      */
     public function getNamedSchemas(string $baseName, Parameter $parameter): array
     {

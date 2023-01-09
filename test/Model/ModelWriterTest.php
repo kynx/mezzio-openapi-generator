@@ -24,7 +24,7 @@ use function current;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator

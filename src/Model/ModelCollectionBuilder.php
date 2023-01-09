@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamerInterface;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 
 use function array_combine;
 use function array_keys;
@@ -30,7 +30,7 @@ final class ModelCollectionBuilder
     }
 
     /**
-     * @param list<NamedSchema> $namedSchemas
+     * @param list<NamedSpecification> $namedSchemas
      */
     public function getModelCollection(array $namedSchemas): ModelCollection
     {
@@ -44,7 +44,7 @@ final class ModelCollectionBuilder
     }
 
     /**
-     * @param list<NamedSchema> $namedSchemas
+     * @param list<NamedSpecification> $namedSchemas
      * @return list<ClassModel|EnumModel|InterfaceModel>
      */
     private function getModels(array $namedSchemas): array
@@ -54,15 +54,15 @@ final class ModelCollectionBuilder
         $interfaceNames = $this->getInterfaceNames($namedSchemas, $classNames);
 
         $models = [];
-        foreach ($namedSchemas as $model) {
-            $models = array_merge($models, $this->modelsBuilder->getModels($model, $classNames, $interfaceNames));
+        foreach ($namedSchemas as $namedSchema) {
+            $models = array_merge($models, $this->modelsBuilder->getModels($namedSchema, $classNames, $interfaceNames));
         }
 
         return $models;
     }
 
     /**
-     * @param list<NamedSchema> $namedSchemas
+     * @param list<NamedSpecification> $namedSchemas
      * @return array<string, string>
      */
     private function getClassNames(array $namedSchemas): array
@@ -78,14 +78,14 @@ final class ModelCollectionBuilder
     }
 
     /**
-     * @param list<NamedSchema> $namedSchemas
+     * @param list<NamedSpecification> $namedSchemas
      * @param array<string, string> $classNames
      */
     private function getInterfaceNames(array $namedSchemas, array $classNames): array
     {
         $names = [];
         foreach ($namedSchemas as $namedSchema) {
-            $schema = $namedSchema->getSchema();
+            $schema = $namedSchema->getSpecification();
             if (empty($schema->allOf)) {
                 continue;
             }

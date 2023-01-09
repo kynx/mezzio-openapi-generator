@@ -11,11 +11,11 @@ use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
@@ -81,7 +81,7 @@ final class MediaTypeLocatorTest extends TestCase
                 'schema' => $duplicate,
             ]),
         ];
-        $expected   = [$pointer => new NamedSchema('Pet', $duplicate)];
+        $expected   = [$pointer => new NamedSpecification('Pet', $duplicate)];
 
         foreach ($mediaTypes as $mediaType) {
             self::assertTrue($mediaType->validate());
@@ -115,8 +115,8 @@ final class MediaTypeLocatorTest extends TestCase
             'application/xml'  => new MediaType(['schema' => $xml]),
         ];
         $expected   = [
-            '/a/b/c' => new NamedSchema('FooJson', $json),
-            '/a/b/d' => new NamedSchema('FooXml', $xml),
+            '/a/b/c' => new NamedSpecification('FooJson', $json),
+            '/a/b/d' => new NamedSpecification('FooXml', $xml),
         ];
 
         $actual = $this->locator->getNamedSchemas('Foo', $mediaTypes);

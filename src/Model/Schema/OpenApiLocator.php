@@ -29,7 +29,7 @@ final class OpenApiLocator
     }
 
     /**
-     * @return list<NamedSchema>
+     * @return list<NamedSpecification>
      */
     public function getNamedSchemas(OpenApi $openApi): array
     {

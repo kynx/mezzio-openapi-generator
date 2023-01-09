@@ -34,7 +34,7 @@ final class ResponseLocator
     }
 
     /**
-     * @return array<string, NamedSchema>
+     * @return array<string, NamedSpecification>
      */
     public function getNamedSchemas(string $baseName, Response $response): array
     {

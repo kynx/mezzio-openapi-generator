@@ -22,7 +22,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -32,7 +32,7 @@ use function implode;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
@@ -128,8 +128,8 @@ final class ModelsBuilderTest extends TestCase
         $baz            = $this->getNamedSchema('Baz', []);
         $foo            = $this->getNamedSchema('Foo', [
             'allOf' => [
-                $bar->getSchema(),
-                $baz->getSchema(),
+                $bar->getSpecification(),
+                $baz->getSpecification(),
             ],
         ]);
         $classNames     = [
@@ -143,19 +143,19 @@ final class ModelsBuilderTest extends TestCase
         ];
 
         // need to reset documentContext to emulate references...
-        $bar->getSchema()->setDocumentContext(new OpenApi([]), new JsonPointer('/components/schemas/Bar'));
-        $baz->getSchema()->setDocumentContext(new OpenApi([]), new JsonPointer('/components/schemas/Baz'));
+        $bar->getSpecification()->setDocumentContext(new OpenApi([]), new JsonPointer('/components/schemas/Bar'));
+        $baz->getSpecification()->setDocumentContext(new OpenApi([]), new JsonPointer('/components/schemas/Baz'));
 
         $actual = $this->builder->getModels($foo, $classNames, $interfaceNames);
         self::assertEquals($expected, $actual);
     }
 
-    private function getNamedSchema(string $name, array $spec): NamedSchema
+    private function getNamedSchema(string $name, array $spec): NamedSpecification
     {
         $schema = new Schema($spec);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer('/components/schemas/' . $name));
         self::assertTrue($schema->validate(), implode("\n", $schema->getErrors()));
 
-        return new NamedSchema($name, $schema);
+        return new NamedSpecification($name, $schema);
     }
 }

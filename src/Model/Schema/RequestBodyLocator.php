@@ -24,7 +24,7 @@ final class RequestBodyLocator
     }
 
     /**
-     * @return array<string, NamedSchema>
+     * @return array<string, NamedSpecification>
      */
     public function getNamedSchemas(string $baseName, RequestBody $requestBody): array
     {

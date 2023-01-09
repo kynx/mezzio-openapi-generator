@@ -8,7 +8,7 @@ use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ use function implode;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
@@ -85,7 +85,7 @@ final class OpenApiLocatorTest extends TestCase
             ],
         ]);
         $openApi->setDocumentContext($openApi, new JsonPointer(''));
-        $expected = [new NamedSchema('my pets defaultResponse', $schema)];
+        $expected = [new NamedSpecification('my pets defaultResponse', $schema)];
 
         self::assertTrue($openApi->validate(), implode("\n", $openApi->getErrors()));
         $actual = $this->locator->getNamedSchemas($openApi);

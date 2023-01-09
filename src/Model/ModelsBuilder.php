@@ -7,7 +7,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model;
 use cebe\openapi\spec\Schema;
 use Kynx\Code\Normalizer\UniqueConstantLabeler;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 
 use function array_map;
 use function assert;
@@ -33,13 +33,14 @@ final class ModelsBuilder
      * @param array<string, string> $interfaceNames
      * @return list<ClassModel|EnumModel|InterfaceModel>
      */
-    public function getModels(NamedSchema $namedSchema, array $classNames, array $interfaceNames): array
+    public function getModels(NamedSpecification $namedSpec, array $classNames, array $interfaceNames): array
     {
-        $pointer = $namedSchema->getJsonPointer();
+        $pointer = $namedSpec->getJsonPointer();
         assert(isset($classNames[$pointer]));
 
         $className = $classNames[$pointer];
-        $schema    = $namedSchema->getSchema();
+        $schema    = $namedSpec->getSpecification();
+        assert($schema instanceof Schema);
 
         if (ModelUtil::isEnum($schema)) {
             return [new EnumModel($className, $pointer, ...$this->getCases($schema))];
@@ -59,7 +60,7 @@ final class ModelsBuilder
         $models[] = new ClassModel(
             $className,
             $pointer,
-            $this->getImplements($namedSchema, $interfaceNames),
+            $this->getImplements($namedSpec, $interfaceNames),
             ...$properties
         );
 
@@ -69,13 +70,13 @@ final class ModelsBuilder
     /**
      * @param array<string, string> $interfaceNames
      */
-    private function getImplements(NamedSchema $namedSchema, array $interfaceNames): array
+    private function getImplements(NamedSpecification $namedSpec, array $interfaceNames): array
     {
-        $schema = $namedSchema->getSchema();
+        $schema = $namedSpec->getSpecification();
 
         $implements = [];
 
-        $pointer = $namedSchema->getJsonPointer();
+        $pointer = $namedSpec->getJsonPointer();
         if (isset($interfaceNames[$pointer])) {
             $implements[] = $interfaceNames[$pointer];
         }

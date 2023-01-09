@@ -28,7 +28,7 @@ final class PathsLocator
     }
 
     /**
-     * @return array<string, NamedSchema>
+     * @return array<string, NamedSpecification>
      */
     public function getNamedSchemas(Paths $paths): array
     {

@@ -35,7 +35,7 @@ final class MediaTypeLocator
 
     /**
      * @param array<array-key, MediaType> $mediaTypes
-     * @return array<string, NamedSchema>
+     * @return array<string, NamedSpecification>
      */
     public function getNamedSchemas(string $baseName, array $mediaTypes): array
     {

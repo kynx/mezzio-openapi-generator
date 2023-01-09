@@ -37,7 +37,7 @@ final class OperationLocator
     }
 
     /**
-     * @return array<string, NamedSchema>
+     * @return array<string, NamedSpecification>
      */
     public function getNamedSchemas(string $baseName, Operation $operation): array
     {

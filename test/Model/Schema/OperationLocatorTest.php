@@ -8,13 +8,13 @@ use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
@@ -96,7 +96,7 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new NamedSchema("Foo idParam", $schema)];
+        $expected  = ['' => new NamedSpecification("Foo idParam", $schema)];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getNamedSchemas('Foo', $operation);
@@ -143,7 +143,7 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new NamedSchema("Foo RequestBody", $schema)];
+        $expected  = ['' => new NamedSpecification("Foo RequestBody", $schema)];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getNamedSchemas('Foo', $operation);
@@ -179,7 +179,7 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new NamedSchema("Foo Status200Response", $schema)];
+        $expected  = ['' => new NamedSpecification("Foo Status200Response", $schema)];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getNamedSchemas('Foo', $operation);
@@ -201,7 +201,7 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new NamedSchema("Foo defaultResponse", $schema)];
+        $expected  = ['' => new NamedSpecification("Foo defaultResponse", $schema)];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getNamedSchemas('Foo', $operation);

@@ -26,7 +26,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator;
 use PHPUnit\Framework\TestCase;
 
@@ -274,7 +274,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
     }
 
     /**
-     * @return list<NamedSchema>
+     * @return list<NamedSpecification>
      */
     private function getUnresolved(string $file): array
     {
