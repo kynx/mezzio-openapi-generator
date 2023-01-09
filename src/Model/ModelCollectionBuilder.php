@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamerInterface;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
 
 use function array_combine;
 use function array_keys;

@@ -2,33 +2,33 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Mezzio\OpenApiGenerator\Model\Locator;
+namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\OperationLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\PathItemLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\PathsLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\RequestBodyLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ResponseLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathsLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  * @uses \Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil
  *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Locator\OpenApiLocator
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator
  */
 final class OpenApiLocatorTest extends TestCase
 {

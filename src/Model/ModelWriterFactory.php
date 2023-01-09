@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\OpenApiLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Psr\Container\ContainerInterface;
 

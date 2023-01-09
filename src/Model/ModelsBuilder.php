@@ -6,8 +6,8 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
 use cebe\openapi\spec\Schema;
 use Kynx\Code\Normalizer\UniqueConstantLabeler;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
 
 use function array_map;
 use function assert;

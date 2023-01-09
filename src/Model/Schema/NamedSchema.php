@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
+namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\Schema;
 
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\NamedSchemaTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Schema\NamedSchemaTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model

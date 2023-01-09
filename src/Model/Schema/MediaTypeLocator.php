@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
+namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\MediaType;
 use cebe\openapi\spec\Reference;
@@ -19,10 +19,10 @@ use function ucfirst;
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\MediaTypeLocatorTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocatorTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model\Locator
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model\Schema
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model\Schema
  */
 final class MediaTypeLocator
 {

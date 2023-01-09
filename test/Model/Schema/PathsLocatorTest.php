@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Mezzio\OpenApiGenerator\Model\Locator;
+namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\Paths;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\PathsLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathsLocator;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\OperationLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\PathItemLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\RequestBodyLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ResponseLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  * @uses \Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil
  *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Locator\PathsLocator
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathsLocator
  */
 final class PathsLocatorTest extends TestCase
 {

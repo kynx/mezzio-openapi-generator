@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
+namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Paths;
@@ -14,7 +14,7 @@ use function assert;
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\OpenApiLocatorTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocatorTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model

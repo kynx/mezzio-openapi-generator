@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
+namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
@@ -15,10 +15,10 @@ use function array_pop;
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocatorTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocatorTest
  *
- * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Locator
- * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Locator
+ * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model\Schema
+ * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model\Schema
  */
 final class SchemaLocator
 {

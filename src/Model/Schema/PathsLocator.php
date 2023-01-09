@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
+namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\Paths;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil;
@@ -13,7 +13,7 @@ use function implode;
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\PathsLocatorTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Schema\PathsLocatorTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model

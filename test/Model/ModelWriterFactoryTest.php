@@ -14,14 +14,14 @@ use Psr\Container\ContainerInterface;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\OpenApiLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\OperationLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\PathItemLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\PathsLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\RequestBodyLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\ResponseLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathsLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter

@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Mezzio\OpenApiGenerator\Model\Locator;
+namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Locator\NamedSchema
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSchema
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Locator\SchemaLocator
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
  */
 final class SchemaLocatorTest extends TestCase
 {

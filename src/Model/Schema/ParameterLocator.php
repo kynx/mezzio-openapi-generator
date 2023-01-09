@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Locator;
+namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\Parameter;
 use cebe\openapi\spec\Reference;
@@ -12,7 +12,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Locator\ParameterLocatorTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocatorTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
