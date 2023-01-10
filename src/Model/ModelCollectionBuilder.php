@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
+use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamerInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
@@ -26,7 +27,8 @@ final class ModelCollectionBuilder
 {
     public function __construct(
         private readonly NamerInterface $classNamer,
-        private readonly ModelsBuilder $modelsBuilder
+        private readonly ModelsBuilder $modelsBuilder,
+        private readonly OperationBuilder $operationBuilder
     ) {
     }
 
@@ -56,6 +58,10 @@ final class ModelCollectionBuilder
 
         $models = [];
         foreach ($namedSchemas as $namedSchema) {
+            if ($namedSchema->getSpecification() instanceof Operation) {
+                $models = array_merge($models, $this->operationBuilder->getModels($namedSchema, $classNames));
+                continue;
+            }
             $models = array_merge($models, $this->modelsBuilder->getModels($namedSchema, $classNames, $interfaceNames));
         }
 

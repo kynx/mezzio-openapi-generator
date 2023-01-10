@@ -35,13 +35,13 @@ final class ModelGenerator
 
         $namespace = $file->addNamespace($this->getNamespace($modelClass));
 
-        if ($modelClass instanceof ClassModel) {
-            $added = $this->classGenerator->addClass($namespace, $modelClass);
-        } elseif ($modelClass instanceof EnumModel) {
+        if ($modelClass instanceof EnumModel) {
             $added = $this->enumGenerator->addEnum($namespace, $modelClass);
-        } else {
-            assert($modelClass instanceof InterfaceModel);
+        } elseif ($modelClass instanceof InterfaceModel) {
             $added = $this->interfaceGenerator->addInterface($namespace, $modelClass);
+        } else {
+            assert($modelClass instanceof ClassModel);
+            $added = $this->classGenerator->addClass($namespace, $modelClass);
         }
 
         $namespace->addUse(OpenApiSchema::class);

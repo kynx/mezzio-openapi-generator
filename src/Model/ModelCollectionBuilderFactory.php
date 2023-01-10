@@ -27,6 +27,10 @@ final class ModelCollectionBuilderFactory
 
         $classLabeler = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
         $classNamer   = new NamespacedNamer($configuration->getSourceNamespace() . '\\Model', $classLabeler);
-        return new ModelCollectionBuilder($classNamer, $container->get(ModelsBuilder::class));
+        return new ModelCollectionBuilder(
+            $classNamer,
+            $container->get(ModelsBuilder::class),
+            $container->get(OperationBuilder::class)
+        );
     }
 }

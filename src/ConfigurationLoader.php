@@ -40,12 +40,12 @@ final class ConfigurationLoader
 
     private static function loadFromFile(string $file): Configuration
     {
+        /** @var array<string, string>|false $config */
         $config = json_decode(file_get_contents($file), true);
         if (! is_array($config)) {
             throw ConfigurationException::invalidConfigurationFile($file);
         }
 
-        /** @var array<string, string> $config */
         $config['projectDir'] = dirname($file);
         try {
             return new Configuration(...$config);

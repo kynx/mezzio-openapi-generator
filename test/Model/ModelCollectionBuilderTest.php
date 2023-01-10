@@ -6,6 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
+use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Schema;
 use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\ConstantNameNormalizer;
@@ -21,7 +22,11 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
@@ -50,20 +55,21 @@ final class ModelCollectionBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $propertiesBuilder = new PropertiesBuilder(
-            new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix())
-        );
+        $propertyLabeler   = new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
+        $propertiesBuilder = new PropertiesBuilder($propertyLabeler);
         $caseLabeler       = new UniqueConstantLabeler(
             new ConstantNameNormalizer('Case', WordCase::Pascal),
             new NumberSuffix()
         );
         $modelsBuilder     = new ModelsBuilder($propertiesBuilder, $caseLabeler);
+        $operationBuilder  = new OperationBuilder($propertyLabeler);
         $classLabeler      = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
         $classNamer        = new NamespacedNamer('', $classLabeler);
 
         $this->builder = new ModelCollectionBuilder(
             $classNamer,
-            $modelsBuilder
+            $modelsBuilder,
+            $operationBuilder
         );
     }
 
@@ -116,6 +122,38 @@ final class ModelCollectionBuilderTest extends TestCase
         $baz->getSpecification()->setDocumentContext(new OpenApi([]), new JsonPointer('/components/schemas/Baz'));
 
         $actual = $this->builder->getModelCollection([$foo, $bar, $baz]);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testGetModelCollectionReturnsOperation(): void
+    {
+        $expected = new ModelCollection();
+        $expected->add(
+            new ClassModel(
+                '\\PatchOperation',
+                '/paths/foo/patch',
+                [],
+                new SimpleProperty('$requestBody', '', new PropertyMetadata(), PropertyType::String)
+            )
+        );
+        $operation = new Operation([
+            'requestBody' => [
+                'content' => [
+                    'default' => [
+                        'schema' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                ],
+            ],
+            'responses'   => [],
+        ]);
+        $operation->setDocumentContext(new OpenApi([]), new JsonPointer('/paths/foo/patch'));
+        self::assertTrue($operation->validate(), implode("\n", $operation->getErrors()));
+
+        $namedSpec = new NamedSpecification('PatchOperation', $operation);
+
+        $actual = $this->builder->getModelCollection([$namedSpec]);
         self::assertEquals($expected, $actual);
     }
 

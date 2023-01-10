@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
+use cebe\openapi\json\JsonPointer;
+use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
@@ -49,9 +51,9 @@ final class OperationLocatorTest extends TestCase
         $this->locator->getNamedSchemas('', $operation);
     }
 
-    public function testGetNamedSchemasReturnsEmpty(): void
+    public function testGetNamedSchemasReturnsOperationSpecification(): void
     {
-        $operation = new Operation([
+        $operation = $this->getOperation([
             'parameters' => [
                 [
                     'name'   => 'id',
@@ -70,16 +72,17 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
+        $expected  = ['/paths/foo/get' => new NamedSpecification('Operation', $operation)];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getNamedSchemas('', $operation);
-        self::assertEmpty($actual);
+        self::assertEquals($expected, $actual);
     }
 
     public function testGetNamedSchemasReturnsParameterSchema(): void
     {
         $schema    = $this->getSchema();
-        $operation = new Operation([
+        $operation = $this->getOperation([
             'parameters' => [
                 [
                     'name'   => 'id',
@@ -96,7 +99,10 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new NamedSpecification("Foo idParam", $schema)];
+        $expected  = [
+            '/paths/foo/get/parameters/0/schema' => new NamedSpecification("Foo idParam", $schema),
+            '/paths/foo/get'                     => new NamedSpecification('FooOperation', $operation),
+        ];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getNamedSchemas('Foo', $operation);
@@ -106,7 +112,7 @@ final class OperationLocatorTest extends TestCase
     public function testGetNamedSchemasReferencedRequestBodyThrowsException(): void
     {
         $ref       = '#/components/requestBodies/Foo';
-        $operation = new Operation([
+        $operation = $this->getOperation([
             'requestBody' => new Reference(['$ref' => $ref]),
             'responses'   => [
                 '200' => [
@@ -126,7 +132,7 @@ final class OperationLocatorTest extends TestCase
     public function testGetNamedSchemasReturnsRequestBody(): void
     {
         $schema    = $this->getSchema();
-        $operation = new Operation([
+        $operation = $this->getOperation([
             'requestBody' => [
                 'content' => [
                     'application/json' => [
@@ -143,7 +149,11 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new NamedSpecification("Foo RequestBody", $schema)];
+        $path      = '/paths/foo/get/requestBody/content/application~1json/schema';
+        $expected  = [
+            $path            => new NamedSpecification("Foo RequestBody", $schema),
+            '/paths/foo/get' => new NamedSpecification('FooOperation', $operation),
+        ];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getNamedSchemas('Foo', $operation);
@@ -153,7 +163,7 @@ final class OperationLocatorTest extends TestCase
     public function testGetNamedSchemasReferencedResponseThrowsException(): void
     {
         $ref       = '#/components/responses/Foo';
-        $operation = new Operation([
+        $operation = $this->getOperation([
             'responses' => [
                 '200' => new Reference(['$ref' => $ref]),
             ],
@@ -167,7 +177,7 @@ final class OperationLocatorTest extends TestCase
     public function testGetNamedSchemasReturnsResponse(): void
     {
         $schema    = $this->getSchema();
-        $operation = new Operation([
+        $operation = $this->getOperation([
             'responses' => [
                 '200' => [
                     'description' => 'Foo description',
@@ -179,7 +189,11 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new NamedSpecification("Foo Status200Response", $schema)];
+        $path      = '/paths/foo/get/responses/200/content/application~1json/schema';
+        $expected  = [
+            $path            => new NamedSpecification("Foo Status200Response", $schema),
+            '/paths/foo/get' => new NamedSpecification('FooOperation', $operation),
+        ];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getNamedSchemas('Foo', $operation);
@@ -189,7 +203,7 @@ final class OperationLocatorTest extends TestCase
     public function testGetNamedSchemasUsesDefaultStatusForName(): void
     {
         $schema    = $this->getSchema();
-        $operation = new Operation([
+        $operation = $this->getOperation([
             'responses' => [
                 'default' => [
                     'description' => 'Foo description',
@@ -201,11 +215,22 @@ final class OperationLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new NamedSpecification("Foo defaultResponse", $schema)];
+        $path      = '/paths/foo/get/responses/default/content/application~1json/schema';
+        $expected  = [
+            $path            => new NamedSpecification("Foo defaultResponse", $schema),
+            '/paths/foo/get' => new NamedSpecification('FooOperation', $operation),
+        ];
 
         self::assertTrue($operation->validate());
         $actual = $this->locator->getNamedSchemas('Foo', $operation);
         self::assertEquals($expected, $actual);
+    }
+
+    private function getOperation(array $spec, string $pointer = '/paths/foo/get'): Operation
+    {
+        $operation = new Operation($spec);
+        $operation->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
+        return $operation;
     }
 
     private function getSchema(): Schema

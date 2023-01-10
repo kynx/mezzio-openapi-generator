@@ -5,23 +5,12 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
 use cebe\openapi\Reader;
-use Kynx\Code\Normalizer\ClassNameNormalizer;
-use Kynx\Code\Normalizer\ConstantNameNormalizer;
-use Kynx\Code\Normalizer\UniqueClassLabeler;
-use Kynx\Code\Normalizer\UniqueConstantLabeler;
-use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\VariableNameNormalizer;
-use Kynx\Code\Normalizer\WordCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
@@ -37,6 +26,8 @@ use function implode;
  */
 final class ModelCollectionBuilderEnd2EndTest extends TestCase
 {
+    use ModelTrait;
+
     private OpenApiLocator $locator;
     private ModelCollectionBuilder $builder;
 
@@ -44,22 +35,8 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
     {
         parent::setUp();
 
-        $this->locator     = new OpenApiLocator();
-        $propertiesBuilder = new PropertiesBuilder(
-            new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix())
-        );
-        $caseLabeler       = new UniqueConstantLabeler(
-            new ConstantNameNormalizer('Case', WordCase::Pascal),
-            new NumberSuffix()
-        );
-        $modelsBuilder     = new ModelsBuilder($propertiesBuilder, $caseLabeler);
-        $classLabeler      = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
-        $classNamer        = new NamespacedNamer('', $classLabeler);
-
-        $this->builder = new ModelCollectionBuilder(
-            $classNamer,
-            $modelsBuilder
-        );
+        $this->locator = new OpenApiLocator();
+        $this->builder = $this->getModelCollectionBuilder('');
     }
 
     public function testGetModelCollectionNoSchemasReturnsEmptyCollection(): void

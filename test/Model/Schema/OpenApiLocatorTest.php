@@ -6,6 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
+use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
@@ -52,7 +53,7 @@ final class OpenApiLocatorTest extends TestCase
 
     public function testGetNamedSchemasReturnsList(): void
     {
-        $schema  = new Schema([
+        $schema    = new Schema([
             'type'       => 'object',
             'properties' => [
                 'id' => [
@@ -60,7 +61,19 @@ final class OpenApiLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $openApi = new OpenApi([
+        $operation = new Operation([
+            'responses' => [
+                'default' => [
+                    'description' => 'Pets',
+                    'content'     => [
+                        'application/json' => [
+                            'schema' => $schema,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $openApi   = new OpenApi([
             'openapi' => '3.0.3',
             'info'    => [
                 'title'       => 'Title',
@@ -69,23 +82,15 @@ final class OpenApiLocatorTest extends TestCase
             ],
             'paths'   => [
                 '/my/pets' => [
-                    'get' => [
-                        'responses' => [
-                            'default' => [
-                                'description' => 'Pets',
-                                'content'     => [
-                                    'application/json' => [
-                                        'schema' => $schema,
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
+                    'get' => $operation,
                 ],
             ],
         ]);
         $openApi->setDocumentContext($openApi, new JsonPointer(''));
-        $expected = [new NamedSpecification('my pets defaultResponse', $schema)];
+        $expected = [
+            new NamedSpecification('my pets defaultResponse', $schema),
+            new NamedSpecification('my petsOperation', $operation),
+        ];
 
         self::assertTrue($openApi->validate(), implode("\n", $openApi->getErrors()));
         $actual = $this->locator->getNamedSchemas($openApi);

@@ -8,6 +8,7 @@ use Kynx\Mezzio\OpenApiGenerator\Configuration;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -26,13 +27,15 @@ final class ModelCollectionBuilderFactoryTest extends TestCase
 
     public function testInvokeReturnsInstance(): void
     {
-        $configuration = new Configuration(__DIR__, '', __NAMESPACE__);
-        $modelsBuilder = $this->getModelsBuilder();
-        $container     = $this->createStub(ContainerInterface::class);
+        $configuration    = new Configuration(__DIR__, '', __NAMESPACE__);
+        $modelsBuilder    = $this->getModelsBuilder();
+        $operationBuilder = $this->getOperationBuilder();
+        $container        = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
                 [Configuration::class, $configuration],
                 [ModelsBuilder::class, $modelsBuilder],
+                [OperationBuilder::class, $operationBuilder],
             ]);
 
         $factory = new ModelCollectionBuilderFactory();

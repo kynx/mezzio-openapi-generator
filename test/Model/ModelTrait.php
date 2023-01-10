@@ -15,15 +15,14 @@ use Kynx\Code\Normalizer\WordCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 
 trait ModelTrait
 {
     protected function getModelsBuilder(): ModelsBuilder
     {
-        $propertyBuilder = new PropertiesBuilder(
-            new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix())
-        );
+        $propertyBuilder = new PropertiesBuilder($this->getPropertyLabeler());
         $caseLabeler     = new UniqueConstantLabeler(
             new ConstantNameNormalizer('Case', WordCase::Pascal),
             new NumberSuffix()
@@ -32,11 +31,21 @@ trait ModelTrait
         return new ModelsBuilder($propertyBuilder, $caseLabeler);
     }
 
+    protected function getOperationBuilder(): OperationBuilder
+    {
+        return new OperationBuilder($this->getPropertyLabeler());
+    }
+
     protected function getModelCollectionBuilder(string $namespace): ModelCollectionBuilder
     {
         $classLabeler = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
         $classNamer   = new NamespacedNamer($namespace, $classLabeler);
 
-        return new ModelCollectionBuilder($classNamer, $this->getModelsBuilder());
+        return new ModelCollectionBuilder($classNamer, $this->getModelsBuilder(), $this->getOperationBuilder());
+    }
+
+    protected function getPropertyLabeler(): UniqueVariableLabeler
+    {
+        return new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
     }
 }

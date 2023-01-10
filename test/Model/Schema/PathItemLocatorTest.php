@@ -6,6 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
+use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\PathItem;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
@@ -39,22 +40,27 @@ final class PathItemLocatorTest extends TestCase
 
     public function testGetNamedSchemasSingleOperationUsesBaseName(): void
     {
-        $schema   = $this->getSchema();
-        $pathItem = new PathItem([
-            'get' => [
-                'responses' => [
-                    'default' => [
-                        'description' => 'Pets',
-                        'content'     => [
-                            'application/json' => [
-                                'schema' => $schema,
-                            ],
+        $schema        = $this->getSchema();
+        $get           = new Operation([
+            'responses' => [
+                'default' => [
+                    'description' => 'Pets',
+                    'content'     => [
+                        'application/json' => [
+                            'schema' => $schema,
                         ],
                     ],
                 ],
             ],
         ]);
-        $expected = ['' => new NamedSpecification('Foo defaultResponse', $schema)];
+        $pathItem      = $this->getPathItem([
+            'get' => $get,
+        ]);
+        $schemaPointer = '/paths/pet/get/responses/default/content/application~1json/schema';
+        $expected      = [
+            $schemaPointer   => new NamedSpecification('Foo defaultResponse', $schema),
+            '/paths/pet/get' => new NamedSpecification('FooOperation', $get),
+        ];
 
         self::assertTrue($pathItem->validate(), implode("\n", $pathItem->getErrors()));
         $actual = $this->locator->getNamedSchemas('Foo', $pathItem);
@@ -65,42 +71,52 @@ final class PathItemLocatorTest extends TestCase
     {
         $getSchema  = $this->getSchema();
         $postSchema = $this->getSchema();
-        $pathItem   = new PathItem([
-            'get'  => [
-                'responses' => [
-                    'default' => [
-                        'description' => 'Pets',
-                        'content'     => [
-                            'application/json' => [
-                                'schema' => $getSchema,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'post' => [
-                'responses' => [
-                    'default' => [
-                        'description' => 'Pets',
-                        'content'     => [
-                            'application/json' => [
-                                'schema' => $postSchema,
-                            ],
+        $get        = new Operation([
+            'responses' => [
+                'default' => [
+                    'description' => 'Pets',
+                    'content'     => [
+                        'application/json' => [
+                            'schema' => $getSchema,
                         ],
                     ],
                 ],
             ],
         ]);
-        $pathItem->setDocumentContext(new OpenApi([]), new JsonPointer('/paths/pet'));
+        $post       = new Operation([
+            'responses' => [
+                'default' => [
+                    'description' => 'Pets',
+                    'content'     => [
+                        'application/json' => [
+                            'schema' => $postSchema,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $pathItem   = $this->getPathItem([
+            'get'  => $get,
+            'post' => $post,
+        ]);
         $subPointer = '/responses/default/content/application~1json/schema';
         $expected   = [
             '/paths/pet/get' . $subPointer  => new NamedSpecification('Foo get defaultResponse', $getSchema),
             '/paths/pet/post' . $subPointer => new NamedSpecification('Foo post defaultResponse', $postSchema),
+            '/paths/pet/get'                => new NamedSpecification('Foo getOperation', $get),
+            '/paths/pet/post'               => new NamedSpecification('Foo postOperation', $post),
         ];
 
         self::assertTrue($pathItem->validate(), implode("\n", $pathItem->getErrors()));
         $actual = $this->locator->getNamedSchemas('Foo', $pathItem);
         self::assertEquals($expected, $actual);
+    }
+
+    private function getPathItem(array $spec): PathItem
+    {
+        $pathItem = new PathItem($spec);
+        $pathItem->setDocumentContext(new OpenApi([]), new JsonPointer('/paths/pet'));
+        return $pathItem;
     }
 
     private function getSchema(): Schema

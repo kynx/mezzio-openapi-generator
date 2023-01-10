@@ -14,6 +14,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterFactory;
+use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderFactory;
 use Symfony\Component\Console\Command\Command;
@@ -70,6 +72,7 @@ final class ConfigProvider
                 ModelCollectionBuilder::class => ModelCollectionBuilderFactory::class,
                 ModelsBuilder::class          => ModelsBuilderFactory::class,
                 ModelWriter::class            => ModelWriterFactory::class,
+                OperationBuilder::class       => OperationBuilderFactory::class,
                 PropertiesBuilder::class      => PropertiesBuilderFactory::class,
                 Writer::class                 => WriterFactory::class,
             ],

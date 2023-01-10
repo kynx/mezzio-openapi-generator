@@ -80,6 +80,9 @@ final class OperationLocator
             }
         }
 
+        $pointer          = $operation->getDocumentPosition()?->getPointer() ?? '';
+        $models[$pointer] = new NamedSpecification($baseName . 'Operation', $operation);
+
         return $models;
     }
 }

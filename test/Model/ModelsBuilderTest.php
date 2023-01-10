@@ -73,7 +73,7 @@ final class ModelsBuilderTest extends TestCase
                 new EnumCase('BoolCase', 'bool')
             ),
         ];
-        $namedSchema = $this->getNamedSchema('Foo', [
+        $namedSchema = $this->getNamedSpecification('Foo', [
             'type' => 'string',
             'enum' => ['cat', 'dog', 'bool'],
         ]);
@@ -100,7 +100,7 @@ final class ModelsBuilderTest extends TestCase
                 new SimpleProperty('$a', 'a', $propertyMetadata, PropertyType::String)
             ),
         ];
-        $namedSchema      = $this->getNamedSchema('Foo', [
+        $namedSchema      = $this->getNamedSpecification('Foo', [
             'type'       => 'object',
             'properties' => [
                 'a' => [
@@ -124,9 +124,9 @@ final class ModelsBuilderTest extends TestCase
                 ['\\BarInterface', '\\BazInterface']
             ),
         ];
-        $bar            = $this->getNamedSchema('Bar', []);
-        $baz            = $this->getNamedSchema('Baz', []);
-        $foo            = $this->getNamedSchema('Foo', [
+        $bar            = $this->getNamedSpecification('Bar', []);
+        $baz            = $this->getNamedSpecification('Baz', []);
+        $foo            = $this->getNamedSpecification('Foo', [
             'allOf' => [
                 $bar->getSpecification(),
                 $baz->getSpecification(),
@@ -150,7 +150,7 @@ final class ModelsBuilderTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    private function getNamedSchema(string $name, array $spec): NamedSpecification
+    private function getNamedSpecification(string $name, array $spec): NamedSpecification
     {
         $schema = new Schema($spec);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer('/components/schemas/' . $name));

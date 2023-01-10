@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
+use cebe\openapi\json\JsonPointer;
+use cebe\openapi\spec\OpenApi;
+use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Paths;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
@@ -50,7 +53,7 @@ final class PathsLocatorTest extends TestCase
 
     public function testGetNamedSchemasReturnsSchema(): void
     {
-        $schema   = new Schema([
+        $schema        = new Schema([
             'type'       => 'object',
             'properties' => [
                 'id' => [
@@ -58,26 +61,42 @@ final class PathsLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $paths    = new Paths([
-            '/my/pets' => [
-                'get' => [
-                    'responses' => [
-                        'default' => [
-                            'description' => 'Pets',
-                            'content'     => [
-                                'application/json' => [
-                                    'schema' => $schema,
-                                ],
-                            ],
+        $get           = new Operation([
+            'responses' => [
+                'default' => [
+                    'description' => 'Pets',
+                    'content'     => [
+                        'application/json' => [
+                            'schema' => $schema,
                         ],
                     ],
                 ],
             ],
         ]);
-        $expected = ['' => new NamedSpecification('my pets defaultResponse', $schema)];
+        $paths         = $this->getPaths([
+            '/my/pets' => [
+                'get' => $get,
+            ],
+        ]);
+        $schemaPointer = '/paths/~1my~1pets/get/responses/default/content/application~1json/schema';
+        $expected      = [
+            $schemaPointer          => new NamedSpecification('my pets defaultResponse', $schema),
+            '/paths/~1my~1pets/get' => new NamedSpecification('my petsOperation', $get),
+        ];
 
-        self::assertTrue($paths->validate(), implode("\n", $paths->getErrors()));
         $actual = $this->locator->getNamedSchemas($paths);
         self::assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param  array<array-key, array<array-key, mixed>> $spec
+     */
+    private function getPaths(array $spec): Paths
+    {
+        $paths = new Paths($spec);
+        $paths->setDocumentContext(new OpenApi([]), new JsonPointer('/paths'));
+        self::assertTrue($paths->validate(), implode("\n", $paths->getErrors()));
+
+        return $paths;
     }
 }
