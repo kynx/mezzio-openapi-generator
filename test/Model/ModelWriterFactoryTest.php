@@ -27,6 +27,7 @@ use Psr\Container\ContainerInterface;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Writer
  *

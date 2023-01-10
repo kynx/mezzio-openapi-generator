@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
 use function implode;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumCase
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel

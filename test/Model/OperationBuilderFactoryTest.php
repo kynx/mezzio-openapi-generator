@@ -10,6 +10,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilderFactory
  */
 final class OperationBuilderFactoryTest extends TestCase

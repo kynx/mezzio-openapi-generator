@@ -13,6 +13,7 @@ use ReflectionClass;
 use stdClass;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
  *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelException

@@ -14,9 +14,11 @@ use Psr\Container\ContainerInterface;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Configuration
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilderFactory

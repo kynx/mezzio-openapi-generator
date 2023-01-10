@@ -33,6 +33,8 @@ use PHPUnit\Framework\TestCase;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilderFactory
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilderFactory
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderFactory
  * @uses \Kynx\Mezzio\OpenApiGenerator\Writer

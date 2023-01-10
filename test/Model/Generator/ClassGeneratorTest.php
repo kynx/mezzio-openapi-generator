@@ -15,6 +15,7 @@ use Nette\PhpGenerator\PromotedParameter;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty

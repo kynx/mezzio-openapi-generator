@@ -12,6 +12,7 @@ use Psr\Container\ContainerInterface;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Configuration
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels
  *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModelsFactory

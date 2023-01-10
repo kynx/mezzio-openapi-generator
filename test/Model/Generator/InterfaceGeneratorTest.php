@@ -14,6 +14,7 @@ use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty

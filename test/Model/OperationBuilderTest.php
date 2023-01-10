@@ -24,6 +24,17 @@ use function implode;
 use function ucfirst;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
+ *
  * @covers \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
  */
 final class OperationBuilderTest extends TestCase

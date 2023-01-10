@@ -13,6 +13,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata

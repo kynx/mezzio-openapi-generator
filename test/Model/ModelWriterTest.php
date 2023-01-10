@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 use function current;
 
 /**
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
@@ -39,6 +40,7 @@ use function current;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
