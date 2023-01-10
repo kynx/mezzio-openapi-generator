@@ -57,7 +57,7 @@ final class OperationBuilderTest extends TestCase
         $section       = ucfirst($in);
         $pointer       = '/paths/foo/get';
         $className     = '\\FooOperation';
-        $propertyClass = '\\FooOperation' . $section . 'Params';
+        $propertyClass = '\\FooOperation\\' . $section . 'Params';
         $fooProperty   = new SimpleProperty(
             '$foo',
             'foo',
@@ -71,7 +71,7 @@ final class OperationBuilderTest extends TestCase
             $propertyClass
         );
         $expected      = [
-            new ClassModel($className . $section . 'Params', $pointer . '/parameters/' . $in, [], $fooProperty),
+            new ClassModel($propertyClass, $pointer . '/parameters/' . $in, [], $fooProperty),
             new ClassModel($className, $pointer, [], $pathProperty),
         ];
         $namedSpec     = $this->getNamedSpecification('get', spec: [
@@ -105,7 +105,7 @@ final class OperationBuilderTest extends TestCase
     {
         $pointer       = '/paths/foo/get';
         $className     = '\\FooOperation';
-        $propertyClass = '\\FooOperationQueryParams';
+        $propertyClass = '\\FooOperation\\QueryParams';
         $fooProperty   = new SimpleProperty(
             '$foo',
             'foo',
@@ -119,7 +119,7 @@ final class OperationBuilderTest extends TestCase
             $propertyClass
         );
         $expected      = [
-            new ClassModel($className . 'QueryParams', $pointer . '/parameters/query', [], $fooProperty),
+            new ClassModel($propertyClass, $pointer . '/parameters/query', [], $fooProperty),
             new ClassModel($className, $pointer, [], $pathProperty),
         ];
         $namedSpec     = $this->getNamedSpecification('get', spec: [

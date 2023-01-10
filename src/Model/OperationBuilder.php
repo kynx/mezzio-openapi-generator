@@ -62,10 +62,10 @@ final class OperationBuilder
         $properties = [];
         $metadata   = ['required' => true];
         $positions  = [
-            'path'   => $className . 'PathParams',
-            'query'  => $className . 'QueryParams',
-            'header' => $className . 'HeaderParams',
-            'cookie' => $className . 'CookieParams',
+            'path'   => $className . '\PathParams',
+            'query'  => $className . '\QueryParams',
+            'header' => $className . '\HeaderParams',
+            'cookie' => $className . '\CookieParams',
         ];
         foreach ($positions as $in => $name) {
             $model = $this->getParamModel($operation, $name, $in, $classNames);
@@ -196,10 +196,7 @@ final class OperationBuilder
 
         if (count($types) === 1) {
             return new SimpleProperty('$requestBody', '', $metadata, current($types));
-        } elseif (count($types) > 1) {
-            return new UnionProperty('$requestBody', '', $metadata, ...$types);
         }
-
-        return null;
+        return new UnionProperty('$requestBody', '', $metadata, ...$types);
     }
 }
