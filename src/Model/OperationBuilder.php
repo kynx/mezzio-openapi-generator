@@ -90,7 +90,7 @@ final class OperationBuilder
         }
 
         $pointer  = $operation->getDocumentPosition()?->getPointer() ?? '';
-        $models[] = new ClassModel($className, $pointer, [], ...$properties);
+        $models[] = new OperationModel($className, $pointer, ...$properties);
 
         return $models;
     }

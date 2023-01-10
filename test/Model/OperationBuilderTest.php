@@ -12,6 +12,7 @@ use Kynx\Code\Normalizer\UniqueVariableLabeler;
 use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
@@ -27,6 +28,7 @@ use function ucfirst;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
@@ -83,7 +85,7 @@ final class OperationBuilderTest extends TestCase
         );
         $expected      = [
             new ClassModel($propertyClass, $pointer . '/parameters/' . $in, [], $fooProperty),
-            new ClassModel($className, $pointer, [], $pathProperty),
+            new OperationModel($className, $pointer, $pathProperty),
         ];
         $namedSpec     = $this->getNamedSpecification('get', spec: [
             'parameters' => [
@@ -131,7 +133,7 @@ final class OperationBuilderTest extends TestCase
         );
         $expected      = [
             new ClassModel($propertyClass, $pointer . '/parameters/query', [], $fooProperty),
-            new ClassModel($className, $pointer, [], $pathProperty),
+            new OperationModel($className, $pointer, $pathProperty),
         ];
         $namedSpec     = $this->getNamedSpecification('get', spec: [
             'parameters' => [
@@ -174,7 +176,7 @@ final class OperationBuilderTest extends TestCase
             PropertyType::String
         );
         $expected    = [
-            new ClassModel($className, $pointer, [], $requestBody),
+            new OperationModel($className, $pointer, $requestBody),
         ];
         $namedSpec   = $this->getNamedSpecification('patch', spec: [
             'requestBody' => [
@@ -210,7 +212,7 @@ final class OperationBuilderTest extends TestCase
             PropertyType::Integer
         );
         $expected    = [
-            new ClassModel($className, $pointer, [], $requestBody),
+            new OperationModel($className, $pointer, $requestBody),
         ];
         $namedSpec   = $this->getNamedSpecification('patch', spec: [
             'requestBody' => [
@@ -240,7 +242,7 @@ final class OperationBuilderTest extends TestCase
             PropertyType::String
         );
         $expected    = [
-            new ClassModel($className, $pointer, [], $requestBody),
+            new OperationModel($className, $pointer, $requestBody),
         ];
         $namedSpec   = $this->getNamedSpecification('patch', spec: [
             'requestBody' => [
@@ -273,7 +275,7 @@ final class OperationBuilderTest extends TestCase
             PropertyType::Array
         );
         $expected    = [
-            new ClassModel($className, $pointer, [], $requestBody),
+            new OperationModel($className, $pointer, $requestBody),
         ];
         $namedSpec   = $this->getNamedSpecification('patch', spec: [
             'requestBody' => [

@@ -16,6 +16,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Model\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
@@ -35,6 +36,7 @@ use function implode;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
@@ -121,10 +123,9 @@ final class ModelCollectionBuilderTest extends TestCase
     {
         $expected = new ModelCollection();
         $expected->add(
-            new ClassModel(
+            new OperationModel(
                 '\\PatchOperation',
                 '/paths/foo/patch',
-                [],
                 new SimpleProperty('$requestBody', '', new PropertyMetadata(), PropertyType::String)
             )
         );

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Generator;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\OperationModel;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 
@@ -21,7 +22,7 @@ use function sprintf;
  */
 final class ClassGenerator extends AbstractGenerator
 {
-    public function addClass(PhpNamespace $namespace, ClassModel $model): ClassType
+    public function addClass(PhpNamespace $namespace, ClassModel|OperationModel $model): ClassType
     {
         $class = $namespace->addClass($this->getClassLikeName($model));
         $class->setFinal();
@@ -56,7 +57,7 @@ final class ClassGenerator extends AbstractGenerator
     /**
      * @param UsesArray $aliases
      */
-    private function addMethods(ClassType $type, ClassModel $model): void
+    private function addMethods(ClassType $type, ClassModel|OperationModel $model): void
     {
         foreach ($model->getProperties() as $property) {
             $method = $type->addMethod($this->getMethodName($property));

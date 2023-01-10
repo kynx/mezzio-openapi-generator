@@ -40,7 +40,7 @@ final class ModelGenerator
         } elseif ($modelClass instanceof InterfaceModel) {
             $added = $this->interfaceGenerator->addInterface($namespace, $modelClass);
         } else {
-            assert($modelClass instanceof ClassModel);
+            assert($modelClass instanceof ClassModel || $modelClass instanceof OperationModel);
             $added = $this->classGenerator->addClass($namespace, $modelClass);
         }
 
