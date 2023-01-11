@@ -215,7 +215,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
             PropertyType::String,
         ];
         $nullable       = new PropertyMetadata(...['nullable' => true]);
-        $union          = new UnionProperty('$foo', 'foo', $nullable, ...$types);
+        $union          = new UnionProperty('$foo', 'foo', $nullable, null, ...$types);
         $models         = [
             new ClassModel('\\Untyped', $untypedPointer, [], $union),
         ];
@@ -235,7 +235,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
 
         $scalarPointer    = '/components/schemas/Scalar';
         $scalarProperties = [
-            new UnionProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::String, PropertyType::Number),
+            new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, PropertyType::String, PropertyType::Number),
         ];
         $models           = [
             new ClassModel('\\Scalar', $scalarPointer, [], ...$scalarProperties),

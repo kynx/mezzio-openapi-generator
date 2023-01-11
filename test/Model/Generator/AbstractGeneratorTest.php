@@ -128,7 +128,7 @@ final class AbstractGeneratorTest extends TestCase
             'bool_is'   => [new SimpleProperty('$isA', 'isA', new PropertyMetadata(), PropertyType::Boolean), 'isA'],
             'string'    => [new SimpleProperty('$a', 'a', new PropertyMetadata(), PropertyType::String), 'getA'],
             'string_is' => [new SimpleProperty('$isA', 'isA', new PropertyMetadata(), PropertyType::String), 'getIsA'],
-            'union'     => [new UnionProperty('$a', 'a', new PropertyMetadata(), '\\A'), 'getA'],
+            'union'     => [new UnionProperty('$a', 'a', new PropertyMetadata(), null, '\\A'), 'getA'],
         ];
     }
 
@@ -152,7 +152,7 @@ final class AbstractGeneratorTest extends TestCase
             'not_required' => [new SimpleProperty('$a', 'a', $notRequired, PropertyType::Boolean), 'bool|null'],
             'array'        => [new ArrayProperty('$a', 'a', $required, false, PropertyType::String), 'array'],
             'list'         => [new ArrayProperty('$a', 'a', $required, true, PropertyType::String), 'array'],
-            'union'        => [new UnionProperty('$a', 'a', $required, '\\A\\B', '\\A\\C'), '\\A\\B|\\A\\C'],
+            'union'        => [new UnionProperty('$a', 'a', $required, null, '\\A\\B', '\\A\\C'), '\\A\\B|\\A\\C'],
         ];
     }
 
@@ -177,9 +177,9 @@ final class AbstractGeneratorTest extends TestCase
             'simple_php' => [[new SimpleProperty('$a', 'a', $metadata, PropertyType::String)], []],
             'simple_uri' => [[new SimpleProperty('$a', 'a', $metadata, PropertyType::Uri)], [UriInterface::class => null]],
             'simple'     => [[new SimpleProperty('$a', 'a', $metadata, '\\A')], ['\\A' => null]],
-            'union_php'  => [[new UnionProperty('$a', 'a', $metadata, PropertyType::String)], []],
-            'union_uri'  => [[new UnionProperty('$a', 'a', $metadata, PropertyType::Uri)], [UriInterface::class => null]],
-            'union'      => [[new UnionProperty('$a', 'a', $metadata, '\\A', '\\B')], ['\\A' => null, '\\B' => null]],
+            'union_php'  => [[new UnionProperty('$a', 'a', $metadata, null, PropertyType::String)], []],
+            'union_uri'  => [[new UnionProperty('$a', 'a', $metadata, null, PropertyType::Uri)], [UriInterface::class => null]],
+            'union'      => [[new UnionProperty('$a', 'a', $metadata, null, '\\A', '\\B')], ['\\A' => null, '\\B' => null]],
         ];
         // phpcs:enable
     }

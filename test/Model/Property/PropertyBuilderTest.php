@@ -8,6 +8,7 @@ use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
@@ -102,7 +103,7 @@ final class PropertyBuilderTest extends TestCase
     public function testGetPropertyEnumReturnsUnionProperty(): void
     {
         $types    = [PropertyType::Integer, PropertyType::String];
-        $expected = new UnionProperty('$foo', 'foo', new PropertyMetadata(), ...$types);
+        $expected = new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, ...$types);
         $pointer  = '/components/schemas/Foo';
         $schema   = $this->getSchema($pointer, [
             'enum' => [1, 2, 'bar'],
@@ -127,7 +128,7 @@ final class PropertyBuilderTest extends TestCase
     public function testGetPropertyOneOfReturnsUnionOfPropertyTypes(): void
     {
         $types    = [PropertyType::Integer, PropertyType::String];
-        $expected = new UnionProperty('$foo', 'foo', new PropertyMetadata(), ...$types);
+        $expected = new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, ...$types);
         $pointer  = '/components/schemas/Foo';
         $schema   = $this->getSchema($pointer, [
             'oneOf' => [
@@ -142,11 +143,12 @@ final class PropertyBuilderTest extends TestCase
 
     public function testGetPropertyOneOfReturnsUnionOfClassNames(): void
     {
-        $classes  = [
+        $classes       = [
             '\\Bar',
             '\\Baz',
         ];
-        $expected = new UnionProperty('$foo', 'foo', new PropertyMetadata(), ...$classes);
+        $discriminator = new PropertyList(['\\Bar' => [], '\\Baz' => []]);
+        $expected      = new UnionProperty('$foo', 'foo', new PropertyMetadata(), $discriminator, ...$classes);
 
         $pointers = [
             '/components/schemas/Bar',

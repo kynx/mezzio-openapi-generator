@@ -6,6 +6,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\DiscriminatorBuilder;
 
 use function array_pop;
 use function assert;
@@ -22,6 +23,11 @@ use function in_array;
  */
 final class PropertyBuilder
 {
+    public function __construct(
+        private readonly DiscriminatorBuilder $discriminatorBuilder = new DiscriminatorBuilder()
+    ) {
+    }
+
     /**
      * @param array<string, string> $classNames
      */
@@ -50,7 +56,7 @@ final class PropertyBuilder
             }
 
             if (count($types) > 1) {
-                return new UnionProperty($name, $originalName, $metadata, ...$types);
+                return new UnionProperty($name, $originalName, $metadata, null, ...$types);
             }
             return new SimpleProperty($name, $originalName, $metadata, array_pop($types));
         }
@@ -61,7 +67,8 @@ final class PropertyBuilder
                 assert($component instanceof Schema);
                 $types[] = $this->getPropertyTypeOrClassName($component, $classNames);
             }
-            return new UnionProperty($name, $originalName, $metadata, ...$types);
+            $discriminator = $this->discriminatorBuilder->getDiscriminator($schema, $classNames);
+            return new UnionProperty($name, $originalName, $metadata, $discriminator, ...$types);
         }
 
         if ($schema->additionalProperties instanceof Schema) {

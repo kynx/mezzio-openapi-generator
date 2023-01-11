@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
+
 use function array_values;
 
 /**
@@ -23,9 +26,15 @@ final class UnionProperty extends AbstractProperty
         protected readonly string $name,
         protected readonly string $originalName,
         protected readonly PropertyMetadata $metadata,
+        private readonly PropertyList|PropertyValue|null $discriminator,
         PropertyType|string ...$members
     ) {
         $this->members = array_values($members);
+    }
+
+    public function getDiscriminator(): PropertyList|PropertyValue|null
+    {
+        return $this->discriminator;
     }
 
     /**

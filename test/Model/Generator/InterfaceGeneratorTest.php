@@ -45,7 +45,7 @@ final class InterfaceGeneratorTest extends TestCase
         $model     = new InterfaceModel(
             '\\A\\B',
             '/B',
-            new UnionProperty('$a', 'a', new PropertyMetadata(), ...$expected)
+            new UnionProperty('$a', 'a', new PropertyMetadata(), null, ...$expected)
         );
         $namespace = new PhpNamespace('A');
         $this->generator->addInterface($namespace, $model);

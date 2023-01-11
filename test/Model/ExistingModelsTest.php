@@ -215,7 +215,7 @@ final class ExistingModelsTest extends TestCase
             self::NAMESPACE . '\\MatchedClass',
             '/components/schemas/FooClass',
             [],
-            new UnionProperty('$foo', 'foo', new PropertyMetadata(), $expectedType, PropertyType::String)
+            new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, $expectedType, PropertyType::String)
         ));
         $expected->add(new EnumModel(
             self::NAMESPACE . '\\MatchedEnum',
@@ -227,7 +227,7 @@ final class ExistingModelsTest extends TestCase
             self::NAMESPACE . '\\FooClass',
             '/components/schemas/FooClass',
             [],
-            new UnionProperty('$foo', 'foo', new PropertyMetadata(), $originalType, PropertyType::String)
+            new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, $originalType, PropertyType::String)
         ));
         $original->add(new EnumModel(
             self::NAMESPACE . '\\FooEnum',

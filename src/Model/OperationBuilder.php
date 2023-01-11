@@ -197,6 +197,6 @@ final class OperationBuilder
         if (count($types) === 1) {
             return new SimpleProperty('$requestBody', '', $metadata, current($types));
         }
-        return new UnionProperty('$requestBody', '', $metadata, ...$types);
+        return new UnionProperty('$requestBody', '', $metadata, null, ...$types);
     }
 }

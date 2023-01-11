@@ -35,7 +35,7 @@ use const DIRECTORY_SEPARATOR;
  *
  * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model
  * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model
- * @psalm-type ExistingArray array<'class'|'enum'|'interface', array<string, OpenApiSchema>>
+ * @psalm-type ExistingArray array<'class'|'enum'|'interface', array<string, OpenApiModel>>
  */
 final class ExistingModels
 {

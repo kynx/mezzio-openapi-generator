@@ -208,6 +208,7 @@ final class OperationBuilderTest extends TestCase
             '$requestBody',
             '',
             new PropertyMetadata(),
+            null,
             PropertyType::String,
             PropertyType::Integer
         );
@@ -271,6 +272,7 @@ final class OperationBuilderTest extends TestCase
             '$requestBody',
             '',
             new PropertyMetadata(),
+            null,
             PropertyType::String,
             PropertyType::Array
         );

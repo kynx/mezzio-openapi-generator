@@ -55,7 +55,7 @@ final class ClassGeneratorTest extends TestCase
             '\\A\\B',
             '/B',
             [],
-            new UnionProperty('$a', 'a', new PropertyMetadata(), ...$expected)
+            new UnionProperty('$a', 'a', new PropertyMetadata(), null, ...$expected)
         );
         $namespace = new PhpNamespace('A');
         $this->generator->addClass($namespace, $model);
