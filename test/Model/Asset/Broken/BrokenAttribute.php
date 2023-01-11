@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Asset\Broken;
 
-use Kynx\Mezzio\OpenApi\OpenApiSchema;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiModel;
 
-#[OpenApiSchema()]
+#[OpenApiModel()]
 final class BrokenAttribute
 {
 }

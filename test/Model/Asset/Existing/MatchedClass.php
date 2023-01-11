@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Asset\Existing;
 
-use Kynx\Mezzio\OpenApi\OpenApiSchema;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiModel;
 
-#[OpenApiSchema('/components/schemas/FooClass')]
+#[OpenApiModel('/components/schemas/FooClass')]
 final class MatchedClass
 {
 }

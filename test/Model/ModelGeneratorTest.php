@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Mezzio\OpenApi\OpenApiSchema;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
@@ -43,7 +43,7 @@ final class ModelGeneratorTest extends TestCase
     public function testGenerateAddsNamespaceAndAttribute(): void
     {
         $pointer  = '/A';
-        $expected = new Attribute(OpenApiSchema::class, [$pointer]);
+        $expected = new Attribute(OpenApiModel::class, [$pointer]);
         $model    = new ClassModel('\\A\\A', $pointer, []);
 
         $file = $this->generator->generate($model);
@@ -56,7 +56,7 @@ final class ModelGeneratorTest extends TestCase
         self::assertSame('A', $namespace->getName());
 
         $uses = $namespace->getUses();
-        self::assertSame(['OpenApiSchema' => OpenApiSchema::class], $uses);
+        self::assertSame(['OpenApiModel' => OpenApiModel::class], $uses);
 
         $classes = $file->getClasses();
         self::assertCount(1, $classes);

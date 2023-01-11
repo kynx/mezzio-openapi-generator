@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Mezzio\OpenApi\OpenApiSchema;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
@@ -127,9 +127,9 @@ final class ExistingModels
         }
     }
 
-    private function getOpenApiSchema(ReflectionClass $class): ?OpenApiSchema
+    private function getOpenApiSchema(ReflectionClass $class): ?OpenApiModel
     {
-        $attribute = current($class->getAttributes(OpenApiSchema::class));
+        $attribute = current($class->getAttributes(OpenApiModel::class));
         if (! $attribute instanceof ReflectionAttribute) {
             return null;
         }
@@ -246,6 +246,7 @@ final class ExistingModels
                     $property->getName(),
                     $property->getOriginalName(),
                     $property->getMetadata(),
+                    $property->getDiscriminator(),
                     ...$members
                 );
             } else {
