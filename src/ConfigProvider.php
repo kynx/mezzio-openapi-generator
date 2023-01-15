@@ -6,6 +6,10 @@ namespace Kynx\Mezzio\OpenApiGenerator;
 
 use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommand;
 use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommandFactory;
+use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGeneratorFactory;
+use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriter;
+use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriterFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels;
 use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModelsFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
@@ -14,8 +18,6 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterFactory;
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderFactory;
 use Symfony\Component\Console\Command\Command;
@@ -69,10 +71,12 @@ final class ConfigProvider
             'factories' => [
                 ExistingModels::class         => ExistingModelsFactory::class,
                 GenerateCommand::class        => GenerateCommandFactory::class,
+                GenerateService::class        => GenerateServiceFactory::class,
+                HydratorGenerator::class      => HydratorGeneratorFactory::class,
+                HydratorWriter::class         => HydratorWriterFactory::class,
                 ModelCollectionBuilder::class => ModelCollectionBuilderFactory::class,
                 ModelsBuilder::class          => ModelsBuilderFactory::class,
                 ModelWriter::class            => ModelWriterFactory::class,
-                OperationBuilder::class       => OperationBuilderFactory::class,
                 PropertiesBuilder::class      => PropertiesBuilderFactory::class,
                 Writer::class                 => WriterFactory::class,
             ],
