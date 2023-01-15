@@ -7,8 +7,9 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Console;
 use Kynx\Mezzio\OpenApiGenerator\Configuration;
 use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommand;
 use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommandFactory;
-use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter;
-use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterInterface;
+use Kynx\Mezzio\OpenApiGenerator\GenerateService;
+use Kynx\Mezzio\OpenApiGenerator\GenerateServiceInterface;
+use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -20,15 +21,17 @@ use Psr\Container\ContainerInterface;
  */
 final class GenerateCommandFactoryTest extends TestCase
 {
+    use ModelTrait;
+
     public function testInvokeReturnsInstance(): void
     {
         $configuration = new Configuration(__DIR__);
-        $modelWriter   = $this->createStub(ModelWriterInterface::class);
+        $service       = $this->createStub(GenerateServiceInterface::class);
         $container     = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
                 [Configuration::class, $configuration],
-                [ModelWriter::class, $modelWriter],
+                [GenerateService::class, $service],
             ]);
 
         $factory = new GenerateCommandFactory();

@@ -21,10 +21,13 @@ final class Configuration implements JsonSerializable
     public function __construct(
         private readonly string $projectDir,
         private readonly string $openApiFile = '',
-        private readonly string $sourceNamespace = '',
-        private readonly string $sourceDir = '',
+        private readonly string $baseNamespace = '',
+        private readonly string $baseDir = '',
         private readonly string $testNamespace = '',
-        private readonly string $testDir = ''
+        private readonly string $testDir = '',
+        private readonly string $modelNamespace = '',
+        private readonly string $operationNamespace = '',
+        private readonly string $handlerNamespace = ''
     ) {
     }
 
@@ -38,14 +41,14 @@ final class Configuration implements JsonSerializable
         return $this->openApiFile;
     }
 
-    public function getSourceNamespace(): string
+    public function getBaseNamespace(): string
     {
-        return $this->sourceNamespace;
+        return $this->baseNamespace;
     }
 
-    public function getSourceDir(): string
+    public function getBaseDir(): string
     {
-        return $this->sourceDir;
+        return $this->baseDir;
     }
 
     public function getTestNamespace(): string
@@ -56,6 +59,21 @@ final class Configuration implements JsonSerializable
     public function getTestDir(): string
     {
         return $this->testDir;
+    }
+
+    public function getModelNamespace(): string
+    {
+        return $this->modelNamespace;
+    }
+
+    public function getOperationNamespace(): string
+    {
+        return $this->operationNamespace;
+    }
+
+    public function getHandlerNamespace(): string
+    {
+        return $this->handlerNamespace;
     }
 
     public function jsonSerialize(): mixed

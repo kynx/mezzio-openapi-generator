@@ -7,7 +7,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Console;
 use cebe\openapi\Reader;
 use cebe\openapi\spec\OpenApi;
 use finfo;
-use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterInterface;
+use Kynx\Mezzio\OpenApiGenerator\GenerateServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -34,7 +34,7 @@ final class GenerateCommand extends Command
     public function __construct(
         private readonly string $projectDir,
         private readonly string $openApiFile,
-        private readonly ModelWriterInterface $modelWriter
+        private readonly GenerateServiceInterface $generateService
     ) {
         parent::__construct();
     }
@@ -65,7 +65,9 @@ final class GenerateCommand extends Command
             return 1;
         }
 
-        $this->modelWriter->write($openApi);
+        $models = $this->generateService->getModels($openApi);
+        $this->generateService->createModels($models);
+        $this->generateService->createHydrators($models);
 
         return 0;
     }

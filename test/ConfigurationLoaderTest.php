@@ -25,6 +25,9 @@ final class ConfigurationLoaderTest extends TestCase
             "src/Api",
             "\\KynxTest\\Api",
             "test/Api",
+            "Model",
+            "Operation",
+            "Handler"
         );
 
         $actual = ConfigurationLoader::load($dir);

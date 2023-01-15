@@ -20,6 +20,6 @@ final class WriterFactory
     public function __invoke(ContainerInterface $container): Writer
     {
         $configuration = $container->get(Configuration::class);
-        return new Writer($configuration->getSourceNamespace(), $configuration->getSourceDir());
+        return new Writer($configuration->getBaseNamespace(), $configuration->getBaseDir());
     }
 }

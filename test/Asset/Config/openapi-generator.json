@@ -1,7 +1,10 @@
 {
   "openApiFile": "foo.yml",
-  "sourceNamespace": "\\Kynx\\Api",
-  "sourceDir": "src/Api",
+  "baseNamespace": "\\Kynx\\Api",
+  "baseDir": "src/Api",
   "testNamespace": "\\KynxTest\\Api",
-  "testDir": "test/Api"
+  "testDir": "test/Api",
+  "modelNamespace": "Model",
+  "operationNamespace": "Operation",
+  "handlerNamespace": "Handler"
 }

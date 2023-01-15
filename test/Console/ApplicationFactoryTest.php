@@ -18,11 +18,11 @@ use PHPUnit\Framework\TestCase;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModelsFactory
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathsLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder
@@ -32,9 +32,9 @@ use PHPUnit\Framework\TestCase;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterFactory
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilderFactory
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilderFactory
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilderFactory
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderFactory
  * @uses \Kynx\Mezzio\OpenApiGenerator\Writer

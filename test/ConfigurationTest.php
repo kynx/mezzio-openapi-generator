@@ -31,8 +31,8 @@ final class ConfigurationTest extends TestCase
 
         self::assertSame($projectDir, $configuration->getProjectDir());
         self::assertSame($openApiFile, $configuration->getOpenApiFile());
-        self::assertSame($sourceNamespace, $configuration->getSourceNamespace());
-        self::assertSame($sourceDir, $configuration->getSourceDir());
+        self::assertSame($sourceNamespace, $configuration->getBaseNamespace());
+        self::assertSame($sourceDir, $configuration->getBaseDir());
         self::assertSame($testNamespace, $configuration->getTestNamespace());
         self::assertSame($testDir, $configuration->getTestDir());
     }
@@ -40,11 +40,14 @@ final class ConfigurationTest extends TestCase
     public function testJsonSerializeRemovesProjectDir(): void
     {
         $expected      = [
-            'openApiFile'     => 'foo.json',
-            'sourceNamespace' => "\\Kynx\\Api",
-            'sourceDir'       => "src/Api",
-            'testNamespace'   => "\\KynxTest\Api",
-            'testDir'         => "test/Api",
+            'openApiFile'        => 'foo.json',
+            'baseNamespace'      => "\\Kynx\\Api",
+            'baseDir'            => "src/Api",
+            'testNamespace'      => "\\KynxTest\Api",
+            'testDir'            => "test/Api",
+            'modelNamespace'     => '',
+            'operationNamespace' => '',
+            'handlerNamespace'   => '',
         ];
         $configuration = new Configuration(__DIR__, ...$expected);
         $actual        = $configuration->jsonSerialize();
