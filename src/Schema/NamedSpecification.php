@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
+namespace Kynx\Mezzio\OpenApiGenerator\Schema;
 
 use cebe\openapi\SpecBaseObject;
 
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecificationTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Schema\NamedSpecificationTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class NamedSpecification
 {

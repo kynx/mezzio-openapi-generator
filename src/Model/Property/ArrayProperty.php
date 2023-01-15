@@ -19,7 +19,7 @@ final class ArrayProperty extends AbstractProperty
         protected readonly string $originalName,
         protected readonly PropertyMetadata $metadata,
         private readonly bool $isList,
-        private readonly PropertyType|string $memberType
+        private readonly PropertyType|ClassString $type
     ) {
     }
 
@@ -28,8 +28,8 @@ final class ArrayProperty extends AbstractProperty
         return $this->isList;
     }
 
-    public function getMemberType(): PropertyType|string
+    public function getType(): PropertyType|ClassString
     {
-        return $this->memberType;
+        return $this->type;
     }
 }

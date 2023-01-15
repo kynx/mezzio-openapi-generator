@@ -7,7 +7,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model;
 use cebe\openapi\spec\Schema;
 use Kynx\Code\Normalizer\UniqueConstantLabeler;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_map;
 use function assert;
@@ -17,8 +17,8 @@ use function assert;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ModelsBuilderTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class ModelsBuilder
 {

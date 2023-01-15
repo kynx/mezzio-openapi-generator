@@ -10,13 +10,13 @@ use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
@@ -48,35 +48,7 @@ final class OperationLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getNamedSchemas('', $operation);
-    }
-
-    public function testGetNamedSchemasReturnsOperationSpecification(): void
-    {
-        $operation = $this->getOperation([
-            'parameters' => [
-                [
-                    'name'   => 'id',
-                    'in'     => 'query',
-                    'schema' => [
-                        'type' => 'string',
-                    ],
-                ],
-            ],
-            'responses'  => [
-                '200' => [
-                    'description' => 'Pet description',
-                    'content'     => [
-                        'application/json' => [],
-                    ],
-                ],
-            ],
-        ]);
-        $expected  = ['/paths/foo/get' => new NamedSpecification('Operation', $operation)];
-
-        self::assertTrue($operation->validate());
-        $actual = $this->locator->getNamedSchemas('', $operation);
-        self::assertEquals($expected, $actual);
+        $this->locator->getNamedSpecifications('', $operation);
     }
 
     public function testGetNamedSchemasReturnsParameterSchema(): void
@@ -101,11 +73,10 @@ final class OperationLocatorTest extends TestCase
         ]);
         $expected  = [
             '/paths/foo/get/parameters/0/schema' => new NamedSpecification("Foo idParam", $schema),
-            '/paths/foo/get'                     => new NamedSpecification('FooOperation', $operation),
         ];
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $operation);
+        $actual = $this->locator->getNamedSpecifications('Foo', $operation);
         self::assertEquals($expected, $actual);
     }
 
@@ -126,7 +97,7 @@ final class OperationLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getNamedSchemas('', $operation);
+        $this->locator->getNamedSpecifications('', $operation);
     }
 
     public function testGetNamedSchemasReturnsRequestBody(): void
@@ -151,12 +122,11 @@ final class OperationLocatorTest extends TestCase
         ]);
         $path      = '/paths/foo/get/requestBody/content/application~1json/schema';
         $expected  = [
-            $path            => new NamedSpecification("Foo RequestBody", $schema),
-            '/paths/foo/get' => new NamedSpecification('FooOperation', $operation),
+            $path => new NamedSpecification("Foo RequestBody", $schema),
         ];
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $operation);
+        $actual = $this->locator->getNamedSpecifications('Foo', $operation);
         self::assertEquals($expected, $actual);
     }
 
@@ -171,7 +141,7 @@ final class OperationLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getNamedSchemas('', $operation);
+        $this->locator->getNamedSpecifications('', $operation);
     }
 
     public function testGetNamedSchemasReturnsResponse(): void
@@ -191,12 +161,11 @@ final class OperationLocatorTest extends TestCase
         ]);
         $path      = '/paths/foo/get/responses/200/content/application~1json/schema';
         $expected  = [
-            $path            => new NamedSpecification("Foo Status200Response", $schema),
-            '/paths/foo/get' => new NamedSpecification('FooOperation', $operation),
+            $path => new NamedSpecification("Foo Status200Response", $schema),
         ];
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $operation);
+        $actual = $this->locator->getNamedSpecifications('Foo', $operation);
         self::assertEquals($expected, $actual);
     }
 
@@ -217,12 +186,11 @@ final class OperationLocatorTest extends TestCase
         ]);
         $path      = '/paths/foo/get/responses/default/content/application~1json/schema';
         $expected  = [
-            $path            => new NamedSpecification("Foo defaultResponse", $schema),
-            '/paths/foo/get' => new NamedSpecification('FooOperation', $operation),
+            $path => new NamedSpecification("Foo defaultResponse", $schema),
         ];
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $operation);
+        $actual = $this->locator->getNamedSpecifications('Foo', $operation);
         self::assertEquals($expected, $actual);
     }
 

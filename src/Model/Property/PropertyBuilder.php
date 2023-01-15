@@ -18,8 +18,8 @@ use function in_array;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilderTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class PropertyBuilder
 {
@@ -42,7 +42,8 @@ final class PropertyBuilder
         $metadata = $this->getMetadata($schema, $required);
 
         if (isset($classNames[$pointer])) {
-            return new SimpleProperty($name, $originalName, $metadata, $classNames[$pointer]);
+            $classString = new ClassString($classNames[$pointer], ModelUtil::isEnum($schema));
+            return new SimpleProperty($name, $originalName, $metadata, $classString);
         }
 
         if (! empty($schema->enum) && empty($schema->type)) {
@@ -112,11 +113,11 @@ final class PropertyBuilder
     /**
      * @param array<string, string> $classNames
      */
-    private function getPropertyTypeOrClassName(Schema $schema, array $classNames): PropertyType|string
+    private function getPropertyTypeOrClassName(Schema $schema, array $classNames): PropertyType|ClassString
     {
         $pointer = ModelUtil::getJsonPointer($schema);
         if (isset($classNames[$pointer])) {
-            return $classNames[$pointer];
+            return new ClassString($classNames[$pointer], ModelUtil::isEnum($schema));
         }
         return PropertyType::fromSchema($schema);
     }

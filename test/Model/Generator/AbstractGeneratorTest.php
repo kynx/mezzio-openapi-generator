@@ -9,6 +9,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
@@ -123,12 +124,13 @@ final class AbstractGeneratorTest extends TestCase
 
     public function getMethodNameProvider(): array
     {
+        $a = new ClassString('\\A');
         return [
             'bool'      => [new SimpleProperty('$a', 'a', new PropertyMetadata(), PropertyType::Boolean), 'isA'],
             'bool_is'   => [new SimpleProperty('$isA', 'isA', new PropertyMetadata(), PropertyType::Boolean), 'isA'],
             'string'    => [new SimpleProperty('$a', 'a', new PropertyMetadata(), PropertyType::String), 'getA'],
             'string_is' => [new SimpleProperty('$isA', 'isA', new PropertyMetadata(), PropertyType::String), 'getIsA'],
-            'union'     => [new UnionProperty('$a', 'a', new PropertyMetadata(), null, '\\A'), 'getA'],
+            'union'     => [new UnionProperty('$a', 'a', new PropertyMetadata(), null, $a), 'getA'],
         ];
     }
 
@@ -146,13 +148,15 @@ final class AbstractGeneratorTest extends TestCase
         $nullable    = new PropertyMetadata('', '', false, true);
         $required    = new PropertyMetadata('', '', true, false);
         $notRequired = new PropertyMetadata('', '', false, false);
+        $ab          = new ClassString('\\A\\B');
+        $ac          = new ClassString('\\A\\C');
         return [
             'php'          => [new SimpleProperty('$a', 'a', $required, PropertyType::Boolean), 'bool'],
             'nullable'     => [new SimpleProperty('$a', 'a', $nullable, PropertyType::Boolean), 'bool|null'],
             'not_required' => [new SimpleProperty('$a', 'a', $notRequired, PropertyType::Boolean), 'bool|null'],
             'array'        => [new ArrayProperty('$a', 'a', $required, false, PropertyType::String), 'array'],
             'list'         => [new ArrayProperty('$a', 'a', $required, true, PropertyType::String), 'array'],
-            'union'        => [new UnionProperty('$a', 'a', $required, null, '\\A\\B', '\\A\\C'), '\\A\\B|\\A\\C'],
+            'union'        => [new UnionProperty('$a', 'a', $required, null, $ab, $ac), '\\A\\B|\\A\\C'],
         ];
     }
 
@@ -169,17 +173,19 @@ final class AbstractGeneratorTest extends TestCase
     public function getPropertyUsesProvider(): array
     {
         $metadata = new PropertyMetadata();
+        $a        = new ClassString('\\A');
+        $b        = new ClassString('\\B');
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
             'array_php'  => [[new ArrayProperty('$a', 'a', $metadata, false, PropertyType::String)], []],
             'array_uri'  => [[new ArrayProperty('$a', 'a', $metadata, false, PropertyType::Uri)], [UriInterface::class => null]],
-            'array'      => [[new ArrayProperty('$a', 'a', $metadata, false, '\\A')], ['\\A' => null]],
+            'array'      => [[new ArrayProperty('$a', 'a', $metadata, false, $a)], ['\\A' => null]],
             'simple_php' => [[new SimpleProperty('$a', 'a', $metadata, PropertyType::String)], []],
             'simple_uri' => [[new SimpleProperty('$a', 'a', $metadata, PropertyType::Uri)], [UriInterface::class => null]],
-            'simple'     => [[new SimpleProperty('$a', 'a', $metadata, '\\A')], ['\\A' => null]],
+            'simple'     => [[new SimpleProperty('$a', 'a', $metadata, $a)], ['\\A' => null]],
             'union_php'  => [[new UnionProperty('$a', 'a', $metadata, null, PropertyType::String)], []],
             'union_uri'  => [[new UnionProperty('$a', 'a', $metadata, null, PropertyType::Uri)], [UriInterface::class => null]],
-            'union'      => [[new UnionProperty('$a', 'a', $metadata, null, '\\A', '\\B')], ['\\A' => null, '\\B' => null]],
+            'union'      => [[new UnionProperty('$a', 'a', $metadata, null, $a, $b)], ['\\A' => null, '\\B' => null]],
         ];
         // phpcs:enable
     }
@@ -193,9 +199,9 @@ final class AbstractGeneratorTest extends TestCase
         ];
         $metadata   = new PropertyMetadata();
         $properties = [
-            new SimpleProperty('$a', 'a', $metadata, '\\B\\D'),
-            new SimpleProperty('$b', 'b', $metadata, '\\B\\C'),
-            new SimpleProperty('$d', 'd', $metadata, '\\A\\B'),
+            new SimpleProperty('$a', 'a', $metadata, new ClassString('\\B\\D')),
+            new SimpleProperty('$b', 'b', $metadata, new ClassString('\\B\\C')),
+            new SimpleProperty('$d', 'd', $metadata, new ClassString('\\A\\B')),
         ];
 
         $actual = $this->generator->getPropertyUses($properties);
@@ -211,9 +217,9 @@ final class AbstractGeneratorTest extends TestCase
         ];
         $metadata   = new PropertyMetadata();
         $properties = [
-            new SimpleProperty('$a', 'a', $metadata, '\\A'),
-            new SimpleProperty('$b', 'b', $metadata, '\\B\\A'),
-            new SimpleProperty('$d', 'd', $metadata, '\\C\\B\\A'),
+            new SimpleProperty('$a', 'a', $metadata, new ClassString('\\A')),
+            new SimpleProperty('$b', 'b', $metadata, new ClassString('\\B\\A')),
+            new SimpleProperty('$d', 'd', $metadata, new ClassString('\\C\\B\\A')),
         ];
 
         $actual = $this->generator->getPropertyUses($properties);
@@ -229,9 +235,9 @@ final class AbstractGeneratorTest extends TestCase
         ];
         $metadata   = new PropertyMetadata();
         $properties = [
-            new SimpleProperty('$a', 'a', $metadata, '\\B'),
-            new SimpleProperty('$b', 'b', $metadata, '\\AB'),
-            new SimpleProperty('$d', 'd', $metadata, '\\A\\B'),
+            new SimpleProperty('$a', 'a', $metadata, new ClassString('\\B')),
+            new SimpleProperty('$b', 'b', $metadata, new ClassString('\\AB')),
+            new SimpleProperty('$d', 'd', $metadata, new ClassString('\\A\\B')),
         ];
 
         $actual = $this->generator->getPropertyUses($properties);

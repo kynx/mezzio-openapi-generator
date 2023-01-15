@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Namer;
+namespace Kynx\Mezzio\OpenApiGenerator\Namer;
 
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 
@@ -10,7 +10,7 @@ use function array_combine;
 use function array_map;
 
 /**
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Namer\FlatNamerTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Namer\FlatNamerTest
  */
 final class FlatNamer implements NamerInterface
 {

@@ -20,6 +20,6 @@ final class ExistingModelsFactory
     public function __invoke(ContainerInterface $container): ExistingModels
     {
         $configuration = $container->get(Configuration::class);
-        return new ExistingModels($configuration->getSourceNamespace(), $configuration->getSourceDir());
+        return new ExistingModels($configuration->getBaseNamespace(), $configuration->getBaseDir());
     }
 }

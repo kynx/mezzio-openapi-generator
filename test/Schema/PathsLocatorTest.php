@@ -2,22 +2,23 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
+namespace KynxTest\Mezzio\OpenApiGenerator\Schema;
 
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Paths;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathsLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
@@ -27,7 +28,7 @@ use function implode;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  * @uses \Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil
  *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathsLocator
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator
  */
 final class PathsLocatorTest extends TestCase
 {
@@ -37,7 +38,7 @@ final class PathsLocatorTest extends TestCase
     {
         parent::setUp();
 
-        $this->locator = new PathsLocator();
+        $this->locator = new PathsLocator(new PathItemLocator());
     }
 
     public function testGetNamedSchemasSkipsNullPath(): void
@@ -47,7 +48,7 @@ final class PathsLocatorTest extends TestCase
         ]);
 
         self::assertTrue($paths->validate(), implode("\n", $paths->getErrors()));
-        $actual = $this->locator->getNamedSchemas($paths);
+        $actual = $this->locator->getNamedSpecifications($paths);
         self::assertEmpty($actual);
     }
 
@@ -80,11 +81,10 @@ final class PathsLocatorTest extends TestCase
         ]);
         $schemaPointer = '/paths/~1my~1pets/get/responses/default/content/application~1json/schema';
         $expected      = [
-            $schemaPointer          => new NamedSpecification('my pets defaultResponse', $schema),
-            '/paths/~1my~1pets/get' => new NamedSpecification('my petsOperation', $get),
+            $schemaPointer => new NamedSpecification('my pets get defaultResponse', $schema),
         ];
 
-        $actual = $this->locator->getNamedSchemas($paths);
+        $actual = $this->locator->getNamedSpecifications($paths);
         self::assertEquals($expected, $actual);
     }
 

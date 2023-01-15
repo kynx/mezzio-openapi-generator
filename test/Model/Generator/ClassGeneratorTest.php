@@ -6,6 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Generator;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
@@ -13,6 +14,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use Nette\PhpGenerator\PhpNamespace;
 use Nette\PhpGenerator\PromotedParameter;
 use PHPUnit\Framework\TestCase;
+
+use function array_map;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
@@ -47,17 +50,18 @@ final class ClassGeneratorTest extends TestCase
 
     public function testAddClassAddsUses(): void
     {
-        $expected  = [
+        $expected   = [
             'C'  => 'B\\C',
             'DC' => 'D\\C',
         ];
-        $model     = new ClassModel(
+        $properties = array_map(fn (string $className): ClassString => new ClassString($className), $expected);
+        $model      = new ClassModel(
             '\\A\\B',
             '/B',
             [],
-            new UnionProperty('$a', 'a', new PropertyMetadata(), null, ...$expected)
+            new UnionProperty('$a', 'a', new PropertyMetadata(), null, ...$properties)
         );
-        $namespace = new PhpNamespace('A');
+        $namespace  = new PhpNamespace('A');
         $this->generator->addClass($namespace, $model);
 
         $actual = $namespace->getUses();
@@ -94,7 +98,7 @@ final class ClassGeneratorTest extends TestCase
             '\\A\\B',
             '/A/B',
             [],
-            new SimpleProperty('$a', 'a', new PropertyMetadata('', '', true), $expected)
+            new SimpleProperty('$a', 'a', new PropertyMetadata('', '', true), new ClassString($expected))
         );
         $namespace = new PhpNamespace('A');
         $class     = $this->generator->addClass($namespace, $model);

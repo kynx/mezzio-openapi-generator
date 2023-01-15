@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
+namespace Kynx\Mezzio\OpenApiGenerator\Schema;
 
 use cebe\openapi\spec\Paths;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil;
@@ -15,22 +15,19 @@ use function implode;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Schema\PathsLocatorTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class PathsLocator
 {
-    private PathItemLocator $pathItemLocator;
-
-    public function __construct()
+    public function __construct(private readonly PathItemLocatorInterface $pathItemLocator)
     {
-        $this->pathItemLocator = new PathItemLocator();
     }
 
     /**
      * @return array<string, NamedSpecification>
      */
-    public function getNamedSchemas(Paths $paths): array
+    public function getNamedSpecifications(Paths $paths): array
     {
         $models = [];
         foreach ($paths->getPaths() as $path => $pathItem) {
@@ -40,7 +37,7 @@ final class PathsLocator
             }
 
             $name   = implode(' ', RouteUtil::getPathParts((string) $path));
-            $models = array_merge($models, $this->pathItemLocator->getNamedSchemas($name, $pathItem));
+            $models = array_merge($models, $this->pathItemLocator->getNamedSpecifications($name, $pathItem));
         }
 
         return $models;

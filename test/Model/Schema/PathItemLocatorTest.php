@@ -9,15 +9,15 @@ use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\PathItem;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
@@ -36,35 +36,6 @@ final class PathItemLocatorTest extends TestCase
         parent::setUp();
 
         $this->locator = new PathItemLocator();
-    }
-
-    public function testGetNamedSchemasSingleOperationUsesBaseName(): void
-    {
-        $schema        = $this->getSchema();
-        $get           = new Operation([
-            'responses' => [
-                'default' => [
-                    'description' => 'Pets',
-                    'content'     => [
-                        'application/json' => [
-                            'schema' => $schema,
-                        ],
-                    ],
-                ],
-            ],
-        ]);
-        $pathItem      = $this->getPathItem([
-            'get' => $get,
-        ]);
-        $schemaPointer = '/paths/pet/get/responses/default/content/application~1json/schema';
-        $expected      = [
-            $schemaPointer   => new NamedSpecification('Foo defaultResponse', $schema),
-            '/paths/pet/get' => new NamedSpecification('FooOperation', $get),
-        ];
-
-        self::assertTrue($pathItem->validate(), implode("\n", $pathItem->getErrors()));
-        $actual = $this->locator->getNamedSchemas('Foo', $pathItem);
-        self::assertEquals($expected, $actual);
     }
 
     public function testGetNamedSchemasAppendsOperationMethod(): void
@@ -103,12 +74,10 @@ final class PathItemLocatorTest extends TestCase
         $expected   = [
             '/paths/pet/get' . $subPointer  => new NamedSpecification('Foo get defaultResponse', $getSchema),
             '/paths/pet/post' . $subPointer => new NamedSpecification('Foo post defaultResponse', $postSchema),
-            '/paths/pet/get'                => new NamedSpecification('Foo getOperation', $get),
-            '/paths/pet/post'               => new NamedSpecification('Foo postOperation', $post),
         ];
 
         self::assertTrue($pathItem->validate(), implode("\n", $pathItem->getErrors()));
-        $actual = $this->locator->getNamedSchemas('Foo', $pathItem);
+        $actual = $this->locator->getNamedSpecifications('Foo', $pathItem);
         self::assertEquals($expected, $actual);
     }
 

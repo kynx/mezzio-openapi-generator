@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
+namespace KynxTest\Mezzio\OpenApiGenerator\Schema;
 
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
  */
 final class NamedSpecificationTest extends TestCase
 {

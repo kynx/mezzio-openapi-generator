@@ -8,6 +8,7 @@ use cebe\openapi\spec\Parameter;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 /**
  * @internal
@@ -19,19 +20,16 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
  */
 final class ParameterLocator
 {
-    private MediaTypeLocator $mediaTypeLocator;
-    private SchemaLocator $schemaLocator;
-
-    public function __construct()
-    {
-        $this->mediaTypeLocator = new MediaTypeLocator();
-        $this->schemaLocator    = new SchemaLocator();
+    public function __construct(
+        private readonly MediaTypeLocator $mediaTypeLocator = new MediaTypeLocator(),
+        private readonly SchemaLocator $schemaLocator = new SchemaLocator()
+    ) {
     }
 
     /**
      * @return array<string, NamedSpecification>
      */
-    public function getNamedSchemas(string $baseName, Parameter $parameter): array
+    public function getNamedSpecifications(string $baseName, Parameter $parameter): array
     {
         $name = $baseName . ' ' . $parameter->name . 'Param';
 
@@ -39,9 +37,9 @@ final class ParameterLocator
             throw ModelException::unresolvedReference($parameter->schema);
         }
         if ($parameter->schema instanceof Schema) {
-            return $this->schemaLocator->getNamedSchemas($name, $parameter->schema);
+            return $this->schemaLocator->getNamedSpecifications($name, $parameter->schema);
         }
 
-        return $this->mediaTypeLocator->getNamedSchemas($name, $parameter->content);
+        return $this->mediaTypeLocator->getNamedSpecifications($name, $parameter->content);
     }
 }

@@ -8,6 +8,7 @@ use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_merge;
 use function array_pop;
@@ -25,7 +26,7 @@ final class SchemaLocator
     /**
      * @return array<string, NamedSpecification>
      */
-    public function getNamedSchemas(string $name, Schema $schema): array
+    public function getNamedSpecifications(string $name, Schema $schema): array
     {
         if ($this->isReferenced($schema)) {
             $paths = $schema->getDocumentPosition()?->getPath() ?? [];
@@ -33,10 +34,10 @@ final class SchemaLocator
         }
 
         if ($schema->type === 'array' && $schema->items instanceof Schema) {
-            return $this->getNamedSchemas($name . 'Item', $schema->items);
+            return $this->getNamedSpecifications($name . 'Item', $schema->items);
         }
         if ($schema->additionalProperties instanceof Schema) {
-            return $this->getNamedSchemas($name . 'Item', $schema->additionalProperties);
+            return $this->getNamedSpecifications($name . 'Item', $schema->additionalProperties);
         }
 
         $models = [];
@@ -59,7 +60,7 @@ final class SchemaLocator
             if ($property instanceof Reference) {
                 throw ModelException::unresolvedReference($property);
             }
-            $models = array_merge($models, $this->getNamedSchemas("$name $propertyName", $property));
+            $models = array_merge($models, $this->getNamedSpecifications("$name $propertyName", $property));
         }
 
         return $models;
@@ -79,7 +80,7 @@ final class SchemaLocator
                 throw ModelException::unresolvedReference($schema);
             }
 
-            $allOf = $this->getNamedSchemas($name . $i, $schema);
+            $allOf = $this->getNamedSpecifications($name . $i, $schema);
             if (! $this->isReferenced($schema)) {
                 $pointer = $schema->getDocumentPosition()?->getPointer() ?? '';
                 unset($allOf[$pointer]);
@@ -106,7 +107,7 @@ final class SchemaLocator
             }
 
             $pointer = $schema->getDocumentPosition()?->getPointer() ?? '';
-            $anyOf   = $this->getNamedSchemas($name . $i, $schema);
+            $anyOf   = $this->getNamedSpecifications($name . $i, $schema);
             unset($anyOf[$pointer]);
 
             $models = array_merge($models, $anyOf);
@@ -129,7 +130,7 @@ final class SchemaLocator
                 throw ModelException::unresolvedReference($schema);
             }
 
-            $models = array_merge($models, $this->getNamedSchemas($name . $i, $schema));
+            $models = array_merge($models, $this->getNamedSpecifications($name . $i, $schema));
         }
 
         return $models;

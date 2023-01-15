@@ -50,18 +50,17 @@
     </UndefinedClass>
   </file>
   <file src="test/Handler/ExistingHandlersTest.php">
-    <ArgumentTypeCoercion occurrences="4">
-      <code>$className</code>
-      <code>self::ASSET_NAMESPACE . '\\Handler'</code>
-      <code>self::ASSET_NAMESPACE . '\\NewHandler'</code>
-      <code>self::ASSET_NAMESPACE . '\\Subdir\\SubdirHandler'</code>
-    </ArgumentTypeCoercion>
-    <MissingDependency occurrences="1">
-      <code>BadOpenApiOperation</code>
-    </MissingDependency>
-    <MixedAssignment occurrences="1">
-      <code>$class</code>
-    </MixedAssignment>
+    <UnevaluatedCode occurrences="12">
+      <code>$class   = BadOpenApiOperation::class;</code>
+      <code>$collection = new HandlerCollection();</code>
+      <code>$created = $locator-&gt;updateClassNames($collection);</code>
+      <code>$locator = new ExistingHandlers(__NAMESPACE__ . '\\Asset\\Invalid', __DIR__ . '/Asset/Invalid');</code>
+      <code>$locator = new ExistingHandlers(self::ASSET_NAMESPACE, self::ASSET_DIR);</code>
+      <code>$locator-&gt;updateClassNames(new HandlerCollection());</code>
+      <code>self::assertSame(count($expected), count($created));</code>
+      <code>self::expectException(HandlerException::class);</code>
+      <code>self::expectExceptionMessage("Invalid OpenApiOperation attribute for class '$class'");</code>
+    </UnevaluatedCode>
   </file>
   <file src="test/Handler/HandlerClassTest.php">
     <ArgumentTypeCoercion occurrences="3">
@@ -142,5 +141,11 @@
       <code>'Bar'</code>
       <code>'Foo'</code>
     </UndefinedClass>
+  </file>
+  <file src="test/Route/RouteDelegatorGeneratorTest.php">
+    <UnevaluatedCode occurrences="2">
+      <code>$this-&gt;generator = new RouteDelegatorGenerator(new FastRouteConverter(), new DotSnakeCaseNamer('api'));</code>
+      <code>parent::setUp();</code>
+    </UnevaluatedCode>
   </file>
 </files>

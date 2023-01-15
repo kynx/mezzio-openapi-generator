@@ -10,13 +10,10 @@ use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\EnumGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Nette\PhpGenerator\PhpFile;
 
-use function array_slice;
 use function assert;
-use function explode;
-use function implode;
-use function ltrim;
 
 /**
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ModelGeneratorTest
@@ -35,7 +32,7 @@ final class ModelGenerator
         $file = new PhpFile();
         $file->setStrictTypes();
 
-        $namespace = $file->addNamespace($this->getNamespace($modelClass));
+        $namespace = $file->addNamespace(GeneratorUtil::getNamespace($modelClass->getClassName()));
 
         if ($modelClass instanceof EnumModel) {
             $added = $this->enumGenerator->addEnum($namespace, $modelClass);
@@ -55,11 +52,5 @@ final class ModelGenerator
         }
 
         return $file;
-    }
-
-    private function getNamespace(AbstractClassLikeModel|EnumModel $modelClass): string
-    {
-        $namespace = implode('\\', array_slice(explode('\\', $modelClass->getClassName()), 0, -1));
-        return ltrim($namespace, '\\');
     }
 }

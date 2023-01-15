@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
-use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamerInterface;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
+use Kynx\Mezzio\OpenApiGenerator\Namer\NamerInterface;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_combine;
 use function array_keys;
@@ -20,15 +19,14 @@ use function array_values;
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilderTest
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ModelCollectionFactoryEnd2EndTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class ModelCollectionBuilder
 {
     public function __construct(
         private readonly NamerInterface $classNamer,
-        private readonly ModelsBuilder $modelsBuilder,
-        private readonly OperationBuilder $operationBuilder
+        private readonly ModelsBuilder $modelsBuilder
     ) {
     }
 
@@ -58,10 +56,6 @@ final class ModelCollectionBuilder
 
         $models = [];
         foreach ($namedSchemas as $namedSchema) {
-            if ($namedSchema->getSpecification() instanceof Operation) {
-                $models = array_merge($models, $this->operationBuilder->getModels($namedSchema, $classNames));
-                continue;
-            }
             $models = array_merge($models, $this->modelsBuilder->getModels($namedSchema, $classNames, $interfaceNames));
         }
 

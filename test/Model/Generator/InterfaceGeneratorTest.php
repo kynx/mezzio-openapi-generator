@@ -6,12 +6,15 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Generator;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
+
+use function array_map;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
@@ -38,16 +41,17 @@ final class InterfaceGeneratorTest extends TestCase
 
     public function testAddInterfaceAddsUses(): void
     {
-        $expected  = [
+        $expected   = [
             'C'  => 'B\\C',
             'DC' => 'D\\C',
         ];
-        $model     = new InterfaceModel(
+        $properties = array_map(fn (string $className): ClassString => new ClassString($className), $expected);
+        $model      = new InterfaceModel(
             '\\A\\B',
             '/B',
-            new UnionProperty('$a', 'a', new PropertyMetadata(), null, ...$expected)
+            new UnionProperty('$a', 'a', new PropertyMetadata(), null, ...$properties)
         );
-        $namespace = new PhpNamespace('A');
+        $namespace  = new PhpNamespace('A');
         $this->generator->addInterface($namespace, $model);
 
         $actual = $namespace->getUses();

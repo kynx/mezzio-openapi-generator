@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
@@ -22,7 +23,7 @@ final class UnionPropertyTest extends TestCase
 {
     public function testConstructorSetsMembers(): void
     {
-        $members  = [PropertyType::Integer, '\\Foo'];
+        $members  = [PropertyType::Integer, new ClassString('\\Foo')];
         $property = new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, ...$members);
         self::assertSame($members, $property->getMembers());
     }
@@ -32,7 +33,7 @@ final class UnionPropertyTest extends TestCase
      */
     public function testConstructorSetsDiscriminator(PropertyList|PropertyValue|null $discriminator): void
     {
-        $members  = ['\\Foo', '\\Bar'];
+        $members  = [new ClassString('\\Foo'), new ClassString('\\Bar')];
         $property = new UnionProperty('$foo', 'foo', new PropertyMetadata(), $discriminator, ...$members);
         self::assertSame($discriminator, $property->getDiscriminator());
     }

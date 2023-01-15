@@ -12,7 +12,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  *
- * @template T of PropertyType|string
+ * @template T of PropertyType|ClassString
  */
 final class SimpleProperty extends AbstractProperty
 {
@@ -23,14 +23,14 @@ final class SimpleProperty extends AbstractProperty
         protected readonly string $name,
         protected readonly string $originalName,
         protected readonly PropertyMetadata $metadata,
-        private readonly PropertyType|string $type
+        private readonly PropertyType|ClassString $type
     ) {
     }
 
     /**
      * @return T
      */
-    public function getType(): PropertyType|string
+    public function getType(): PropertyType|ClassString
     {
         return $this->type;
     }

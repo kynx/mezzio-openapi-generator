@@ -6,6 +6,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
@@ -33,8 +34,8 @@ use const DIRECTORY_SEPARATOR;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ExistingModelsTest
  *
- * @psalm-internal Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal KynxTest\Mezzio\OpenApiGenerator
  * @psalm-type ExistingArray array<'class'|'enum'|'interface', array<string, OpenApiModel>>
  */
 final class ExistingModels
@@ -50,7 +51,7 @@ final class ExistingModels
         }
 
         $updated  = new ModelCollection();
-        $existing = $this->getOpenApiSchemas();
+        $existing = $this->getOpenApiModels();
         $renames  = $this->getRenames($collection, $existing);
 
         foreach ($collection as $model) {
@@ -64,7 +65,7 @@ final class ExistingModels
     /**
      * @return ExistingArray
      */
-    private function getOpenApiSchemas(): array
+    private function getOpenApiModels(): array
     {
         $schemas   = [
             'class'     => [],
@@ -82,8 +83,8 @@ final class ExistingModels
                 continue;
             }
 
-            $openApiSchema = $this->getOpenApiSchema($reflection);
-            if ($openApiSchema === null) {
+            $openApiModel = $this->getOpenApiModel($reflection);
+            if ($openApiModel === null) {
                 continue;
             }
 
@@ -94,7 +95,7 @@ final class ExistingModels
                 $type = 'interface';
             }
 
-            $schemas[$type][$reflection->getName()] = $openApiSchema;
+            $schemas[$type][$reflection->getName()] = $openApiModel;
         }
 
         return $schemas;
@@ -127,7 +128,7 @@ final class ExistingModels
         }
     }
 
-    private function getOpenApiSchema(ReflectionClass $class): ?OpenApiModel
+    private function getOpenApiModel(ReflectionClass $class): ?OpenApiModel
     {
         $attribute = current($class->getAttributes(OpenApiModel::class));
         if (! $attribute instanceof ReflectionAttribute) {
@@ -150,8 +151,8 @@ final class ExistingModels
         $renamed = [];
         foreach ($collection as $model) {
             $type = $this->getType($model);
-            foreach ($existing[$type] as $className => $schema) {
-                if ($schema->getJsonPointer() === $model->getJsonPointer()) {
+            foreach ($existing[$type] as $className => $openApiModel) {
+                if ($openApiModel->getJsonPointer() === $model->getJsonPointer()) {
                     $renamed[$model->getClassName()] = $className;
                 }
             }
@@ -216,8 +217,9 @@ final class ExistingModels
     {
         $properties = [];
         foreach ($model->getProperties() as $property) {
-            if ($property instanceof ArrayProperty && ! $property->getMemberType() instanceof PropertyType) {
-                $type         = $renames[$property->getMemberType()] ?? $property->getMemberType();
+            if ($property instanceof ArrayProperty && $property->getType() instanceof ClassString) {
+                $className    = $property->getType()->getClassString();
+                $type         = new ClassString($renames[$className] ?? $className, $property->getType()->isEnum());
                 $properties[] = new ArrayProperty(
                     $property->getName(),
                     $property->getOriginalName(),
@@ -226,7 +228,8 @@ final class ExistingModels
                     $type
                 );
             } elseif ($property instanceof SimpleProperty && ! $property->getType() instanceof PropertyType) {
-                $type         = $renames[$property->getType()] ?? $property->getType();
+                $className    = $property->getType()->getClassString();
+                $type         = new ClassString($renames[$className] ?? $className, $property->getType()->isEnum());
                 $properties[] = new SimpleProperty(
                     $property->getName(),
                     $property->getOriginalName(),
@@ -239,7 +242,8 @@ final class ExistingModels
                     if ($member instanceof PropertyType) {
                         $members[] = $member;
                     } else {
-                        $members[] = $renames[$member] ?? $member;
+                        $className = $member->getClassString();
+                        $members[] = new ClassString($renames[$className] ?? $className, $member->isEnum());
                     }
                 }
                 $properties[] = new UnionProperty(

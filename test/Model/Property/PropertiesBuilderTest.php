@@ -10,6 +10,7 @@ use cebe\openapi\spec\Schema;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Code\Normalizer\UniqueVariableLabeler;
 use Kynx\Code\Normalizer\VariableNameNormalizer;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
@@ -129,7 +130,7 @@ final class PropertiesBuilderTest extends TestCase
     public function testGetPropertiesUsesClassNames(): void
     {
         $expected   = [
-            new SimpleProperty('$bar', 'bar', new PropertyMetadata(), '\\Bar'),
+            new SimpleProperty('$bar', 'bar', new PropertyMetadata(), new ClassString('\\Bar')),
         ];
         $bar        = $this->getSchema('/components/schemas/Bar', []);
         $schema     = $this->getSchema('/components/schemas/Foo', [

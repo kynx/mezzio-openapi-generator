@@ -7,6 +7,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Response;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_map;
 use function array_merge;
@@ -24,13 +25,10 @@ use function strtolower;
  */
 final class ResponseLocator
 {
-    private MediaTypeLocator $mediaTypeLocator;
-    private SchemaLocator $schemaLocator;
-
-    public function __construct()
-    {
-        $this->mediaTypeLocator = new MediaTypeLocator();
-        $this->schemaLocator    = new SchemaLocator();
+    public function __construct(
+        private readonly MediaTypeLocator $mediaTypeLocator = new MediaTypeLocator(),
+        private readonly SchemaLocator $schemaLocator = new SchemaLocator()
+    ) {
     }
 
     /**
@@ -38,7 +36,7 @@ final class ResponseLocator
      */
     public function getNamedSchemas(string $baseName, Response $response): array
     {
-        $models = $this->mediaTypeLocator->getNamedSchemas($baseName . 'Response', $response->content);
+        $models = $this->mediaTypeLocator->getNamedSpecifications($baseName . 'Response', $response->content);
         foreach ($response->headers as $headerName => $header) {
             if ($header instanceof Reference) {
                 throw ModelException::unresolvedReference($header);
@@ -51,7 +49,7 @@ final class ResponseLocator
             }
 
             $name   = $baseName . $this->normalizeHeaderName((string) $headerName);
-            $models = array_merge($models, $this->schemaLocator->getNamedSchemas($name, $header->schema));
+            $models = array_merge($models, $this->schemaLocator->getNamedSpecifications($name, $header->schema));
         }
 
         return $models;

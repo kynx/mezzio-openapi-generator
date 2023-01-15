@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Namer;
+namespace Kynx\Mezzio\OpenApiGenerator\Namer;
 
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 
@@ -11,7 +11,7 @@ use function array_map;
 use function preg_replace;
 
 /**
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamerTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Namer\NamespacedNamerTest
  */
 final class NamespacedNamer implements NamerInterface
 {

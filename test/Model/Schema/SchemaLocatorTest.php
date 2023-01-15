@@ -9,14 +9,14 @@ use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  *
@@ -39,7 +39,7 @@ final class SchemaLocatorTest extends TestCase
             'type' => 'integer',
         ]);
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $schema);
+        $actual = $this->locator->getNamedSpecifications('Foo', $schema);
         self::assertEmpty($actual);
     }
 
@@ -58,7 +58,7 @@ final class SchemaLocatorTest extends TestCase
         $expected = [$pointer => new NamedSpecification('Foo', $schema)];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getNamedSchemas('Bar', $schema);
+        $actual = $this->locator->getNamedSpecifications('Bar', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -79,7 +79,7 @@ final class SchemaLocatorTest extends TestCase
         $expected   = ['' => new NamedSpecification('FooItem', new Schema($itemSchema))];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $schema);
+        $actual = $this->locator->getNamedSpecifications('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -100,7 +100,7 @@ final class SchemaLocatorTest extends TestCase
         $expected   = ['' => new NamedSpecification('FooItem', new Schema($itemSchema))];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $schema);
+        $actual = $this->locator->getNamedSpecifications('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -113,7 +113,7 @@ final class SchemaLocatorTest extends TestCase
         $expected = ['' => new NamedSpecification('Foo', $schema)];
 
         self::assertTrue($schema->validate(), implode("\n", $schema->getErrors()));
-        $actual = $this->locator->getNamedSchemas('Foo', $schema);
+        $actual = $this->locator->getNamedSpecifications('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -145,7 +145,7 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $schema);
+        $actual = $this->locator->getNamedSpecifications('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -180,7 +180,7 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $schema);
+        $actual = $this->locator->getNamedSpecifications('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -195,7 +195,7 @@ final class SchemaLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage($expected);
-        $this->locator->getNamedSchemas('Foo', $schema);
+        $this->locator->getNamedSpecifications('Foo', $schema);
     }
 
     public function testGetNamedSchemasReturnsAnyOfSchema(): void
@@ -228,7 +228,7 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $schema);
+        $actual = $this->locator->getNamedSpecifications('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -271,7 +271,7 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate(), implode("\n", $schema->getErrors()));
-        $actual = $this->locator->getNamedSchemas('Baz', $schema);
+        $actual = $this->locator->getNamedSpecifications('Baz', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -286,7 +286,7 @@ final class SchemaLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage($expected);
-        $this->locator->getNamedSchemas('Foo', $schema);
+        $this->locator->getNamedSpecifications('Foo', $schema);
     }
 
     public function testGetNamedSchemasReturnsOneOfSchemas(): void
@@ -318,7 +318,7 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $schema);
+        $actual = $this->locator->getNamedSpecifications('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -333,7 +333,7 @@ final class SchemaLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage($expected);
-        $this->locator->getNamedSchemas('Foo', $schema);
+        $this->locator->getNamedSpecifications('Foo', $schema);
     }
 
     public function testGetNamedSchemasRecursesProperties(): void
@@ -360,7 +360,7 @@ final class SchemaLocatorTest extends TestCase
         ];
 
         self::assertTrue($schema->validate());
-        $actual = $this->locator->getNamedSchemas('Foo', $schema);
+        $actual = $this->locator->getNamedSpecifications('Foo', $schema);
         self::assertEquals($expected, $actual);
     }
 
@@ -377,6 +377,6 @@ final class SchemaLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage($expected);
-        $this->locator->getNamedSchemas('Foo', $schema);
+        $this->locator->getNamedSpecifications('Foo', $schema);
     }
 }

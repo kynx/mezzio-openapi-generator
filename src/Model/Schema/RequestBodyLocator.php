@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\RequestBody;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 /**
  * @internal
@@ -16,11 +17,8 @@ use cebe\openapi\spec\RequestBody;
  */
 final class RequestBodyLocator
 {
-    private MediaTypeLocator $mediaTypeLocator;
-
-    public function __construct()
+    public function __construct(private readonly MediaTypeLocator $mediaTypeLocator = new MediaTypeLocator())
     {
-        $this->mediaTypeLocator = new MediaTypeLocator();
     }
 
     /**
@@ -28,6 +26,6 @@ final class RequestBodyLocator
      */
     public function getNamedSchemas(string $baseName, RequestBody $requestBody): array
     {
-        return $this->mediaTypeLocator->getNamedSchemas($baseName . ' RequestBody', $requestBody->content);
+        return $this->mediaTypeLocator->getNamedSpecifications($baseName . ' RequestBody', $requestBody->content);
     }
 }

@@ -11,11 +11,11 @@ use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
@@ -35,7 +35,7 @@ final class MediaTypeLocatorTest extends TestCase
 
     public function testGetNamedSchemasReturnsEmpty(): void
     {
-        $actual = $this->locator->getNamedSchemas('Foo', []);
+        $actual = $this->locator->getNamedSpecifications('Foo', []);
         self::assertEmpty($actual);
     }
 
@@ -48,7 +48,7 @@ final class MediaTypeLocatorTest extends TestCase
 
         self::expectException(ModelException::class);
         self::expectExceptionMessage("Unresolved reference: '$ref'");
-        $this->locator->getNamedSchemas('', $mediaTypes);
+        $this->locator->getNamedSpecifications('', $mediaTypes);
     }
 
     public function testGetNamedSchemasIgnoresNullSchemas(): void
@@ -57,7 +57,7 @@ final class MediaTypeLocatorTest extends TestCase
             'application/json' => new MediaType(['schema' => null]),
         ];
 
-        $actual = $this->locator->getNamedSchemas('', $mediaTypes);
+        $actual = $this->locator->getNamedSpecifications('', $mediaTypes);
         self::assertEmpty($actual);
     }
 
@@ -86,7 +86,7 @@ final class MediaTypeLocatorTest extends TestCase
         foreach ($mediaTypes as $mediaType) {
             self::assertTrue($mediaType->validate());
         }
-        $actual = $this->locator->getNamedSchemas('', $mediaTypes);
+        $actual = $this->locator->getNamedSpecifications('', $mediaTypes);
         self::assertEquals($expected, $actual);
     }
 
@@ -119,7 +119,7 @@ final class MediaTypeLocatorTest extends TestCase
             '/a/b/d' => new NamedSpecification('FooXml', $xml),
         ];
 
-        $actual = $this->locator->getNamedSchemas('Foo', $mediaTypes);
+        $actual = $this->locator->getNamedSpecifications('Foo', $mediaTypes);
         self::assertEquals($expected, $actual);
     }
 }

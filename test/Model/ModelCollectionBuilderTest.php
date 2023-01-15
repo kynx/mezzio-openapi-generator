@@ -6,7 +6,6 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
-use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Schema;
 use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
@@ -15,12 +14,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer;
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationModel;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
+use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -29,14 +24,14 @@ use function implode;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
@@ -55,15 +50,13 @@ final class ModelCollectionBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $modelsBuilder    = $this->getModelsBuilder();
-        $operationBuilder = $this->getOperationBuilder();
-        $classLabeler     = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
-        $classNamer       = new NamespacedNamer('', $classLabeler);
+        $modelsBuilder = $this->getModelsBuilder();
+        $classLabeler  = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
+        $classNamer    = new NamespacedNamer('', $classLabeler);
 
         $this->builder = new ModelCollectionBuilder(
             $classNamer,
-            $modelsBuilder,
-            $operationBuilder
+            $modelsBuilder
         );
     }
 
@@ -116,37 +109,6 @@ final class ModelCollectionBuilderTest extends TestCase
         $baz->getSpecification()->setDocumentContext(new OpenApi([]), new JsonPointer('/components/schemas/Baz'));
 
         $actual = $this->builder->getModelCollection([$foo, $bar, $baz]);
-        self::assertEquals($expected, $actual);
-    }
-
-    public function testGetModelCollectionReturnsOperation(): void
-    {
-        $expected = new ModelCollection();
-        $expected->add(
-            new OperationModel(
-                '\\PatchOperation',
-                '/paths/foo/patch',
-                new SimpleProperty('$requestBody', '', new PropertyMetadata(), PropertyType::String)
-            )
-        );
-        $operation = new Operation([
-            'requestBody' => [
-                'content' => [
-                    'default' => [
-                        'schema' => [
-                            'type' => 'string',
-                        ],
-                    ],
-                ],
-            ],
-            'responses'   => [],
-        ]);
-        $operation->setDocumentContext(new OpenApi([]), new JsonPointer('/paths/foo/patch'));
-        self::assertTrue($operation->validate(), implode("\n", $operation->getErrors()));
-
-        $namedSpec = new NamedSpecification('PatchOperation', $operation);
-
-        $actual = $this->builder->getModelCollection([$namedSpec]);
         self::assertEquals($expected, $actual);
     }
 

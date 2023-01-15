@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Mezzio\OpenApiGenerator\Model\Namer;
+namespace KynxTest\Mezzio\OpenApiGenerator\Namer;
 
 use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Mezzio\OpenApiGenerator\Model\Namer\FlatNamer;
+use Kynx\Mezzio\OpenApiGenerator\Namer\FlatNamer;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Namer\FlatNamer
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Namer\FlatNamer
  */
 final class FlatNamerTest extends TestCase
 {

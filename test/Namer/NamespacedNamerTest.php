@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Mezzio\OpenApiGenerator\Model\Namer;
+namespace KynxTest\Mezzio\OpenApiGenerator\Namer;
 
 use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer
  */
 final class NamespacedNamerTest extends TestCase
 {

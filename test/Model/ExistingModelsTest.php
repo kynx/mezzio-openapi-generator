@@ -12,6 +12,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
@@ -141,8 +142,8 @@ final class ExistingModelsTest extends TestCase
 
     public function testUpdateClassNamesRenamesArrayProperties(): void
     {
-        $originalType = self::NAMESPACE . '\\FooEnum';
-        $expectedType = self::NAMESPACE . '\\MatchedEnum';
+        $originalType = new ClassString(self::NAMESPACE . '\\FooEnum', true);
+        $expectedType = new ClassString(self::NAMESPACE . '\\MatchedEnum', true);
 
         $expected = new ModelCollection();
         $expected->add(new ClassModel(
@@ -174,8 +175,8 @@ final class ExistingModelsTest extends TestCase
 
     public function testUpdateClassNamesRenamesSimpleProperties(): void
     {
-        $originalType = self::NAMESPACE . '\\FooEnum';
-        $expectedType = self::NAMESPACE . '\\MatchedEnum';
+        $originalType = new ClassString(self::NAMESPACE . '\\FooEnum', true);
+        $expectedType = new ClassString(self::NAMESPACE . '\\MatchedEnum', true);
 
         $expected = new ModelCollection();
         $expected->add(new ClassModel(
@@ -207,8 +208,8 @@ final class ExistingModelsTest extends TestCase
 
     public function testUpdateClassNamesRenamesUnionProperties(): void
     {
-        $originalType = self::NAMESPACE . '\\FooEnum';
-        $expectedType = self::NAMESPACE . '\\MatchedEnum';
+        $originalType = new ClassString(self::NAMESPACE . '\\FooEnum', true);
+        $expectedType = new ClassString(self::NAMESPACE . '\\MatchedEnum', true);
 
         $expected = new ModelCollection();
         $expected->add(new ClassModel(

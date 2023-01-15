@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
  *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\OperationModel
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel
  */
 final class OperationModelTest extends TestCase
 {

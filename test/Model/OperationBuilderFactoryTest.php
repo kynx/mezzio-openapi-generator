@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilderFactory;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilderFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder
  *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilderFactory
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilderFactory
  */
 final class OperationBuilderFactoryTest extends TestCase
 {

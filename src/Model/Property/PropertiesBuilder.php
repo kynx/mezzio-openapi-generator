@@ -17,8 +17,8 @@ use function in_array;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class PropertiesBuilder
 {

@@ -10,6 +10,7 @@ use cebe\openapi\spec\RequestBody;
 use cebe\openapi\spec\Response;
 use cebe\openapi\spec\Responses;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_merge;
 use function assert;
@@ -25,21 +26,17 @@ use function is_numeric;
  */
 final class OperationLocator
 {
-    private ParameterLocator $parameterLocator;
-    private RequestBodyLocator $requestBodyLocator;
-    private ResponseLocator $responseLocator;
-
-    public function __construct()
-    {
-        $this->parameterLocator   = new ParameterLocator();
-        $this->requestBodyLocator = new RequestBodyLocator();
-        $this->responseLocator    = new ResponseLocator();
+    public function __construct(
+        private readonly ParameterLocator $parameterLocator = new ParameterLocator(),
+        private readonly RequestBodyLocator $requestBodyLocator = new RequestBodyLocator(),
+        private readonly ResponseLocator $responseLocator = new ResponseLocator()
+    ) {
     }
 
     /**
      * @return array<string, NamedSpecification>
      */
-    public function getNamedSchemas(string $baseName, Operation $operation): array
+    public function getNamedSpecifications(string $baseName, Operation $operation): array
     {
         $models = [];
         foreach ($operation->parameters as $parameter) {
@@ -47,7 +44,7 @@ final class OperationLocator
                 throw ModelException::unresolvedReference($parameter);
             }
 
-            $models = array_merge($models, $this->parameterLocator->getNamedSchemas($baseName, $parameter));
+            $models = array_merge($models, $this->parameterLocator->getNamedSpecifications($baseName, $parameter));
         }
 
         if ($operation->requestBody instanceof Reference) {
@@ -79,9 +76,6 @@ final class OperationLocator
                 $models = array_merge($models, $this->responseLocator->getNamedSchemas($name, $response));
             }
         }
-
-        $pointer          = $operation->getDocumentPosition()?->getPointer() ?? '';
-        $models[$pointer] = new NamedSpecification($baseName . 'Operation', $operation);
 
         return $models;
     }

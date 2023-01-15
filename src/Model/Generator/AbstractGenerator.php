@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Generator;
 
+use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
@@ -16,7 +18,6 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use function array_combine;
 use function array_filter;
 use function array_pad;
-use function array_pop;
 use function array_slice;
 use function count;
 use function explode;
@@ -71,7 +72,7 @@ abstract class AbstractGenerator
 
     protected function getClassLikeName(AbstractClassLikeModel|EnumModel $modelClass): string
     {
-        return $this->getClassName($modelClass->getClassName());
+        return GeneratorUtil::getClassName($modelClass->getClassName());
     }
 
     protected function getMethodName(PropertyInterface $property): string
@@ -116,7 +117,7 @@ abstract class AbstractGenerator
         $fqns = [];
         foreach ($properties as $property) {
             if ($property instanceof ArrayProperty) {
-                $fqns[] = $this->getPropertyUse($property->getMemberType());
+                $fqns[] = $this->getPropertyUse($property->getType());
             } elseif ($property instanceof SimpleProperty) {
                 $fqns[] = $this->getPropertyUse($property->getType());
             } elseif ($property instanceof UnionProperty) {
@@ -137,12 +138,12 @@ abstract class AbstractGenerator
         return $aliased;
     }
 
-    private function getPropertyUse(PropertyType|string $propertyType): string|null
+    private function getPropertyUse(PropertyType|ClassString $propertyType): string|null
     {
         if ($propertyType instanceof PropertyType) {
             return $propertyType->isClassType() ? $propertyType->toPhpType() : null;
         }
-        return $propertyType;
+        return $propertyType->getClassString();
     }
 
     protected function normalizePropertyName(PropertyInterface $property): string
@@ -150,22 +151,16 @@ abstract class AbstractGenerator
         return preg_replace('/^\$/', '', $property->getName());
     }
 
-    private function getClassName(string $fqn): string
-    {
-        $parts = explode('\\', $fqn);
-        return array_pop($parts);
-    }
-
     /**
      * @param UsesArray $aliases
      */
-    private function getTypeString(PropertyType|string $propertyType): string
+    private function getTypeString(PropertyType|ClassString $propertyType): string
     {
         if ($propertyType instanceof PropertyType) {
             return $propertyType->toPhpType();
         }
 
-        return $propertyType;
+        return $propertyType->getClassString();
     }
 
     /**
@@ -176,7 +171,7 @@ abstract class AbstractGenerator
     {
         $duplicates = $previous = [];
         foreach ($fqns as $fqn => $alias) {
-            $key = $alias ?? $this->getClassName($fqn);
+            $key = $alias ?? GeneratorUtil::getClassName($fqn);
             if (! in_array($key, $previous)) {
                 $previous[] = $key;
                 continue;

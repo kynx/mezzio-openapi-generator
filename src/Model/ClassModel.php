@@ -11,8 +11,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ClassModelTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class ClassModel extends AbstractClassLikeModel
 {

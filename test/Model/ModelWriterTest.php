@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
-use cebe\openapi\Reader;
-use cebe\openapi\spec\OpenApi;
-use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels;
+use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
@@ -25,12 +23,12 @@ use function current;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathsLocator
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
@@ -39,8 +37,8 @@ use function current;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
@@ -70,9 +68,6 @@ final class ModelWriterTest extends TestCase
         $this->writer = $this->createMock(WriterInterface::class);
 
         $this->modelWriter = new ModelWriter(
-            new OpenApiLocator(),
-            $this->getModelCollectionBuilder(self::NAMESPACE),
-            new ExistingModels(self::NAMESPACE, self::DIRECTORY),
             new ModelGenerator(),
             $this->writer
         );
@@ -80,22 +75,24 @@ final class ModelWriterTest extends TestCase
 
     public function testWriteWritesModels(): void
     {
-        $openApi = $this->getOpenApi();
-        $actual  = null;
+        $collection = $this->getModelCollection();
+        $actual     = null;
         $this->writer->method('write')
             ->willReturnCallback(function (PhpFile $file) use (&$actual) {
                 $actual = $file;
             });
 
-        $this->modelWriter->write($openApi);
+        $this->modelWriter->write($collection);
         self::assertInstanceOf(PhpFile::class, $actual);
         $class = current($actual->getClasses());
         self::assertInstanceOf(ClassType::class, $class);
-        self::assertSame('MatchedClass', $class->getName(), "Class not renamed");
+        self::assertSame('FooClass', $class->getName());
     }
 
-    private function getOpenApi(): OpenApi
+    private function getModelCollection(): ModelCollection
     {
-        return Reader::readFromYamlFile(__DIR__ . '/Asset/model-writer.yaml');
+        $collection = new ModelCollection();
+        $collection->add(new ClassModel('FooClass', '/components/schemas/FooClass', []));
+        return $collection;
     }
 }

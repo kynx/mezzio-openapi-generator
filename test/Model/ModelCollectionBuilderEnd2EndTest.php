@@ -11,12 +11,15 @@ use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OpenApiLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator;
+use Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -35,7 +38,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
     {
         parent::setUp();
 
-        $this->locator = new OpenApiLocator();
+        $this->locator = new OpenApiLocator(new PathsLocator(new PathItemLocator()));
         $this->builder = $this->getModelCollectionBuilder('');
     }
 
@@ -86,7 +89,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
             new SimpleProperty('$id', 'id', new PropertyMetadata(), PropertyType::Integer),
             new SimpleProperty('$name', 'name', new PropertyMetadata(), PropertyType::String),
         ];
-        $anonClass      = '\\First\\Status200Response';
+        $anonClass      = '\\First\\Get\\Status200Response';
 
         $models   = [
             new ClassModel($anonClass, $anonPointer, [], ...$anonProperties),
@@ -114,7 +117,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
 
         $firstPointer    = '/components/schemas/First';
         $firstProperties = [
-            new SimpleProperty('$enum', 'enum', new PropertyMetadata(), $enumClass),
+            new SimpleProperty('$enum', 'enum', new PropertyMetadata(), new ClassString($enumClass, true)),
         ];
 
         $models   = [
@@ -184,7 +187,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         $requestProperties = [
             new SimpleProperty('$age', 'age', new PropertyMetadata(), PropertyType::Integer),
             new SimpleProperty('$nickname', 'nickname', new PropertyMetadata(), PropertyType::String),
-            new SimpleProperty('$petType', 'pet_type', new PropertyMetadata(), $enumClass),
+            new SimpleProperty('$petType', 'pet_type', new PropertyMetadata(), new ClassString($enumClass, true)),
             new SimpleProperty('$hunts', 'hunts', new PropertyMetadata(), PropertyType::Boolean),
         ];
 
@@ -258,6 +261,6 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         $openApi = Reader::readFromYamlFile(__DIR__ . '/Asset/' . $file);
         self::assertTrue($openApi->validate(), "Invalid openapi schema: " . implode("\n", $openApi->getErrors()));
 
-        return $this->locator->getNamedSchemas($openApi);
+        return $this->locator->getNamedSpecifications($openApi);
     }
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
-use cebe\openapi\spec\OpenApi;
-
 /**
  * @internal
  *
@@ -14,5 +12,5 @@ use cebe\openapi\spec\OpenApi;
  */
 interface ModelWriterInterface
 {
-    public function write(OpenApi $openApi): void;
+    public function write(ModelCollection $modelCollection): void;
 }

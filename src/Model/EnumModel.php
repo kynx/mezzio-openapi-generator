@@ -11,8 +11,8 @@ use function array_values;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\EnumModelTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class EnumModel
 {

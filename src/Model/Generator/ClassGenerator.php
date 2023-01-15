@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Generator;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationModel;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 

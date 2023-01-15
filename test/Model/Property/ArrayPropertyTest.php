@@ -23,6 +23,6 @@ final class ArrayPropertyTest extends TestCase
         $property   = new ArrayProperty('$foo', 'foo', new PropertyMetadata(), $isList, $memberType);
 
         self::assertSame($isList, $property->isList());
-        self::assertSame($memberType, $property->getMemberType());
+        self::assertSame($memberType, $property->getType());
     }
 }

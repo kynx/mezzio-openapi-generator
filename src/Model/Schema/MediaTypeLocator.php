@@ -8,6 +8,7 @@ use cebe\openapi\spec\MediaType;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_merge;
 use function array_pop;
@@ -26,18 +27,15 @@ use function ucfirst;
  */
 final class MediaTypeLocator
 {
-    private SchemaLocator $schemaLocator;
-
-    public function __construct()
+    public function __construct(private readonly SchemaLocator $schemaLocator = new SchemaLocator())
     {
-        $this->schemaLocator = new SchemaLocator();
     }
 
     /**
      * @param array<array-key, MediaType> $mediaTypes
      * @return array<string, NamedSpecification>
      */
-    public function getNamedSchemas(string $baseName, array $mediaTypes): array
+    public function getNamedSpecifications(string $baseName, array $mediaTypes): array
     {
         $models   = [];
         $pointers = [];
@@ -67,7 +65,7 @@ final class MediaTypeLocator
                 $name = $baseName;
             }
 
-            $models = array_merge($models, $this->schemaLocator->getNamedSchemas($name, $mediaType->schema));
+            $models = array_merge($models, $this->schemaLocator->getNamedSpecifications($name, $mediaType->schema));
         }
 
         return $models;

@@ -9,8 +9,8 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Property\AbstractPropertyTest
  *
- * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
- * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 abstract class AbstractProperty implements PropertyInterface
 {

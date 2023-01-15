@@ -11,16 +11,19 @@ final class PropertyValue
 {
     /** @param array<string, string> $valueMap */
     public function __construct(
-        private readonly string|null $key,
+        private readonly string $key,
         private readonly array $valueMap,
     ) {
     }
 
-    public function getKey(): string|null
+    public function getKey(): string
     {
         return $this->key;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getValueMap(): array
     {
         return $this->valueMap;

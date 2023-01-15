@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Mezzio\OpenApiGenerator\Model\Namer;
+namespace Kynx\Mezzio\OpenApiGenerator\Namer;
 
 interface NamerInterface
 {

@@ -11,14 +11,15 @@ use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Code\Normalizer\UniqueVariableLabeler;
 use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
-use Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -28,16 +29,16 @@ use function ucfirst;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\OperationModel
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\NamedSpecification
+ * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
  *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder
  */
 final class OperationBuilderTest extends TestCase
 {
@@ -81,7 +82,7 @@ final class OperationBuilderTest extends TestCase
             '$' . $in . 'Params',
             '',
             new PropertyMetadata(...['required' => true]),
-            $propertyClass
+            new ClassString($propertyClass)
         );
         $expected      = [
             new ClassModel($propertyClass, $pointer . '/parameters/' . $in, [], $fooProperty),
@@ -123,13 +124,13 @@ final class OperationBuilderTest extends TestCase
             '$foo',
             'foo',
             new PropertyMetadata(...['required' => true]),
-            '\\Bar'
+            new ClassString('\\Bar')
         );
         $pathProperty  = new SimpleProperty(
             '$queryParams',
             '',
             new PropertyMetadata(...['required' => true]),
-            $propertyClass
+            new ClassString($propertyClass)
         );
         $expected      = [
             new ClassModel($propertyClass, $pointer . '/parameters/query', [], $fooProperty),

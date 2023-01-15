@@ -19,7 +19,7 @@ use function array_values;
  */
 final class UnionProperty extends AbstractProperty
 {
-    /** @var list<PropertyType|string> */
+    /** @var list<PropertyType|ClassString> */
     private array $members;
 
     public function __construct(
@@ -27,7 +27,7 @@ final class UnionProperty extends AbstractProperty
         protected readonly string $originalName,
         protected readonly PropertyMetadata $metadata,
         private readonly PropertyList|PropertyValue|null $discriminator,
-        PropertyType|string ...$members
+        PropertyType|ClassString ...$members
     ) {
         $this->members = array_values($members);
     }
@@ -38,7 +38,7 @@ final class UnionProperty extends AbstractProperty
     }
 
     /**
-     * @return list<PropertyType|string>
+     * @return list<PropertyType|ClassString>
      */
     public function getMembers(): array
     {

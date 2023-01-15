@@ -13,6 +13,9 @@ final class PropertyList
     {
     }
 
+    /**
+     * @return array<string, list<string>>
+     */
     public function getClassMap(): array
     {
         return $this->classMap;

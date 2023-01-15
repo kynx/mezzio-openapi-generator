@@ -8,6 +8,7 @@ use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
@@ -17,6 +18,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use PHPUnit\Framework\TestCase;
 
 use function array_combine;
+use function array_map;
 use function implode;
 
 /**
@@ -85,10 +87,10 @@ final class PropertyBuilderTest extends TestCase
 
     public function testGetPropertyReturnsClassProperty(): void
     {
-        $expected   = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), '\\Foo');
+        $expected   = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), new ClassString(self::class));
         $pointer    = '/components/schemas/Foo';
         $schema     = $this->getSchema($pointer, []);
-        $classNames = [$pointer => $expected->getType()];
+        $classNames = [$pointer => self::class];
 
         $actual = $this->builder->getProperty(
             $schema,
@@ -147,8 +149,9 @@ final class PropertyBuilderTest extends TestCase
             '\\Bar',
             '\\Baz',
         ];
+        $propertyTypes = array_map(fn (string $class): ClassString => new ClassString($class), $classes);
         $discriminator = new PropertyList(['\\Bar' => [], '\\Baz' => []]);
-        $expected      = new UnionProperty('$foo', 'foo', new PropertyMetadata(), $discriminator, ...$classes);
+        $expected      = new UnionProperty('$foo', 'foo', new PropertyMetadata(), $discriminator, ...$propertyTypes);
 
         $pointers = [
             '/components/schemas/Bar',

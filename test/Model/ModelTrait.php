@@ -14,9 +14,9 @@ use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Code\Normalizer\WordCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\Namer\NamespacedNamer;
-use Kynx\Mezzio\OpenApiGenerator\Model\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 
 trait ModelTrait
 {
@@ -41,7 +41,7 @@ trait ModelTrait
         $classLabeler = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
         $classNamer   = new NamespacedNamer($namespace, $classLabeler);
 
-        return new ModelCollectionBuilder($classNamer, $this->getModelsBuilder(), $this->getOperationBuilder());
+        return new ModelCollectionBuilder($classNamer, $this->getModelsBuilder());
     }
 
     protected function getPropertyLabeler(): UniqueVariableLabeler
