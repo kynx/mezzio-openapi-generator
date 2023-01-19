@@ -19,11 +19,17 @@ final class HydratorGeneratorFactoryTest extends TestCase
 {
     public function testInvokeReturnsInstance(): void
     {
-        $expected = [
+        $expected  = [
             DateTimeImmutable::class => DateTimeImmutableHydrator::class,
         ];
+        $container = $this->createStub(ContainerInterface::class);
+        $container->method('get')
+            ->willReturnMap([
+                ['config', ['openapi-gen' => ['hydrators' => $expected]]],
+            ]);
+
         $factory  = new HydratorGeneratorFactory();
-        $instance = $factory($this->createStub(ContainerInterface::class));
+        $instance = $factory($container);
         self::assertInstanceOf(HydratorGenerator::class, $instance);
 
         $reflection = new ReflectionProperty($instance, 'overrideHydrators');

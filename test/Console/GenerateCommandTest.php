@@ -7,7 +7,9 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Console;
 use cebe\openapi\spec\OpenApi;
 use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommand;
 use Kynx\Mezzio\OpenApiGenerator\GenerateServiceInterface;
+use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -33,34 +35,36 @@ final class GenerateCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    public function testConfigureSetsSpecificationDefault(): void
+    /**
+     * @dataProvider specificationArgumentProvider
+     */
+    public function testConfigureSetsSpecificationArgument(array $arguments, string $expected): void
     {
-        $actual = null;
+        $actualModels = $actualOperations = null;
         $this->service->method('getModels')
-            ->willReturnCallback(function (OpenApi $openApi) use (&$actual): ModelCollection {
-                $actual = $openApi;
+            ->willReturnCallback(function (OpenApi $openApi) use (&$actualModels): ModelCollection {
+                $actualModels = $openApi;
                 return new ModelCollection();
             });
+        $this->service->method('getOperations')
+            ->willReturnCallback(function (OpenApi $openApi) use (&$actualOperations): OperationCollection {
+                $actualOperations = $openApi;
+                return new OperationCollection();
+            });
 
-        $exit = $this->commandTester->execute([]);
+        $exit = $this->commandTester->execute($arguments);
         self::assertSame(0, $exit);
-        self::assertInstanceOf(OpenApi::class, $actual);
-        self::assertSame('Test Yaml', $actual->info->title);
+        self::assertInstanceOf(OpenApi::class, $actualModels);
+        self::assertSame($expected, $actualModels->info->title);
+        self::assertSame($actualModels, $actualOperations);
     }
 
-    public function testExecuteUsesSpecificationArgument(): void
+    public function specificationArgumentProvider(): array
     {
-        $actual = null;
-        $this->service->method('getModels')
-            ->willReturnCallback(function (OpenApi $openApi) use (&$actual): ModelCollection {
-                $actual = $openApi;
-                return new ModelCollection();
-            });
-
-        $exit = $this->commandTester->execute(['specification' => 'test.json']);
-        self::assertSame(0, $exit);
-        self::assertInstanceOf(OpenApi::class, $actual);
-        self::assertSame('Test Json', $actual->info->title);
+        return [
+            'default'   => [[], 'Test Yaml'],
+            'test.json' => [['specification' => 'test.json'], 'Test Json'],
+        ];
     }
 
     public function testExecuteNonExistentSpecificationOutputsError(): void
@@ -87,12 +91,15 @@ final class GenerateCommandTest extends TestCase
 
     public function testGenerateCreatesModels(): void
     {
-        $collection = new ModelCollection();
+        $modelCollection     = new ModelCollection();
+        $operationCollection = new OperationCollection();
         $this->service->method('getModels')
-            ->willReturn($collection);
+            ->willReturn($modelCollection);
+        $this->service->method('getOperations')
+            ->willReturn($operationCollection);
         $this->service->expects(self::once())
             ->method('createModels')
-            ->with($collection);
+            ->with($modelCollection);
 
         $exit = $this->commandTester->execute([]);
         self::assertSame(0, $exit);
@@ -100,12 +107,32 @@ final class GenerateCommandTest extends TestCase
 
     public function testGenerateCreatesHydrators(): void
     {
-        $collection = new ModelCollection();
+        $modelCollection     = new ModelCollection();
+        $hydratorCollection  = HydratorCollection::fromModelCollection($modelCollection);
+        $operationCollection = new OperationCollection();
         $this->service->method('getModels')
-            ->willReturn($collection);
+            ->willReturn($modelCollection);
+        $this->service->method('getOperations')
+            ->willReturn($operationCollection);
         $this->service->expects(self::once())
             ->method('createHydrators')
-            ->with($collection);
+            ->with($hydratorCollection);
+
+        $exit = $this->commandTester->execute([]);
+        self::assertSame(0, $exit);
+    }
+
+    public function testGenerateCreatesOperations(): void
+    {
+        $modelCollection     = new ModelCollection();
+        $operationCollection = new OperationCollection();
+        $this->service->method('getModels')
+            ->willReturn($modelCollection);
+        $this->service->method('getOperations')
+            ->willReturn($operationCollection);
+        $this->service->expects(self::once())
+            ->method('createOperations')
+            ->with($operationCollection);
 
         $exit = $this->commandTester->execute([]);
         self::assertSame(0, $exit);

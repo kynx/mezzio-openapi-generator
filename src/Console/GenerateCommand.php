@@ -8,6 +8,7 @@ use cebe\openapi\Reader;
 use cebe\openapi\spec\OpenApi;
 use finfo;
 use Kynx\Mezzio\OpenApiGenerator\GenerateServiceInterface;
+use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -67,7 +68,12 @@ final class GenerateCommand extends Command
 
         $models = $this->generateService->getModels($openApi);
         $this->generateService->createModels($models);
-        $this->generateService->createHydrators($models);
+
+        $hydrators = HydratorCollection::fromModelCollection($models);
+        $this->generateService->createHydrators($hydrators);
+
+        $operations = $this->generateService->getOperations($openApi, $models);
+        $this->generateService->createOperations($operations, $hydrators);
 
         return 0;
     }

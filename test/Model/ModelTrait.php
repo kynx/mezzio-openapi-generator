@@ -16,7 +16,6 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
-use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 
 trait ModelTrait
 {
@@ -29,11 +28,6 @@ trait ModelTrait
         );
 
         return new ModelsBuilder($propertyBuilder, $caseLabeler);
-    }
-
-    protected function getOperationBuilder(): OperationBuilder
-    {
-        return new OperationBuilder($this->getPropertyLabeler());
     }
 
     protected function getModelCollectionBuilder(string $namespace): ModelCollectionBuilder

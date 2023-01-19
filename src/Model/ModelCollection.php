@@ -21,6 +21,19 @@ final class ModelCollection implements Iterator, Countable
         $this->index   = 0;
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function getClassMap(): array
+    {
+        $map = [];
+        foreach ($this->members as $model) {
+            $map[$model->getJsonPointer()] = $model->getClassName();
+        }
+
+        return $map;
+    }
+
     public function add(AbstractClassLikeModel|EnumModel $member): void
     {
         if ($this->has($member)) {

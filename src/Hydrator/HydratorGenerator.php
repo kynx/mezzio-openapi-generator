@@ -18,6 +18,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\Dumper;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
@@ -27,10 +28,8 @@ use function array_filter;
 use function array_map;
 use function array_values;
 use function assert;
-use function implode;
 use function ltrim;
 use function sprintf;
-use function str_replace;
 
 /**
  * @internal
@@ -51,7 +50,8 @@ final class HydratorGenerator
      * @param array<string, class-string<HydratorInterface>> $overrideHydrators
      */
     public function __construct(
-        private readonly array $overrideHydrators
+        private readonly array $overrideHydrators,
+        private readonly Dumper $dumper = new Dumper()
     ) {
     }
 
@@ -85,8 +85,10 @@ final class HydratorGenerator
         $enums                  = $this->getEnums($classModel);
 
         $all = $valueDiscriminators + $propertyDiscriminators + $propertyHydrators + $enums;
-        if ($all !== []) {
+        if ($all !== [] || $propertyMap !== []) {
             $namespace->addUse(HydratorUtil::class);
+        }
+        if ($all !== []) {
             $arrayProperties = $this->getArrayProperties($classModel);
             $this->addArrayPropertiesConstant($class, $arrayProperties);
         }
@@ -168,11 +170,10 @@ final class HydratorGenerator
             foreach ($discriminator as $classString => $properties) {
                 $namespace->addUse($classString);
 
-                $properties          = array_map(fn (string $prop): string => $this->quoteString($prop), $properties);
                 $values[$property][] = new Literal(sprintf(
-                    "%s::class => [%s],\n",
+                    "%s::class => %s",
                     GeneratorUtil::getClassName($classString),
-                    implode(', ', $properties)
+                    $this->dumper->dump($properties)
                 ));
             }
         }
@@ -308,13 +309,10 @@ final class HydratorGenerator
                 continue;
             }
 
-            $classMap = [];
-            foreach ($discriminator->getClassMap() as $classString => $properties) {
-                $fullyQualified            = $this->getFullQualified($hydratorMap[$classString]);
-                $classMap[$fullyQualified] = $properties;
-            }
-
-            $discriminators[$property->getOriginalName()] = $classMap;
+            $discriminators[$property->getOriginalName()] = DiscriminatorUtil::getListDiscriminator(
+                $property,
+                $hydratorMap
+            );
         }
 
         return $discriminators;
@@ -421,10 +419,5 @@ final class HydratorGenerator
     private function getFullQualified(string $classString): string
     {
         return $this->getHydratorNamespace($classString) . '\\' . $this->getClassName($classString);
-    }
-
-    private function quoteString(string $string): string
-    {
-        return "'" . str_replace("'", "\\'", $string) . "'";
     }
 }

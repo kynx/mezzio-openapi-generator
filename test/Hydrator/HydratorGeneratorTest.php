@@ -20,12 +20,10 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
+use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\Constant;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
-use Nette\PhpGenerator\PhpFile;
-use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -36,6 +34,8 @@ use function trim;
  */
 final class HydratorGeneratorTest extends TestCase
 {
+    use GeneratorTrait;
+
     private const MODEL_NAMESPACE = 'Api\\Model';
 
     private HydratorGenerator $generator;
@@ -64,7 +64,7 @@ final class HydratorGeneratorTest extends TestCase
         $hydratorMap    = [$classModel->getClassName() => $model->getClassName()];
 
         $file         = $this->generator->generate($model, $hydratorMap);
-        $namespace    = $this->getNamespace($file);
+        $namespace    = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $expectedUses = [
             'OpenApiHydrator'   => OpenApiHydrator::class,
             'HydratorException' => HydratorException::class,
@@ -119,9 +119,12 @@ final class HydratorGeneratorTest extends TestCase
         $hydratorMap = [$classModel->getClassName() => $model->getClassName()];
 
         $file      = $this->generator->generate($model, $hydratorMap);
-        $namespace = $this->getNamespace($file);
-        $class     = $this->getClass($namespace, 'FooHydrator');
-        $constant  = $this->getConstant($class, 'PROPERTY_MAP');
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
+        $uses      = $namespace->getUses();
+        self::assertArrayHasKey('HydratorUtil', $uses);
+
+        $class    = $this->getClass($namespace, 'FooHydrator');
+        $constant = $this->getConstant($class, 'PROPERTY_MAP');
 
         self::assertSame($expected, $constant->getValue());
     }
@@ -159,7 +162,7 @@ final class HydratorGeneratorTest extends TestCase
         ];
 
         $file      = $this->generator->generate($model, $hydratorMap);
-        $namespace = $this->getNamespace($file);
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $uses      = $namespace->getUses();
         self::assertArrayHasKey('BarHydrator', $uses);
         self::assertArrayHasKey('BazHydrator', $uses);
@@ -182,8 +185,8 @@ final class HydratorGeneratorTest extends TestCase
     {
         $expected      = [
             'foo' => [
-                new Literal("BarHydrator::class => ['a', 'b'],\n"),
-                new Literal("BazHydrator::class => ['c', 'd'],\n"),
+                new Literal("BarHydrator::class => ['a', 'b']"),
+                new Literal("BazHydrator::class => ['c', 'd']"),
             ],
         ];
         $bar           = self::MODEL_NAMESPACE . '\\Foo\\Bar';
@@ -208,7 +211,7 @@ final class HydratorGeneratorTest extends TestCase
         ];
 
         $file      = $this->generator->generate($model, $classMap);
-        $namespace = $this->getNamespace($file);
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $uses      = $namespace->getUses();
         self::assertArrayHasKey('BarHydrator', $uses);
         self::assertArrayHasKey('BazHydrator', $uses);
@@ -246,7 +249,7 @@ final class HydratorGeneratorTest extends TestCase
         ];
 
         $file      = $this->generator->generate($model, $classMap);
-        $namespace = $this->getNamespace($file);
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $uses      = $namespace->getUses();
         self::assertArrayHasKey('BarHydrator', $uses);
         self::assertArrayHasKey('BazHydrator', $uses);
@@ -284,7 +287,7 @@ final class HydratorGeneratorTest extends TestCase
         ];
 
         $file      = $this->generator->generate($model, $classMap);
-        $namespace = $this->getNamespace($file);
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $uses      = $namespace->getUses();
         self::assertArrayHasKey('HydratorUtil', $uses);
 
@@ -311,7 +314,7 @@ final class HydratorGeneratorTest extends TestCase
         $classMap   = [$classModel->getClassName() => $model->getClassName()];
 
         $file      = $this->generator->generate($model, $classMap);
-        $namespace = $this->getNamespace($file);
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $class     = $this->getClass($namespace, 'FooHydrator');
         $constant  = $this->getConstant($class, 'ENUMS');
         self::assertEquals($expected, $constant->getValue());
@@ -324,35 +327,9 @@ final class HydratorGeneratorTest extends TestCase
         self::assertStringContainsString($expected, $body);
     }
 
-    private function getNamespace(PhpFile $file): PhpNamespace
-    {
-        $namespaces = $file->getNamespaces();
-        self::assertCount(1, $namespaces);
-        self::assertArrayHasKey(self::MODEL_NAMESPACE, $namespaces);
-        return $namespaces[self::MODEL_NAMESPACE];
-    }
-
-    private function getClass(PhpNamespace $namespace, string $className): ClassType
-    {
-        $classes = $namespace->getClasses();
-        self::assertCount(1, $classes);
-        self::assertArrayHasKey($className, $classes);
-        $class = $classes[$className];
-        self::assertInstanceOf(ClassType::class, $class);
-        return $class;
-    }
-
-    private function getConstant(ClassType $class, string $name): Constant
-    {
-        $constants = $class->getConstants();
-        self::assertArrayHasKey($name, $constants);
-        return $constants[$name];
-    }
-
     private function getHydrateMethod(ClassType $class): Method
     {
         self::assertCount(1, $class->getMethods());
-        self::assertTrue($class->hasMethod('hydrate'));
-        return $class->getMethod('hydrate');
+        return $this->getMethod($class, 'hydrate');
     }
 }

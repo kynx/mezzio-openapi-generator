@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Hydrator;
 
-use DateTimeImmutable;
-use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
+use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
 use Psr\Container\ContainerInterface;
 
 /**
  * @internal
  *
- * @psalm-immutable
  * @psalm-internal Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal KynxTest\Mezzio\OpenApiGenerator
  */
@@ -19,10 +17,11 @@ final class HydratorGeneratorFactory
 {
     public function __invoke(ContainerInterface $container): HydratorGenerator
     {
-        return new HydratorGenerator(
-            [
-                DateTimeImmutable::class => DateTimeImmutableHydrator::class,
-            ]
-        );
+        /** @var array $config */
+        $config = $container->get('config');
+        /** @var array<class-string, class-string<HydratorInterface>> $hydrators */
+        $hydrators = $config['openapi-gen']['hydrators'] ?? [];
+
+        return new HydratorGenerator($hydrators);
     }
 }

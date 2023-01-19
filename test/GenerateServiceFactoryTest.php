@@ -12,7 +12,11 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterInterface;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriterInterface;
 use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -22,6 +26,7 @@ use Psr\Container\ContainerInterface;
 final class GenerateServiceFactoryTest extends TestCase
 {
     use ModelTrait;
+    use OperationTrait;
 
     public function testInvokeReturnsInstance(): void
     {
@@ -29,9 +34,11 @@ final class GenerateServiceFactoryTest extends TestCase
         $container->method('get')
             ->willReturnMap([
                 [ModelCollectionBuilder::class, $this->getModelCollectionBuilder(__NAMESPACE__)],
+                [OperationCollectionBuilder::class, $this->getOperationCollectionBuilder(__NAMESPACE__)],
                 [ExistingModels::class, new ExistingModels(__NAMESPACE__, __DIR__)],
                 [ModelWriter::class, $this->createStub(ModelWriterInterface::class)],
                 [HydratorWriter::class, $this->createStub(HydratorWriterInterface::class)],
+                [OperationWriter::class, $this->createStub(OperationWriterInterface::class)],
             ]);
 
         $factory = new GenerateServiceFactory();
