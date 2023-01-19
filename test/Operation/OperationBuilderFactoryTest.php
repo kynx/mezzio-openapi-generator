@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Mezzio\OpenApiGenerator\Model;
+namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilderFactory;

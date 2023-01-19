@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiModel;
-use Kynx\Mezzio\OpenApi\OpenApiOperation;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\EnumGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Nette\PhpGenerator\PhpFile;
 
 use function assert;
@@ -39,17 +37,12 @@ final class ModelGenerator
         } elseif ($modelClass instanceof InterfaceModel) {
             $added = $this->interfaceGenerator->addInterface($namespace, $modelClass);
         } else {
-            assert($modelClass instanceof ClassModel || $modelClass instanceof OperationModel);
+            assert($modelClass instanceof ClassModel);
             $added = $this->classGenerator->addClass($namespace, $modelClass);
         }
 
-        if ($modelClass instanceof OperationModel) {
-            $namespace->addUse(OpenApiOperation::class);
-            $added->addAttribute(OpenApiOperation::class, [$modelClass->getJsonPointer()]);
-        } else {
-            $namespace->addUse(OpenApiModel::class);
-            $added->addAttribute(OpenApiModel::class, [$modelClass->getJsonPointer()]);
-        }
+        $namespace->addUse(OpenApiModel::class);
+        $added->addAttribute(OpenApiModel::class, [$modelClass->getJsonPointer()]);
 
         return $file;
     }
