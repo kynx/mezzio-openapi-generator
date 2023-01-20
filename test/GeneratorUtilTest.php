@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator;
 
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
+use Nette\PhpGenerator\Dumper;
 use PHPUnit\Framework\TestCase;
+
+use function array_map;
+use function implode;
 
 /**
  * @covers \Kynx\Mezzio\OpenApiGenerator\GeneratorUtil
@@ -48,5 +52,31 @@ final class GeneratorUtilTest extends TestCase
             'no_namespace'    => ['\\Foo', 'Foo'],
             'no_slash'        => ['Foo', 'Foo'],
         ];
+    }
+
+    public function testFormAsListReturnsFormatted(): void
+    {
+        $expected = "'first', 'second', 'third'";
+        $actual   = GeneratorUtil::formatAsList(new Dumper(), ['first', 'second', 'third']);
+        self::assertSame($expected, $actual);
+    }
+
+    public function testFormatAsListBreaksLines(): void
+    {
+        $poem     = [
+            'Can a parrot',
+            'Eat a carrot',
+            'Standing on its head?',
+            'If I did that',
+            'My mom would send me',
+            'Straight upstairs to bed!',
+        ];
+        $expected = "\n" . implode("\n", array_map(fn (string $line): string => "    '$line',", $poem)) . "\n";
+
+        $dumper              = new Dumper();
+        $dumper->indentation = '    ';
+
+        $actual = GeneratorUtil::formatAsList($dumper, $poem);
+        self::assertSame($expected, $actual);
     }
 }

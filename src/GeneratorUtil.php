@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator;
 
+use Nette\PhpGenerator\Dumper;
+
 use function array_pop;
 use function array_slice;
 use function explode;
 use function implode;
 use function ltrim;
+use function preg_replace;
 
 /**
  * @internal
@@ -35,5 +38,11 @@ final class GeneratorUtil
     {
         $parts = explode('\\', $fqn);
         return array_pop($parts);
+    }
+
+    public static function formatAsList(Dumper $dumper, array $list): string
+    {
+        $dump = $dumper->dump($list);
+        return preg_replace('/^\s*\[(.*)]\s*$/s', '$1', $dump);
     }
 }
