@@ -115,8 +115,8 @@ final class MediaTypeLocatorTest extends TestCase
             'application/xml'  => new MediaType(['schema' => $xml]),
         ];
         $expected   = [
-            '/a/b/c' => new NamedSpecification('FooJson', $json),
-            '/a/b/d' => new NamedSpecification('FooXml', $xml),
+            '/a/b/c' => new NamedSpecification('Foo application json', $json),
+            '/a/b/d' => new NamedSpecification('Foo application xml', $xml),
         ];
 
         $actual = $this->locator->getNamedSpecifications('Foo', $mediaTypes);

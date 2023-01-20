@@ -11,11 +11,9 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_merge;
-use function array_pop;
 use function array_unique;
 use function count;
-use function explode;
-use function ucfirst;
+use function preg_replace;
 
 /**
  * @internal
@@ -59,8 +57,7 @@ final class MediaTypeLocator
 
             // add content type to name if they're not all pointing at same schema
             if ($numPointers > 1) {
-                $types = explode('/', (string) $type);
-                $name  = $baseName . ucfirst(array_pop($types));
+                $name = $baseName . ' ' . preg_replace('/[^a-z0-9]+/i', ' ', (string) $type);
             } else {
                 $name = $baseName;
             }
