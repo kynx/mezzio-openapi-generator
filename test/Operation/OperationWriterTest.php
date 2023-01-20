@@ -10,7 +10,6 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
@@ -46,7 +45,6 @@ final class OperationWriterTest extends TestCase
             new HydratorGenerator([]),
             new OperationGenerator(),
             new RequestParserGenerator([]),
-            new RequestParserFactoryGenerator(),
             $this->writer
         );
     }
@@ -83,35 +81,6 @@ final class OperationWriterTest extends TestCase
 
         $collection         = $this->getOperationCollection([
             new OperationModel('\\Operation', '/paths/foo/get', $pathParams, null, null, null, []),
-        ]);
-        $modelCollection    = new ModelCollection();
-        $hydratorCollection = HydratorCollection::fromModelCollection($modelCollection);
-
-        $this->operationWriter->write($collection, $hydratorCollection);
-
-        assert(is_array($written));
-        $actual = $this->getWrittenClassNames($written);
-        self::assertSame($expected, $actual);
-    }
-
-    public function testWriteWritesRequestParserFactory(): void
-    {
-        $expected = [
-            'Operation',
-            'RequestParser',
-            'RequestParserFactory',
-        ];
-
-        $written = [];
-        $this->writer->method('write')
-            ->willReturnCallback(function (PhpFile $file) use (&$written) {
-                assert(is_array($written));
-                $written[] = $file;
-            });
-
-        $requestBodies      = $this->getRequestBodies();
-        $collection         = $this->getOperationCollection([
-            new OperationModel('\\Operation', '/paths/foo/get', null, null, null, null, $requestBodies),
         ]);
         $modelCollection    = new ModelCollection();
         $hydratorCollection = HydratorCollection::fromModelCollection($modelCollection);

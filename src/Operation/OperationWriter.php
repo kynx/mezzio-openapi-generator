@@ -59,11 +59,6 @@ final class OperationWriter implements OperationWriterInterface
 
             $parser = $this->requestParserGenerator->generate($operation, $hydratorMap);
             $this->writer->write($parser);
-
-            if ($operation->getRequestBodies() !== []) {
-                $factory = $this->requestParserFactoryGenerator->generate($operation);
-                $this->writer->write($factory);
-            }
         }
     }
 

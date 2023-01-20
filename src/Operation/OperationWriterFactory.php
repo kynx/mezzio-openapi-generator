@@ -8,7 +8,6 @@ use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Psr\Container\ContainerInterface;
@@ -35,7 +34,6 @@ final class OperationWriterFactory
             $container->get(HydratorGenerator::class),
             new OperationGenerator(),
             new RequestParserGenerator($hydrators),
-            new RequestParserFactoryGenerator(),
             $container->get(Writer::class)
         );
     }
