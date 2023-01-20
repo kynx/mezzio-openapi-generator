@@ -7,9 +7,9 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Operation\Generator;
 use DateTimeImmutable;
 use Generator;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestParser;
+use Kynx\Mezzio\OpenApi\Operation\ContentTypeNegotiator;
 use Kynx\Mezzio\OpenApi\Operation\OperationUtil;
-use Kynx\Mezzio\OpenApi\Operation\RequestBody\MediaTypeMatcher;
-use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
+use Kynx\Mezzio\OpenApi\Operation\RequestParserInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
@@ -27,9 +27,9 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Nette\PhpGenerator\PhpFile;
-use Nette\PhpGenerator\PromotedParameter;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
+use Rize\UriTemplate;
 
 use function array_merge;
 use function trim;
@@ -60,11 +60,7 @@ final class RequestParserGeneratorTest extends TestCase
 
     public function testGenerateReturnsParserFile(): void
     {
-        $expected = <<<PARSER_BODY
-        \$params = [];
-        
-        return new Operation(...\$params);
-        PARSER_BODY;
+        $expected = 'return new Operation();';
 
         $operation = new OperationModel(self::CLASS_NAME, self::POINTER, null, null, null, null, []);
 
@@ -75,12 +71,14 @@ final class RequestParserGeneratorTest extends TestCase
         $expectedUses = [
             'OpenApiRequestParser'   => OpenApiRequestParser::class,
             'OperationUtil'          => OperationUtil::class,
+            'RequestParserInterface' => RequestParserInterface::class,
             'ServerRequestInterface' => ServerRequestInterface::class,
         ];
         $uses         = $namespace->getUses();
         self::assertSame($expectedUses, $uses);
 
         $class = $this->getClass($namespace, 'RequestParser');
+        self::assertSame([RequestParserInterface::class], $class->getImplements());
         self::assertTrue($class->isFinal());
 
         $attributes = $class->getAttributes();
@@ -108,27 +106,46 @@ final class RequestParserGeneratorTest extends TestCase
     /**
      * @dataProvider parameterProvider
      */
-    public function testGenerateAddsParameterHydrator(OperationModel $operation, string $type, string $template): void
+    public function testGenerateAddsParameterGetter(OperationModel $operation, string $type, string $template): void
     {
         $var           = '$' . $type;
-        $getMethod     = 'get' . ucfirst($type) . 'Variables';
-        $key           = $type . 'Params';
-        $paramClass    = self::NAMESPACE . '\\' . ucfirst($type) . 'Params';
+        $paramName     = ucfirst($type) . 'Params';
+        $utilMethod    = 'get' . ucfirst($type) . 'Variables';
+        $getMethod     = 'get' . $paramName;
+        $paramClass    = self::NAMESPACE . '\\' . $paramName;
+        $hydratorName  = $paramName . 'Hydrator';
         $hydratorClass = $paramClass . 'Hydrator';
-        $hydratorName  = ucfirst($type) . 'ParamsHydrator';
 
-        $file      = $this->generator->generate($operation, [$paramClass => $hydratorClass]);
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
-        $body      = $this->getParseMethodBody($file);
+        $expected = <<<PARAMETER_GETTER
+        $var = OperationUtil::$utilMethod(\$this->uriTemplate, $template, \$request);
+        return $hydratorName::hydrate($var);
+        PARAMETER_GETTER;
+
+        $file        = $this->generator->generate($operation, [$paramClass => $hydratorClass]);
+        $namespace   = $this->getNamespace($file, self::NAMESPACE);
+        $class       = $this->getClass($namespace, 'RequestParser');
+        $constructor = $this->getMethod($class, '__construct');
+        $getter      = $this->getMethod($class, $getMethod);
+        $body        = $this->getParseMethodBody($file);
 
         $uses = $namespace->getUses();
         self::assertArrayHasKey('UriTemplate', $uses);
 
-        self::assertStringContainsString('$uriTemplate = new UriTemplate();', $body);
+        self::assertTrue($class->hasProperty('uriTemplate'));
+        $property = $class->getProperty('uriTemplate');
+        self::assertTrue($property->isPrivate());
+        self::assertSame(UriTemplate::class, $property->getType());
 
-        $varAssignment   = "$var = OperationUtil::$getMethod(\$uriTemplate, $template, \$request);";
-        $paramAssignment = "\$params['$key'] = $hydratorName::hydrate($var);";
-        self::assertStringContainsString($varAssignment . "\n" . $paramAssignment, $body);
+        self::assertSame('$this->uriTemplate = new UriTemplate();', trim($constructor->getBody()));
+
+        self::assertSame($paramClass, $getter->getReturnType());
+        $parameters = $getter->getParameters();
+        self::assertArrayHasKey('request', $parameters);
+        $parameter = $parameters['request'];
+        self::assertSame(ServerRequestInterface::class, $parameter->getType());
+
+        self::assertSame("return new Operation(\$this->$getMethod(\$request));", trim($body));
+        self::assertSame($expected, trim($getter->getBody()));
     }
 
     public function parameterProvider(): Generator
@@ -196,28 +213,30 @@ final class RequestParserGeneratorTest extends TestCase
         $hydrators = [self::NAMESPACE . '\\PathParams' => self::NAMESPACE . '\\PathParmsHydrator'];
         $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param, null, null, null, []);
 
-        $file = $this->generator->generate($operation, $hydrators);
-        $body = $this->getParseMethodBody($file);
+        $file   = $this->generator->generate($operation, $hydrators);
+        $class  = $this->getClass($this->getNamespace($file, self::NAMESPACE), 'RequestParser');
+        $getter = $this->getMethod($class, 'getPathParams');
 
-        self::assertStringContainsString($expected, $body);
+        self::assertStringContainsString($expected, trim($getter->getBody()));
     }
 
-    /**
-     * @dataProvider requestBodyCallbackProvider
-     * @param array<string, string> $hydrators
-     */
-    public function testGenerateAddsRequestBodyCallback(
-        RequestBodyModel $requestBody,
-        array $hydrators,
-        string $callback
-    ): void {
-        $expected = <<<CONSTRUCTOR
-        \$this->bodyParsers = [
-        $callback
-        ];
-        CONSTRUCTOR;
+    public function testGenerateAddsNegotiator(): void
+    {
+        $expected = "\$this->negotiator = new ContentTypeNegotiator(['application/json', '*/*']);";
 
-        $operation = new OperationModel(self::CLASS_NAME, self::POINTER, null, null, null, null, [$requestBody]);
+        $requestBodies = [
+            new RequestBodyModel(
+                'application/json',
+                new SimpleProperty('', '', new PropertyMetadata(), new ClassString(__NAMESPACE__ . '\\Foo'))
+            ),
+            new RequestBodyModel(
+                '*/*',
+                new SimpleProperty('', '', new PropertyMetadata(), PropertyType::String)
+            ),
+        ];
+
+        $operation = new OperationModel(self::CLASS_NAME, self::POINTER, null, null, null, null, $requestBodies);
+        $hydrators = [__NAMESPACE__ . '\\Foo' => __NAMESPACE__ . '\\FooHydrator'];
 
         $file        = $this->generator->generate($operation, $hydrators);
         $namespace   = $this->getNamespace($file, self::NAMESPACE);
@@ -225,145 +244,145 @@ final class RequestParserGeneratorTest extends TestCase
         $constructor = $this->getMethod($class, '__construct');
 
         $uses = $namespace->getUses();
-        self::assertArrayHasKey('MediaTypeMatcher', $uses);
-        foreach ($hydrators as $hydrator) {
-            self::assertArrayHasKey(GeneratorUtil::getClassName($hydrator), $uses);
-        }
+        self::assertArrayHasKey('ContentTypeNegotiator', $uses);
 
-        $parameters = $constructor->getParameters();
-        self::assertArrayHasKey('requestBodyMatcher', $parameters);
-        $parameter = $parameters['requestBodyMatcher'];
-        self::assertInstanceOf(PromotedParameter::class, $parameter);
-        self::assertSame(MediaTypeMatcher::class, $parameter->getType());
-        self::assertTrue($parameter->isPrivate());
-        self::assertTrue($parameter->isReadOnly());
+        self::assertTrue($class->hasProperty('negotiator'));
+        $property = $class->getProperty('negotiator');
+        self::assertTrue($property->isPrivate());
+        self::assertSame(ContentTypeNegotiator::class, $property->getType());
 
         $body = trim($constructor->getBody());
         self::assertSame($expected, $body);
     }
 
-    public function requestBodyCallbackProvider(): array
+    /**
+     * @dataProvider requestBodyParserProvider
+     */
+    public function testGenerateAddsRequestBodyParser(
+        RequestBodyModel $requestBody,
+        string $returnType,
+        array $hydrators,
+        string $return
+    ): void {
+        $mimeType = $requestBody->getMimeType();
+        $expected = <<<END_OF_REQUEST_BODY_PARSER
+        \$body     = \$request->getParsedBody() ?? (string) \$request->getBody();
+        \$mimeType = \$this->negotiator->negotiate(\$request);
+        
+        return match(\$mimeType) {
+            '$mimeType' => $return,
+            default => throw OperationException::invalidContentType(\$mimeType, \$this->negotiator->getMimeTypes()),
+        };
+        END_OF_REQUEST_BODY_PARSER;
+
+        $operation = new OperationModel(self::CLASS_NAME, self::POINTER, null, null, null, null, [$requestBody]);
+
+        $file      = $this->generator->generate($operation, $hydrators);
+        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $class     = $this->getClass($namespace, 'RequestParser');
+        $method    = $this->getMethod($class, 'getRequestBody');
+
+        self::assertTrue($method->isPrivate());
+        self::assertSame($returnType, $method->getReturnType());
+        $parameters = $method->getParameters();
+        self::assertArrayHasKey('request', $parameters);
+        $parameter = $parameters['request'];
+        self::assertSame(ServerRequestInterface::class, $parameter->getType());
+
+        self::assertSame($expected, trim($method->getBody()));
+
+        $parse = $this->getParseMethodBody($file);
+
+        self::assertSame("return new Operation(\$this->getRequestBody(\$request));", trim($parse));
+    }
+
+    public function requestBodyParserProvider(): array
     {
         $class            = 'Foo';
         $arrayRequestBody = new RequestBodyModel(
-            'default',
+            '*/*',
             new ArrayProperty('', '', new PropertyMetadata(), true, PropertyType::String)
         );
-        $arrayCallback    = <<<ARRAY_CALLBACK
-            'default' => function (mixed \$body): array {
-                return (array) \$body;
-            },
-        ARRAY_CALLBACK;
+        $arrayReturn      = '(array) $body';
+        $arrayType        = 'array';
 
         $simpleClassRequestBody = new RequestBodyModel(
-            'default',
+            '*/*',
             new SimpleProperty('', '', new PropertyMetadata(), new ClassString(__NAMESPACE__ . '\\Foo'))
         );
-        $simpleClassCallback    = <<<SIMPLE_CLASS_CALLBACK
-            'default' => function (array \$body): Foo {
-                return FooHydrator::hydrate(\$body);
-            },
-        SIMPLE_CLASS_CALLBACK;
+        $simpleClassReturn      = 'FooHydrator::hydrate($body)';
+        $simpleClassType        = __NAMESPACE__ . '\\Foo';
         $classHydrators         = [__NAMESPACE__ . '\\' . $class => __NAMESPACE__ . '\\' . $class . 'Hydrator'];
 
         $simplePhpClassRequestBody = new RequestBodyModel(
-            'default',
+            '*/*',
             new SimpleProperty('', '', new PropertyMetadata(), PropertyType::DateTime)
         );
-        $simplePhpClassCallback    = <<<SIMPLE_PHP_CLASS_CALLBACK
-            'default' => function (string \$body): DateTimeImmutable {
-                return DateTimeImmutableHydrator::hydrate(\$body);
-            },
-        SIMPLE_PHP_CLASS_CALLBACK;
+        $simplePhpClassReturn      = 'DateTimeImmutableHydrator::hydrate($body)';
+        $simplePhpClassType        = DateTimeImmutable::class;
         $dateHydrators             = [DateTimeImmutable::class => __NAMESPACE__ . '\\DateTimeImmutableHydrator'];
 
         $simplePhpTypeRequestBody = new RequestBodyModel(
-            'default',
+            '*/*',
             new SimpleProperty('', '', new PropertyMetadata(), PropertyType::Integer)
         );
-        $simplePhpTypeCallback    = <<<SIMPLE_PHP_TYPE_CALLBACK
-            'default' => function (string \$body): int {
-                return (int) \$body;
-            },
-        SIMPLE_PHP_TYPE_CALLBACK;
+        $simplePhpTypeReturn      = '(int) $body';
+        $simplePhpType            = 'int';
 
         $propertyValueRequestBody = new RequestBodyModel(
-            'default',
+            '*/*',
             new UnionProperty(
                 '',
                 '',
                 new PropertyMetadata(),
                 new PropertyValue('foo', ['a' => __NAMESPACE__ . '\\Foo', 'b' => __NAMESPACE__ . '\\Bar']),
-                new ClassString(__NAMESPACE__ . '\\Foo')
+                new ClassString(__NAMESPACE__ . '\\Foo'),
+                new ClassString(__NAMESPACE__ . '\\Bar')
             )
         );
-        $propertyValueCallback    = <<<PROPERTY_VALUE_CALLBACK
-            'default' => function (array \$body): Foo|Bar {
-                return HydratorUtil::hydrateDiscriminatorValue('requestBody', \$body, [
-                    'key' => 'foo',
-                    'map' => [
-                        'a' => FooHydrator::class,
-                        'b' => BarHydrator::class,
-                    ],
-                ]);
-            },
+        $propertyValueReturn      = <<<PROPERTY_VALUE_CALLBACK
+        HydratorUtil::hydrateDiscriminatorValue('requestBody', \$body, [
+                'key' => 'foo',
+                'map' => [
+                    'a' => FooHydrator::class,
+                    'b' => BarHydrator::class,
+                ],
+            ])
         PROPERTY_VALUE_CALLBACK;
+        $propertyType             = __NAMESPACE__ . '\\Foo|' . __NAMESPACE__ . '\\Bar';
         $propertyHydrators        = [
             __NAMESPACE__ . '\\Foo' => __NAMESPACE__ . '\\FooHydrator',
             __NAMESPACE__ . '\\Bar' => __NAMESPACE__ . '\\BarHydrator',
         ];
 
         $propertyListRequestBody = new RequestBodyModel(
-            'default',
+            '*/*',
             new UnionProperty(
                 '',
                 '',
                 new PropertyMetadata(),
                 new PropertyList([__NAMESPACE__ . '\\Foo' => ['a'], __NAMESPACE__ . '\\Bar' => ['b']]),
-                new ClassString(__NAMESPACE__ . '\\Foo')
+                new ClassString(__NAMESPACE__ . '\\Foo'),
+                new ClassString(__NAMESPACE__ . '\\Bar')
             )
         );
-        $propertyListCallback    = <<<PROPERTY_LIST_CALLBACK
-            'default' => function (array \$body): Foo|Bar {
-                return HydratorUtil::hydrateDiscriminatorList('requestBody', \$body, [
-                    FooHydrator::class => ['a'],
-                    BarHydrator::class => ['b'],
-                ]);
-            },
+        $propertyListReturn      = <<<PROPERTY_LIST_CALLBACK
+        HydratorUtil::hydrateDiscriminatorList('requestBody', \$body, [
+                FooHydrator::class => ['a'],
+                BarHydrator::class => ['b'],
+            ])
         PROPERTY_LIST_CALLBACK;
 
+        // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'default'              => [$arrayRequestBody, [], $arrayCallback],
-            'simple_class'         => [$simpleClassRequestBody, $classHydrators, $simpleClassCallback],
-            'simple_php_class'     => [$simplePhpClassRequestBody, $dateHydrators, $simplePhpClassCallback],
-            'simple_php_type'      => [$simplePhpTypeRequestBody, [], $simplePhpTypeCallback],
-            'union_property_value' => [$propertyValueRequestBody, $propertyHydrators, $propertyValueCallback],
-            'union_property_list'  => [$propertyListRequestBody, $propertyHydrators, $propertyListCallback],
+            'default'              => [$arrayRequestBody, $arrayType, [], $arrayReturn],
+            'simple_class'         => [$simpleClassRequestBody, $simpleClassType, $classHydrators, $simpleClassReturn],
+            'simple_php_class'     => [$simplePhpClassRequestBody, $simplePhpClassType, $dateHydrators, $simplePhpClassReturn],
+            'simple_php_type'      => [$simplePhpTypeRequestBody, $simplePhpType, [], $simplePhpTypeReturn],
+            'union_property_value' => [$propertyValueRequestBody, $propertyType, $propertyHydrators, $propertyValueReturn],
+            'union_property_list'  => [$propertyListRequestBody, $propertyType, $propertyHydrators, $propertyListReturn],
         ];
-    }
-
-    public function testGenerateAddsRequestBodyParser(): void
-    {
-        $expected = <<<END_OF_REQUEST_BODY_PARSER
-        \$parser   = \$this->requestBodyMatcher->getParser(\$request);
-        \$body     = \$parser->parse(\$request);
-        \$callback = \$this->bodyParsers[\$parser->getMimeType()] ?? null;
-        assert(is_callable(\$callback));
-        \$params['requestBody'] = \$callback(\$body);
-        END_OF_REQUEST_BODY_PARSER;
-
-        $property    = new SimpleProperty('foo', 'foo', new PropertyMetadata(), new ClassString('\\Foo'));
-        $requestBody = new RequestBodyModel(
-            'default',
-            $property
-        );
-        $hydrators   = ['\\Foo' => '\\FooHydrator'];
-        $operation   = new OperationModel(self::CLASS_NAME, self::POINTER, null, null, null, null, [$requestBody]);
-
-        $file = $this->generator->generate($operation, $hydrators);
-        $body = $this->getParseMethodBody($file);
-
-        self::assertStringContainsString($expected, $body);
+        // phpcs:enable
     }
 
     private function getParseMethodBody(PhpFile $file): string

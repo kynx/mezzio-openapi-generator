@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Operation\Generator;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestParser;
+use Kynx\Mezzio\OpenApi\Operation\ContentTypeNegotiator;
+use Kynx\Mezzio\OpenApi\Operation\OperationException;
 use Kynx\Mezzio\OpenApi\Operation\OperationUtil;
-use Kynx\Mezzio\OpenApi\Operation\RequestBody\MediaTypeMatcher;
+use Kynx\Mezzio\OpenApi\Operation\RequestParserInterface;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\DiscriminatorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
@@ -20,18 +22,18 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
 use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\Closure;
 use Nette\PhpGenerator\Dumper;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
-use Nette\PhpGenerator\Printer;
-use Nette\PhpGenerator\PsrPrinter;
 use Psr\Http\Message\ServerRequestInterface;
 use Rize\UriTemplate;
 
 use function array_keys;
+use function array_map;
+use function array_merge;
+use function array_unique;
 use function assert;
 use function implode;
 use function str_contains;
@@ -52,8 +54,7 @@ final class RequestParserGenerator
      */
     public function __construct(
         private readonly array $overrideHydrators,
-        private readonly Dumper $dumper = new Dumper(),
-        private readonly Printer $printer = new PsrPrinter()
+        private readonly Dumper $dumper = new Dumper()
     ) {
         $this->dumper->indentation = '    ';
     }
@@ -69,17 +70,19 @@ final class RequestParserGenerator
         $namespace = $file->addNamespace(GeneratorUtil::getNamespace($operation->getClassName()));
         $namespace->addUse(OpenApiRequestParser::class)
             ->addUse(OperationUtil::class)
+            ->addUse(RequestParserInterface::class)
             ->addUse(ServerRequestInterface::class)
             ->addUse($operation->getClassName());
 
         $operationClass = $operation->getClassName();
         $parserClass    = GeneratorUtil::getNamespace($operationClass) . '\\RequestParser';
         $class          = $namespace->addClass(GeneratorUtil::getClassName($parserClass))
+            ->addImplement(RequestParserInterface::class)
             ->setFinal();
 
         $class->addAttribute(OpenApiRequestParser::class, [$operation->getJsonPointer()]);
 
-        $this->addConstructor($namespace, $class, $operation->getRequestBodies(), $hydratorMap);
+        $this->addConstructor($namespace, $class, $operation);
 
         $parse = $class->addMethod('parse')
             ->setPublic()
@@ -87,88 +90,107 @@ final class RequestParserGenerator
         $parse->addParameter('request')
             ->setType(ServerRequestInterface::class);
 
-        if ($operation->getModels() !== []) {
-            $namespace->addUse(UriTemplate::class);
-            $parse->addBody('$uriTemplate = new UriTemplate();');
-        }
-        $parse->addBody("\$params = [];\n");
-
+        $arguments = [];
         if ($operation->getPathParams() !== null) {
-            $this->addParamParser($namespace, $parse, $operation->getPathParams(), 'path', $hydratorMap);
+            $arguments[] = new Literal(
+                $this->getParamParser($namespace, $class, $operation->getPathParams(), 'path', $hydratorMap)
+            );
         }
         if ($operation->getQueryParams() !== null) {
-            $this->addParamParser($namespace, $parse, $operation->getQueryParams(), 'query', $hydratorMap);
+            $arguments[] = new Literal(
+                $this->getParamParser($namespace, $class, $operation->getQueryParams(), 'query', $hydratorMap)
+            );
         }
         if ($operation->getHeaderParams() !== null) {
-            $this->addParamParser($namespace, $parse, $operation->getHeaderParams(), 'header', $hydratorMap);
+            $arguments[] = new Literal(
+                $this->getParamParser($namespace, $class, $operation->getHeaderParams(), 'header', $hydratorMap)
+            );
         }
         if ($operation->getCookieParams() !== null) {
-            $this->addParamParser($namespace, $parse, $operation->getCookieParams(), 'cookie', $hydratorMap);
+            $arguments[] = new Literal(
+                $this->getParamParser($namespace, $class, $operation->getCookieParams(), 'cookie', $hydratorMap)
+            );
         }
         if ($operation->getRequestBodies() !== []) {
-            $this->addRequestBodyParser($parse);
+            $arguments[] = new Literal(
+                $this->addRequestBodyParser($namespace, $class, $parse, $operation->getRequestBodies(), $hydratorMap)
+            );
         }
 
         $className = GeneratorUtil::getClassName($operationClass);
-        $parse->addBody("return new $className(...\$params);");
+        $arguments = GeneratorUtil::formatAsList($this->dumper, $arguments);
+        $parse->addBody("return new $className($arguments);");
 
         return $file;
     }
 
     /**
      * @param list<RequestBodyModel> $requestBodies
-     * @param array<string, string> $hydratorMap
      */
-    private function addConstructor(
-        PhpNamespace $namespace,
-        ClassType $class,
-        array $requestBodies,
-        array $hydratorMap
-    ): void {
-        if ($requestBodies === []) {
+    private function addConstructor(PhpNamespace $namespace, ClassType $class, OperationModel $operation): void
+    {
+        $requestBodies = $operation->getRequestBodies();
+        if ($requestBodies === [] && $operation->getModels() === []) {
             return;
         }
 
-        $namespace->addUse(MediaTypeMatcher::class);
-        $namespace->addUseFunction('assert');
-
         $constructor = $class->addMethod('__construct')
             ->setPublic();
-        $constructor->addPromotedParameter('requestBodyMatcher')
-            ->setPrivate()
-            ->setReadOnly()
-            ->setType(MediaTypeMatcher::class);
-        $class->addProperty('bodyParsers')
-            ->setPrivate()
-            ->setType('array');
 
-        $callbacks = [];
-        foreach ($requestBodies as $requestBody) {
-            $mimeType             = $requestBody->getMimeType();
-            $closure              = $this->getRequestBodyCallback($namespace, $requestBody, $hydratorMap);
-            $callbacks[$mimeType] = new Literal($this->printer->printClosure($closure));
+        if ($operation->getModels() !== []) {
+            $namespace->addUse(UriTemplate::class);
+            $class->addProperty('uriTemplate')
+                ->setPrivate()
+                ->setType(UriTemplate::class);
+            $constructor->addBody('$this->uriTemplate = new UriTemplate();');
         }
-        $constructor->addBody('$this->bodyParsers = ' . $this->dumper->dump($callbacks) . ";");
+
+        if ($requestBodies !== []) {
+            $namespace->addUse(ContentTypeNegotiator::class);
+            $class->addProperty('negotiator')
+                ->setPrivate()
+                ->setType(ContentTypeNegotiator::class);
+
+            $dumper             = clone $this->dumper;
+            $dumper->wrapLength = 60;
+            $mimeTypes          = $dumper->dump(
+                array_map(fn (RequestBodyModel $body): string => $body->getMimeType(), $requestBodies)
+            );
+
+            $constructor->addBody("\$this->negotiator = new ContentTypeNegotiator($mimeTypes);");
+        }
     }
 
     /**
      * @param array<string, string> $hydratorMap
      */
-    private function addParamParser(
+    private function getParamParser(
         PhpNamespace $namespace,
-        Method $method,
+        ClassType $class,
         CookieOrHeaderParams|PathOrQueryParams $params,
         string $type,
         array $hydratorMap
-    ): void {
-        $template = $this->getTemplate($params);
-        $model    = $params->getModel();
+    ): string {
+        $template  = $this->getTemplate($params);
+        $model     = $params->getModel();
+        $className = $model->getClassName();
 
-        $var       = '$' . $type;
-        $getMethod = 'get' . ucfirst($type) . 'Variables';
-        $key       = $type . 'Params';
+        $hydrator      = $hydratorMap[$model->getClassName()];
+        $hydratorClass = GeneratorUtil::getClassName($hydrator);
+        $namespace->addUse($className);
+        $namespace->addUse($hydrator);
 
-        $method->addBody("$var = OperationUtil::$getMethod(\$uriTemplate, $template, \$request);");
+        $var        = '$' . $type;
+        $utilMethod = 'get' . ucfirst($type) . 'Variables';
+        $getMethod  = 'get' . ucfirst($type) . 'Params';
+
+        $method = $class->addMethod($getMethod)
+            ->setPrivate()
+            ->setReturnType($className);
+        $method->addParameter('request')
+            ->setType(ServerRequestInterface::class);
+
+        $method->addBody("$var = OperationUtil::$utilMethod(\$this->uriTemplate, $template, \$request);");
         foreach ($model->getProperties() as $property) {
             if (! ($property instanceof SimpleProperty && $property->getType() instanceof ClassString)) {
                 continue;
@@ -179,61 +201,118 @@ final class RequestParserGenerator
             }
         }
 
-        $hydrator      = $hydratorMap[$model->getClassName()];
-        $hydratorClass = GeneratorUtil::getClassName($hydrator);
-        $namespace->addUse($hydrator);
+        $method->addBody("return $hydratorClass::hydrate($var);");
 
-        $method->addBody("\$params['$key'] = $hydratorClass::hydrate($var);\n");
-    }
-
-    private function addRequestBodyParser(Method $method): void
-    {
-        $method->addBody('$parser   = $this->requestBodyMatcher->getParser($request);');
-        $method->addBody('$body     = $parser->parse($request);');
-        $method->addBody('$callback = $this->bodyParsers[$parser->getMimeType()] ?? null;');
-        $method->addBody('assert(is_callable($callback));');
-        $method->addBody("\$params['requestBody'] = \$callback(\$body);\n");
+        return "\$this->$getMethod(\$request)";
     }
 
     /**
+     * @param list<RequestBodyModel> $requestBodies
      * @param array<string, string> $hydratorMap
      */
-    private function getRequestBodyCallback(
+    private function addRequestBodyParser(
         PhpNamespace $namespace,
-        RequestBodyModel $requestBody,
+        ClassType $class,
+        Method $parse,
+        array $requestBodies,
         array $hydratorMap
-    ): Closure {
+    ): string {
+        $namespace->addUse(OperationException::class);
+
+        $method = $class->addMethod('getRequestBody')
+            ->setPrivate()
+            ->setReturnType($this->getRequestBodyReturnType($requestBodies));
+        $method->addParameter('request')
+            ->setType(ServerRequestInterface::class);
+
+        $method->addBody('$body     = $request->getParsedBody() ?? (string) $request->getBody();');
+        $method->addBody('$mimeType = $this->negotiator->negotiate($request);' . "\n");
+
+        $literals = [];
+        foreach ($requestBodies as $requestBody) {
+            $return     = $this->getRequestBodyReturn($namespace, $requestBody, $hydratorMap);
+            $literals[] = new Literal("? => $return", [$requestBody->getMimeType()]);
+        }
+        // phpcs:ignore Generic.Files.LineLength.TooLong
+        $literals[] = new Literal('default => throw OperationException::invalidContentType($mimeType, $this->negotiator->getMimeTypes())');
+
+        $dumper     = clone $this->dumper;
+        $conditions = GeneratorUtil::formatAsList($dumper, $literals);
+        $method->addBody('return match($mimeType) {' . $conditions . '};');
+
+        return '$this->getRequestBody($request)';
+    }
+
+    /**
+     * @param list<RequestBodyModel> $requestBodies
+     */
+    private function getRequestBodyReturnType(array $requestBodies): string
+    {
+        $types = [];
+        foreach ($requestBodies as $requestBody) {
+            $types = array_merge($types, $this->getRequestBodyType($requestBody));
+        }
+
+        return implode('|', array_unique($types));
+    }
+
+    private function getRequestBodyType(RequestBodyModel $requestBody): array
+    {
         $property = $requestBody->getType();
         if ($property instanceof ArrayProperty) {
-            return $this->getArrayRequestBodyCallback();
+            return ['array'];
         }
+
         if ($property instanceof SimpleProperty) {
-            return $this->getSimpleRequestBodyCallback($namespace, $property, $hydratorMap);
+            return $property->getType() instanceof ClassString
+                ? [$property->getType()->getClassString()]
+                : [$property->getType()->toPhpType()];
         }
 
         assert($property instanceof UnionProperty);
-        return $this->getUnionRequestBodyCallback($namespace, $property, $hydratorMap);
-    }
+        $types = [];
+        foreach ($property->getMembers() as $member) {
+            $types[] = $member instanceof ClassString
+                ? $member->getClassString()
+                : $member->toPhpType();
+        }
 
-    private function getArrayRequestBodyCallback(): Closure
-    {
-        $closure = new Closure();
-        $closure->setReturnType('array');
-        $closure->addParameter('body')
-            ->setType('mixed');
-        $closure->setBody('return (array) $body;');
-
-        return $closure;
+        return $types;
     }
 
     /**
      * @param array<string, string> $hydratorMap
      */
-    private function getSimpleRequestBodyCallback(
+    private function getRequestBodyReturn(
+        PhpNamespace $namespace,
+        RequestBodyModel $requestBody,
+        array $hydratorMap
+    ): string {
+        $property = $requestBody->getType();
+        if ($property instanceof ArrayProperty) {
+            return $this->getArrayRequestBodyReturn();
+        }
+        if ($property instanceof SimpleProperty) {
+            return $this->getSimpleRequestBodyReturn($namespace, $property, $hydratorMap);
+        }
+
+        assert($property instanceof UnionProperty);
+        return $this->getUnionRequestBodyReturn($namespace, $property, $hydratorMap);
+    }
+
+    private function getArrayRequestBodyReturn(): string
+    {
+        return '(array) $body';
+    }
+
+    /**
+     * @param array<string, string> $hydratorMap
+     */
+    private function getSimpleRequestBodyReturn(
         PhpNamespace $namespace,
         SimpleProperty $property,
         array $hydratorMap
-    ): Closure {
+    ): string {
         $type = $property->getType();
         if ($type instanceof ClassString) {
             $classString   = $type->getClassString();
@@ -243,13 +322,7 @@ final class RequestParserGenerator
             $namespace->addUse($classString);
             $namespace->addUse($hydrator);
 
-            $closure = new Closure();
-            $closure->setReturnType(GeneratorUtil::getClassName($classString));
-            $closure->addParameter('body')
-                ->setType('array');
-            $closure->setBody("return $hydratorClass::hydrate(\$body);");
-
-            return $closure;
+            return "$hydratorClass::hydrate(\$body)";
         }
 
         $phpType = $type->toPhpType();
@@ -260,55 +333,41 @@ final class RequestParserGenerator
             $namespace->addUse($phpType);
             $namespace->addUse($hydrator);
 
-            $closure = new Closure();
-            $closure->setReturnType(GeneratorUtil::getClassName($phpType));
-            $closure->addParameter('body')
-                ->setType('string');
-            $closure->setBody("return $hydratorClass::hydrate(\$body);");
-
-            return $closure;
+            return "$hydratorClass::hydrate(\$body)";
         }
 
-        $closure = new Closure();
-        $closure->setReturnType(GeneratorUtil::getClassName($phpType));
-        $closure->addParameter('body')
-            ->setType('string');
-        $closure->setBody("return ($phpType) \$body;");
-
-        return $closure;
+        return "($phpType) \$body";
     }
 
     /**
      * @param array<string, string> $hydratorMap
      */
-    private function getUnionRequestBodyCallback(
+    private function getUnionRequestBodyReturn(
         PhpNamespace $namespace,
         UnionProperty $property,
         array $hydratorMap
-    ): Closure {
+    ): string {
         $discriminator = $property->getDiscriminator();
         if ($discriminator instanceof PropertyValue) {
-            return $this->getPropertyValueRequestBodyCallback($namespace, $property, $hydratorMap);
+            return $this->getPropertyValueRequestBodyReturn($namespace, $property, $hydratorMap);
         }
 
-        return $this->getPropertyListRequestBodyCallback($namespace, $property, $hydratorMap);
+        return $this->getPropertyListRequestBodyReturn($namespace, $property, $hydratorMap);
     }
 
     /**
      * @param array<string, string> $hydratorMap
      */
-    private function getPropertyValueRequestBodyCallback(
+    private function getPropertyValueRequestBodyReturn(
         PhpNamespace $namespace,
         UnionProperty $property,
         array $hydratorMap
-    ): Closure {
+    ): string {
         $discriminator = $property->getDiscriminator();
         assert($discriminator instanceof PropertyValue);
 
-        $types = [];
         foreach ($discriminator->getValueMap() as $className) {
             $namespace->addUse($className);
-            $types[] = GeneratorUtil::getClassName($className);
         }
 
         $values = DiscriminatorUtil::getValueDiscriminator($property, $hydratorMap);
@@ -319,32 +378,23 @@ final class RequestParserGenerator
 
         $dumper             = clone $this->dumper;
         $dumper->wrapLength = 58;
-        $valueArray         = $dumper->dump($values);
 
-        $closure = new Closure();
-        $closure->setReturnType(implode('|', $types));
-        $closure->addParameter('body')
-            ->setType('array');
-        $closure->addBody("return HydratorUtil::hydrateDiscriminatorValue('requestBody', \$body, $valueArray);");
-
-        return $closure;
+        return $dumper->format("HydratorUtil::hydrateDiscriminatorValue('requestBody', \$body, ?)", $values);
     }
 
     /**
      * @param array<string, string> $hydratorMap
      */
-    private function getPropertyListRequestBodyCallback(
+    private function getPropertyListRequestBodyReturn(
         PhpNamespace $namespace,
         UnionProperty $property,
         array $hydratorMap
-    ): Closure {
+    ): string {
         $discriminator = $property->getDiscriminator();
         assert($discriminator instanceof PropertyList);
 
-        $types = [];
         foreach (array_keys($discriminator->getClassMap()) as $className) {
             $namespace->addUse($className);
-            $types[] = GeneratorUtil::getClassName($className);
         }
 
         $values   = DiscriminatorUtil::getListDiscriminator($property, $hydratorMap);
@@ -352,20 +402,13 @@ final class RequestParserGenerator
         foreach ($values as $hydratorName => $properties) {
             $namespace->addUse($hydratorName);
             $hydrator   = GeneratorUtil::getClassName($hydratorName);
-            $literals[] = new Literal($hydrator . '::class => ' . $this->dumper->dump($properties));
+            $literals[] = new Literal($hydrator . '::class => ?', [$properties]);
         }
 
         $dumper             = clone $this->dumper;
         $dumper->wrapLength = 58;
-        $valueArray         = $dumper->dump($literals);
 
-        $closure = new Closure();
-        $closure->setReturnType(implode('|', $types));
-        $closure->addParameter('body')
-            ->setType('array');
-        $closure->addBody("return HydratorUtil::hydrateDiscriminatorList('requestBody', \$body, $valueArray);");
-
-        return $closure;
+        return $dumper->format("HydratorUtil::hydrateDiscriminatorList('requestBody', \$body, ?)", $literals);
     }
 
     private function getTemplate(CookieOrHeaderParams|PathOrQueryParams $params): string
