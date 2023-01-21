@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Hydrator;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiHydrator;
-use Kynx\Mezzio\OpenApi\Hydrator\HydratorException;
+use Kynx\Mezzio\OpenApi\Hydrator\Exception\HydrationException;
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
@@ -66,7 +66,7 @@ final class HydratorGenerator
         $classModel = $model->getModel();
 
         $namespace = $file->addNamespace($this->getHydratorNamespace($model->getClassName()));
-        $namespace->addUse(HydratorException::class)
+        $namespace->addUse(HydrationException::class)
             ->addUse(HydratorInterface::class)
             ->addUse(OpenApiHydrator::class)
             ->addUse(TypeError::class)
@@ -258,7 +258,7 @@ final class HydratorGenerator
         try {
             return new $className(...\$data);
         } catch (TypeError \$error) {
-            throw HydratorException::fromThrowable($className::class, \$error);
+            throw HydrationException::fromThrowable($className::class, \$error);
         }
         EOB);
     }

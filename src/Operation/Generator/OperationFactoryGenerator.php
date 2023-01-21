@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Operation\Generator;
 
-use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestParser;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
 use Kynx\Mezzio\OpenApi\Operation\ContentTypeNegotiator;
-use Kynx\Mezzio\OpenApi\Operation\OperationException;
+use Kynx\Mezzio\OpenApi\Operation\Exception\InvalidContentTypeException;
+use Kynx\Mezzio\OpenApi\Operation\OperationFactoryInterface;
 use Kynx\Mezzio\OpenApi\Operation\OperationUtil;
-use Kynx\Mezzio\OpenApi\Operation\RequestParserInterface;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\DiscriminatorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
@@ -42,12 +42,12 @@ use function ucfirst;
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserGeneratorTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGeneratorTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
-final class RequestParserGenerator
+final class OperationFactoryGenerator
 {
     /**
      * @param array<string, string> $overrideHydrators
@@ -68,26 +68,26 @@ final class RequestParserGenerator
         $file->setStrictTypes();
 
         $namespace = $file->addNamespace(GeneratorUtil::getNamespace($operation->getClassName()));
-        $namespace->addUse(OpenApiRequestParser::class)
+        $namespace->addUse(OpenApiOperationFactory::class)
             ->addUse(OperationUtil::class)
-            ->addUse(RequestParserInterface::class)
+            ->addUse(OperationFactoryInterface::class)
             ->addUse(ServerRequestInterface::class)
             ->addUse($operation->getClassName());
 
         $operationClass = $operation->getClassName();
-        $parserClass    = GeneratorUtil::getNamespace($operationClass) . '\\RequestParser';
+        $parserClass    = GeneratorUtil::getNamespace($operationClass) . '\\OperationFactory';
         $class          = $namespace->addClass(GeneratorUtil::getClassName($parserClass))
-            ->addImplement(RequestParserInterface::class)
+            ->addImplement(OperationFactoryInterface::class)
             ->setFinal();
 
-        $class->addAttribute(OpenApiRequestParser::class, [$operation->getJsonPointer()]);
+        $class->addAttribute(OpenApiOperationFactory::class, [$operation->getJsonPointer()]);
 
         $this->addConstructor($namespace, $class, $operation);
 
-        $parse = $class->addMethod('parse')
+        $getOperation = $class->addMethod('getOperation')
             ->setPublic()
             ->setReturnType($operationClass);
-        $parse->addParameter('request')
+        $getOperation->addParameter('request')
             ->setType(ServerRequestInterface::class);
 
         $arguments = [];
@@ -113,13 +113,13 @@ final class RequestParserGenerator
         }
         if ($operation->getRequestBodies() !== []) {
             $arguments[] = new Literal(
-                $this->addRequestBodyParser($namespace, $class, $parse, $operation->getRequestBodies(), $hydratorMap)
+                $this->addRequestBodyParser($namespace, $class, $operation->getRequestBodies(), $hydratorMap)
             );
         }
 
         $className = GeneratorUtil::getClassName($operationClass);
         $arguments = GeneratorUtil::formatAsList($this->dumper, $arguments);
-        $parse->addBody("return new $className($arguments);");
+        $getOperation->addBody("return new $className($arguments);");
 
         return $file;
     }
@@ -213,11 +213,10 @@ final class RequestParserGenerator
     private function addRequestBodyParser(
         PhpNamespace $namespace,
         ClassType $class,
-        Method $parse,
         array $requestBodies,
         array $hydratorMap
     ): string {
-        $namespace->addUse(OperationException::class);
+        $namespace->addUse(InvalidContentTypeException::class);
 
         $method = $class->addMethod('getRequestBody')
             ->setPrivate()
@@ -234,11 +233,11 @@ final class RequestParserGenerator
             $literals[] = new Literal("? => $return", [$requestBody->getMimeType()]);
         }
         // phpcs:ignore Generic.Files.LineLength.TooLong
-        $literals[] = new Literal('default => throw OperationException::invalidContentType($mimeType, $this->negotiator->getMimeTypes())');
+        $literals[] = new Literal('default => throw InvalidContentTypeException::fromExpected($mimeType, $this->negotiator->getMimeTypes())');
 
         $dumper     = clone $this->dumper;
         $conditions = GeneratorUtil::formatAsList($dumper, $literals);
-        $method->addBody('return match($mimeType) {' . $conditions . '};');
+        $method->addBody('return match ($mimeType) {' . $conditions . '};');
 
         return '$this->getRequestBody($request)';
     }
@@ -256,6 +255,9 @@ final class RequestParserGenerator
         return implode('|', array_unique($types));
     }
 
+    /**
+     * @return list<string>
+     */
     private function getRequestBodyType(RequestBodyModel $requestBody): array
     {
         $property = $requestBody->getType();
@@ -263,15 +265,8 @@ final class RequestParserGenerator
             return ['array'];
         }
 
-        if ($property instanceof SimpleProperty) {
-            return $property->getType() instanceof ClassString
-                ? [$property->getType()->getClassString()]
-                : [$property->getType()->toPhpType()];
-        }
-
-        assert($property instanceof UnionProperty);
         $types = [];
-        foreach ($property->getMembers() as $member) {
+        foreach ($property->getTypes() as $member) {
             $types[] = $member instanceof ClassString
                 ? $member->getClassString()
                 : $member->toPhpType();

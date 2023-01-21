@@ -9,8 +9,8 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter;
@@ -44,7 +44,7 @@ final class OperationWriterTest extends TestCase
             new ModelGenerator(),
             new HydratorGenerator([]),
             new OperationGenerator(),
-            new RequestParserGenerator([]),
+            new OperationFactoryGenerator([]),
             $this->writer
         );
     }
@@ -69,7 +69,7 @@ final class OperationWriterTest extends TestCase
             $modelName,
             $modelName . 'Hydrator',
             'Operation',
-            'RequestParser',
+            'OperationFactory',
         ];
 
         $written = [];

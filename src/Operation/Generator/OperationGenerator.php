@@ -6,10 +6,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Operation\Generator;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperation;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
@@ -89,12 +86,7 @@ final class OperationGenerator
 
         $types = [];
         foreach ($operation->getRequestBodies() as $requestBody) {
-            $type = $requestBody->getType();
-            if ($type instanceof SimpleProperty || $type instanceof ArrayProperty) {
-                $types[] = $type->getType();
-            } elseif ($type instanceof UnionProperty) {
-                $types = array_merge($types, $type->getMembers());
-            }
+            $types = array_merge($types, $requestBody->getType()->getTypes());
         }
 
         $typeStrings = [];

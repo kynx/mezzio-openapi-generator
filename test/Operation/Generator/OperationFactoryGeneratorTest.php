@@ -6,10 +6,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Operation\Generator;
 
 use DateTimeImmutable;
 use Generator;
-use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestParser;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
 use Kynx\Mezzio\OpenApi\Operation\ContentTypeNegotiator;
+use Kynx\Mezzio\OpenApi\Operation\OperationFactoryInterface;
 use Kynx\Mezzio\OpenApi\Operation\OperationUtil;
-use Kynx\Mezzio\OpenApi\Operation\RequestParserInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
@@ -20,7 +20,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
@@ -36,9 +36,9 @@ use function trim;
 use function ucfirst;
 
 /**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserGenerator
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGenerator
  */
-final class RequestParserGeneratorTest extends TestCase
+final class OperationFactoryGeneratorTest extends TestCase
 {
     use GeneratorTrait;
     use OperationTrait;
@@ -47,13 +47,13 @@ final class RequestParserGeneratorTest extends TestCase
     private const CLASS_NAME = __NAMESPACE__ . '\\Foo\\Get\\Operation';
     private const POINTER    = '/paths/foo/get';
 
-    private RequestParserGenerator $generator;
+    private OperationFactoryGenerator $generator;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->generator = new RequestParserGenerator([
+        $this->generator = new OperationFactoryGenerator([
             DateTimeImmutable::class => __NAMESPACE__ . '\\DateTimeImmutableHydrator',
         ]);
     }
@@ -69,27 +69,27 @@ final class RequestParserGeneratorTest extends TestCase
 
         $namespace    = $this->getNamespace($file, self::NAMESPACE);
         $expectedUses = [
-            'OpenApiRequestParser'   => OpenApiRequestParser::class,
-            'OperationUtil'          => OperationUtil::class,
-            'RequestParserInterface' => RequestParserInterface::class,
-            'ServerRequestInterface' => ServerRequestInterface::class,
+            'OpenApiOperationFactory'   => OpenApiOperationFactory::class,
+            'OperationFactoryInterface' => OperationFactoryInterface::class,
+            'OperationUtil'             => OperationUtil::class,
+            'ServerRequestInterface'    => ServerRequestInterface::class,
         ];
         $uses         = $namespace->getUses();
         self::assertSame($expectedUses, $uses);
 
-        $class = $this->getClass($namespace, 'RequestParser');
-        self::assertSame([RequestParserInterface::class], $class->getImplements());
+        $class = $this->getClass($namespace, 'OperationFactory');
+        self::assertSame([OperationFactoryInterface::class], $class->getImplements());
         self::assertTrue($class->isFinal());
 
         $attributes = $class->getAttributes();
         self::assertCount(1, $attributes);
         $attribute = $attributes[0];
-        self::assertSame(OpenApiRequestParser::class, $attribute->getName());
+        self::assertSame(OpenApiOperationFactory::class, $attribute->getName());
         self::assertSame([self::POINTER], $attribute->getArguments());
 
         self::assertFalse($class->hasMethod('__construct'));
 
-        $method = $this->getMethod($class, 'parse');
+        $method = $this->getMethod($class, 'getOperation');
         self::assertTrue($method->isPublic());
         self::assertSame($operation->getClassName(), $method->getReturnType());
 
@@ -123,10 +123,10 @@ final class RequestParserGeneratorTest extends TestCase
 
         $file        = $this->generator->generate($operation, [$paramClass => $hydratorClass]);
         $namespace   = $this->getNamespace($file, self::NAMESPACE);
-        $class       = $this->getClass($namespace, 'RequestParser');
+        $class       = $this->getClass($namespace, 'OperationFactory');
         $constructor = $this->getMethod($class, '__construct');
         $getter      = $this->getMethod($class, $getMethod);
-        $body        = $this->getParseMethodBody($file);
+        $body        = $this->getGetOperationBody($file);
 
         $uses = $namespace->getUses();
         self::assertArrayHasKey('UriTemplate', $uses);
@@ -188,7 +188,7 @@ final class RequestParserGeneratorTest extends TestCase
         $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param, null, null, null, []);
 
         $file = $this->generator->generate($operation, $hydrators);
-        $body = $this->getParseMethodBody($file);
+        $body = $this->getGetOperationBody($file);
 
         self::assertStringNotContainsString('OperationUtil::listToAssociativeArray', $body);
     }
@@ -214,7 +214,7 @@ final class RequestParserGeneratorTest extends TestCase
         $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param, null, null, null, []);
 
         $file   = $this->generator->generate($operation, $hydrators);
-        $class  = $this->getClass($this->getNamespace($file, self::NAMESPACE), 'RequestParser');
+        $class  = $this->getClass($this->getNamespace($file, self::NAMESPACE), 'OperationFactory');
         $getter = $this->getMethod($class, 'getPathParams');
 
         self::assertStringContainsString($expected, trim($getter->getBody()));
@@ -240,7 +240,7 @@ final class RequestParserGeneratorTest extends TestCase
 
         $file        = $this->generator->generate($operation, $hydrators);
         $namespace   = $this->getNamespace($file, self::NAMESPACE);
-        $class       = $this->getClass($namespace, 'RequestParser');
+        $class       = $this->getClass($namespace, 'OperationFactory');
         $constructor = $this->getMethod($class, '__construct');
 
         $uses = $namespace->getUses();
@@ -269,9 +269,9 @@ final class RequestParserGeneratorTest extends TestCase
         \$body     = \$request->getParsedBody() ?? (string) \$request->getBody();
         \$mimeType = \$this->negotiator->negotiate(\$request);
         
-        return match(\$mimeType) {
+        return match (\$mimeType) {
             '$mimeType' => $return,
-            default => throw OperationException::invalidContentType(\$mimeType, \$this->negotiator->getMimeTypes()),
+            default => throw InvalidContentTypeException::fromExpected(\$mimeType, \$this->negotiator->getMimeTypes()),
         };
         END_OF_REQUEST_BODY_PARSER;
 
@@ -279,7 +279,7 @@ final class RequestParserGeneratorTest extends TestCase
 
         $file      = $this->generator->generate($operation, $hydrators);
         $namespace = $this->getNamespace($file, self::NAMESPACE);
-        $class     = $this->getClass($namespace, 'RequestParser');
+        $class     = $this->getClass($namespace, 'OperationFactory');
         $method    = $this->getMethod($class, 'getRequestBody');
 
         self::assertTrue($method->isPrivate());
@@ -291,7 +291,7 @@ final class RequestParserGeneratorTest extends TestCase
 
         self::assertSame($expected, trim($method->getBody()));
 
-        $parse = $this->getParseMethodBody($file);
+        $parse = $this->getGetOperationBody($file);
 
         self::assertSame("return new Operation(\$this->getRequestBody(\$request));", trim($parse));
     }
@@ -385,11 +385,11 @@ final class RequestParserGeneratorTest extends TestCase
         // phpcs:enable
     }
 
-    private function getParseMethodBody(PhpFile $file): string
+    private function getGetOperationBody(PhpFile $file): string
     {
         $namespace = $this->getNamespace($file, self::NAMESPACE);
-        $class     = $this->getClass($namespace, 'RequestParser');
-        $method    = $this->getMethod($class, 'parse');
+        $class     = $this->getClass($namespace, 'OperationFactory');
+        $method    = $this->getMethod($class, 'getOperation');
         return $method->getBody();
     }
 }

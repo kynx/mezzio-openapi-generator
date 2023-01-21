@@ -7,8 +7,8 @@ namespace Kynx\Mezzio\OpenApiGenerator\Operation;
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Psr\Container\ContainerInterface;
 
@@ -33,7 +33,7 @@ final class OperationWriterFactory
             new ModelGenerator(),
             $container->get(HydratorGenerator::class),
             new OperationGenerator(),
-            new RequestParserGenerator($hydrators),
+            new OperationFactoryGenerator($hydrators),
             $container->get(Writer::class)
         );
     }

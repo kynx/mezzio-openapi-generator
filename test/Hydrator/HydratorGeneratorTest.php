@@ -7,7 +7,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Hydrator;
 use DateTimeImmutable;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiHydrator;
 use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
-use Kynx\Mezzio\OpenApi\Hydrator\HydratorException;
+use Kynx\Mezzio\OpenApi\Hydrator\Exception\HydrationException;
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorModel;
@@ -66,10 +66,10 @@ final class HydratorGeneratorTest extends TestCase
         $file         = $this->generator->generate($model, $hydratorMap);
         $namespace    = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $expectedUses = [
-            'OpenApiHydrator'   => OpenApiHydrator::class,
-            'HydratorException' => HydratorException::class,
-            'HydratorInterface' => HydratorInterface::class,
-            'TypeError'         => TypeError::class,
+            'OpenApiHydrator'    => OpenApiHydrator::class,
+            'HydrationException' => HydrationException::class,
+            'HydratorInterface'  => HydratorInterface::class,
+            'TypeError'          => TypeError::class,
         ];
         self::assertSame($expectedUses, $namespace->getUses());
 
@@ -97,7 +97,7 @@ final class HydratorGeneratorTest extends TestCase
         try {
             return new $className(...\$data);
         } catch (TypeError \$error) {
-            throw HydratorException::fromThrowable($className::class, \$error);
+            throw HydrationException::fromThrowable($className::class, \$error);
         }
         EOB;
         $actual   = trim($method->getBody());

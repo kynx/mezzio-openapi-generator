@@ -8,8 +8,8 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestParserGenerator;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 
 use function array_merge;
@@ -28,7 +28,7 @@ final class OperationWriter implements OperationWriterInterface
         private readonly ModelGenerator $modelGenerator,
         private readonly HydratorGenerator $hydratorGenerator,
         private readonly OperationGenerator $operationGenerator,
-        private readonly RequestParserGenerator $requestParserGenerator,
+        private readonly OperationFactoryGenerator $operationFactoryGenerator,
         private readonly WriterInterface $writer
     ) {
     }
@@ -57,8 +57,8 @@ final class OperationWriter implements OperationWriterInterface
             $file = $this->operationGenerator->generate($operation);
             $this->writer->write($file);
 
-            $parser = $this->requestParserGenerator->generate($operation, $hydratorMap);
-            $this->writer->write($parser);
+            $factory = $this->operationFactoryGenerator->generate($operation, $hydratorMap);
+            $this->writer->write($factory);
         }
     }
 
