@@ -7,18 +7,16 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Generator;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 
 use function array_combine;
-use function array_filter;
+use function array_merge;
 use function array_pad;
 use function array_slice;
+use function array_unique;
 use function count;
 use function explode;
 use function implode;
@@ -84,21 +82,9 @@ abstract class AbstractGenerator
         return 'get' . ucfirst($propertyName);
     }
 
-    /**
-     * @param UsesArray $aliases
-     */
     protected function getType(PropertyInterface $property): string
     {
-        $types = [];
-        if ($property instanceof SimpleProperty) {
-            $types[] = $this->getTypeString($property->getType());
-        } elseif ($property instanceof ArrayProperty) {
-            $types[] = 'array';
-        } elseif ($property instanceof UnionProperty) {
-            foreach ($property->getMembers() as $member) {
-                $types[] = $this->getTypeString($member);
-            }
-        }
+        $types = [$property->getPhpType()];
 
         $metadata = $property->getMetadata();
         if ($metadata->isNullable() || ! $metadata->isRequired()) {
@@ -114,53 +100,25 @@ abstract class AbstractGenerator
      */
     protected function getPropertyUses(array $properties): array
     {
-        $fqns = [];
+        $uses = [];
         foreach ($properties as $property) {
-            if ($property instanceof ArrayProperty) {
-                $fqns[] = $this->getPropertyUse($property->getType());
-            } elseif ($property instanceof SimpleProperty) {
-                $fqns[] = $this->getPropertyUse($property->getType());
-            } elseif ($property instanceof UnionProperty) {
-                foreach ($property->getMembers() as $member) {
-                    $fqns[] = $this->getPropertyUse($member);
-                }
-            }
+            $uses = array_merge($uses, $property->getUses());
         }
 
-        $fqns = array_filter($fqns);
+        $uses = array_unique($uses);
         uksort(
-            $fqns,
+            $uses,
             fn (mixed $a, mixed $b): int => count(explode('\\', (string) $b)) <=> count(explode('\\', (string) $a))
         );
-        $aliased = $this->createAliases(array_combine($fqns, array_pad([], count($fqns), null)));
+        $aliased = $this->createAliases(array_combine($uses, array_pad([], count($uses), null)));
         ksort($aliased);
 
         return $aliased;
     }
 
-    private function getPropertyUse(PropertyType|ClassString $propertyType): string|null
-    {
-        if ($propertyType instanceof PropertyType) {
-            return $propertyType->isClassType() ? $propertyType->toPhpType() : null;
-        }
-        return $propertyType->getClassString();
-    }
-
     protected function normalizePropertyName(PropertyInterface $property): string
     {
         return preg_replace('/^\$/', '', $property->getName());
-    }
-
-    /**
-     * @param UsesArray $aliases
-     */
-    private function getTypeString(PropertyType|ClassString $propertyType): string
-    {
-        if ($propertyType instanceof PropertyType) {
-            return $propertyType->toPhpType();
-        }
-
-        return $propertyType->getClassString();
     }
 
     /**

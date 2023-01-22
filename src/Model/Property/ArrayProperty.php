@@ -32,4 +32,29 @@ final class ArrayProperty extends AbstractProperty
     {
         return $this->type;
     }
+
+    public function getPhpType(): string
+    {
+        return 'array';
+    }
+
+    public function getUses(): array
+    {
+        $use = $this->getClassString($this->type);
+        return $use === null ? [] : [$use];
+    }
+
+    public function getDocBlockType(): string|null
+    {
+        $type = $this->getShortType($this->type);
+        if ($this->isList) {
+            return "list<$type>";
+        }
+        return "array<string, $type>";
+    }
+
+    public function getTypes(): array
+    {
+        return [$this->type];
+    }
 }

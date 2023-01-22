@@ -34,4 +34,28 @@ final class SimpleProperty extends AbstractProperty
     {
         return $this->type;
     }
+
+    public function getPhpType(): string
+    {
+        return $this->getTypeString($this->type);
+    }
+
+    public function getUses(): array
+    {
+        $use = $this->getClassString($this->type);
+        return $use === null ? [] : [$use];
+    }
+
+    public function getDocBlockType(): string|null
+    {
+        return null;
+    }
+
+    /**
+     * @return list<T>
+     */
+    public function getTypes(): array
+    {
+        return [$this->type];
+    }
 }

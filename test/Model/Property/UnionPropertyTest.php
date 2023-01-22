@@ -25,7 +25,7 @@ final class UnionPropertyTest extends TestCase
     {
         $members  = [PropertyType::Integer, new ClassString('\\Foo')];
         $property = new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, ...$members);
-        self::assertSame($members, $property->getMembers());
+        self::assertSame($members, $property->getTypes());
     }
 
     /**
@@ -45,5 +45,37 @@ final class UnionPropertyTest extends TestCase
             'property_value' => [new PropertyValue('foo', ['foo' => '\\Foo', 'bar' => '\\Bar'])],
             'null'           => [null],
         ];
+    }
+
+    public function testGetPhpTypeReturnsUnion(): void
+    {
+        $expected      = '\\Foo\\Bar|\\Foo\\Baz';
+        $members       = [new ClassString('\\Foo\\Bar'), new ClassString('\\Foo\\Baz')];
+        $discriminator = new PropertyValue('foo', []);
+        $property      = new UnionProperty('$foo', 'foo', new PropertyMetadata(), $discriminator, ...$members);
+
+        $actual = $property->getPhpType();
+        self::assertSame($expected, $actual);
+    }
+
+    public function testGetUsesReturnsTypes(): void
+    {
+        $expected      = ['\\Foo\\Bar', '\\Foo\\Baz'];
+        $members       = [new ClassString('\\Foo\\Bar'), new ClassString('\\Foo\\Baz')];
+        $discriminator = new PropertyValue('foo', []);
+        $property      = new UnionProperty('$foo', 'foo', new PropertyMetadata(), $discriminator, ...$members);
+
+        $actual = $property->getUses();
+        self::assertSame($expected, $actual);
+    }
+
+    public function testGetDocBlocTypeReturnsNull(): void
+    {
+        $members       = [new ClassString('\\Foo\\Bar'), new ClassString('\\Foo\\Baz')];
+        $discriminator = new PropertyValue('foo', []);
+        $property      = new UnionProperty('$foo', 'foo', new PropertyMetadata(), $discriminator, ...$members);
+
+        $actual = $property->getDocBlockType();
+        self::assertNull($actual);
     }
 }

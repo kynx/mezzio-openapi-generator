@@ -24,7 +24,6 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Dumper;
 use Nette\PhpGenerator\Literal;
-use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
 use Psr\Http\Message\ServerRequestInterface;
@@ -321,16 +320,6 @@ final class OperationFactoryGenerator
         }
 
         $phpType = $type->toPhpType();
-        if ($type->isClassType()) {
-            $hydrator      = $this->overrideHydrators[$phpType];
-            $hydratorClass = GeneratorUtil::getClassName($hydrator);
-
-            $namespace->addUse($phpType);
-            $namespace->addUse($hydrator);
-
-            return "$hydratorClass::hydrate(\$body)";
-        }
-
         return "($phpType) \$body";
     }
 

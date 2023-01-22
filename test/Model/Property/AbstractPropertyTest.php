@@ -6,6 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,6 +29,26 @@ final class AbstractPropertyTest extends TestCase
                 protected readonly string $originalName,
                 protected readonly PropertyMetadata $metadata
             ) {
+            }
+
+            public function getUses(): array
+            {
+                return [];
+            }
+
+            public function getPhpType(): string
+            {
+                return '';
+            }
+
+            public function getDocBlockType(): string|null
+            {
+                return null;
+            }
+
+            public function getTypes(): array
+            {
+                return [PropertyType::String];
             }
         };
 

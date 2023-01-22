@@ -7,7 +7,9 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
 
+use function array_filter;
 use function array_values;
+use function implode;
 
 /**
  * @internal
@@ -20,16 +22,16 @@ use function array_values;
 final class UnionProperty extends AbstractProperty
 {
     /** @var list<PropertyType|ClassString> */
-    private array $members;
+    private array $types;
 
     public function __construct(
         protected readonly string $name,
         protected readonly string $originalName,
         protected readonly PropertyMetadata $metadata,
         private readonly PropertyList|PropertyValue|null $discriminator,
-        PropertyType|ClassString ...$members
+        PropertyType|ClassString ...$types
     ) {
-        $this->members = array_values($members);
+        $this->types = array_values($types);
     }
 
     public function getDiscriminator(): PropertyList|PropertyValue|null
@@ -37,11 +39,34 @@ final class UnionProperty extends AbstractProperty
         return $this->discriminator;
     }
 
+    public function getPhpType(): string
+    {
+        $types = [];
+        foreach ($this->types as $type) {
+            $types[] = $this->getTypeString($type);
+        }
+        return implode('|', $types);
+    }
+
+    public function getUses(): array
+    {
+        $uses = [];
+        foreach ($this->types as $type) {
+            $uses[] = $this->getClassString($type);
+        }
+        return array_filter($uses);
+    }
+
+    public function getDocBlockType(): string|null
+    {
+        return null;
+    }
+
     /**
      * @return list<PropertyType|ClassString>
      */
-    public function getMembers(): array
+    public function getTypes(): array
     {
-        return $this->members;
+        return $this->types;
     }
 }

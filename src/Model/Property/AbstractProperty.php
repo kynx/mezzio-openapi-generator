@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 
+use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
+
 /**
  * @internal
  *
@@ -31,5 +33,22 @@ abstract class AbstractProperty implements PropertyInterface
     public function getMetadata(): PropertyMetadata
     {
         return $this->metadata;
+    }
+
+    protected function getClassString(ClassString|PropertyType $type): string|null
+    {
+        return $type instanceof ClassString ? $type->getClassString() : null;
+    }
+
+    protected function getTypeString(ClassString|PropertyType $type): string
+    {
+        return $type instanceof PropertyType ? $type->toPhpType() : $type->getClassString();
+    }
+
+    protected function getShortType(ClassString|PropertyType $type): string
+    {
+        return $type instanceof PropertyType
+            ? $type->toPhpType()
+            : GeneratorUtil::getClassName($type->getClassString());
     }
 }

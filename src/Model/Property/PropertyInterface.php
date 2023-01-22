@@ -17,4 +17,18 @@ interface PropertyInterface
     public function getOriginalName(): string;
 
     public function getMetadata(): PropertyMetadata;
+
+    /**
+     * @return array<int, string>
+     */
+    public function getUses(): array;
+
+    public function getPhpType(): string;
+
+    public function getDocBlockType(): string|null;
+
+    /**
+     * @return list<ClassString|PropertyType>
+     */
+    public function getTypes(): array;
 }

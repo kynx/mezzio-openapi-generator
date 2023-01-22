@@ -238,7 +238,7 @@ final class ExistingModels
                 );
             } elseif ($property instanceof UnionProperty) {
                 $members = [];
-                foreach ($property->getMembers() as $member) {
+                foreach ($property->getTypes() as $member) {
                     if ($member instanceof PropertyType) {
                         $members[] = $member;
                     } else {
