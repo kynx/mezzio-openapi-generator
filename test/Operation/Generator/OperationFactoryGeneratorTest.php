@@ -314,14 +314,6 @@ final class OperationFactoryGeneratorTest extends TestCase
         $simpleClassType        = __NAMESPACE__ . '\\Foo';
         $classHydrators         = [__NAMESPACE__ . '\\' . $class => __NAMESPACE__ . '\\' . $class . 'Hydrator'];
 
-        $simplePhpClassRequestBody = new RequestBodyModel(
-            '*/*',
-            new SimpleProperty('', '', new PropertyMetadata(), PropertyType::DateTime)
-        );
-        $simplePhpClassReturn      = 'DateTimeImmutableHydrator::hydrate($body)';
-        $simplePhpClassType        = DateTimeImmutable::class;
-        $dateHydrators             = [DateTimeImmutable::class => __NAMESPACE__ . '\\DateTimeImmutableHydrator'];
-
         $simplePhpTypeRequestBody = new RequestBodyModel(
             '*/*',
             new SimpleProperty('', '', new PropertyMetadata(), PropertyType::Integer)
@@ -377,7 +369,6 @@ final class OperationFactoryGeneratorTest extends TestCase
         return [
             'default'              => [$arrayRequestBody, $arrayType, [], $arrayReturn],
             'simple_class'         => [$simpleClassRequestBody, $simpleClassType, $classHydrators, $simpleClassReturn],
-            'simple_php_class'     => [$simplePhpClassRequestBody, $simplePhpClassType, $dateHydrators, $simplePhpClassReturn],
             'simple_php_type'      => [$simplePhpTypeRequestBody, $simplePhpType, [], $simplePhpTypeReturn],
             'union_property_value' => [$propertyValueRequestBody, $propertyType, $propertyHydrators, $propertyValueReturn],
             'union_property_list'  => [$propertyListRequestBody, $propertyType, $propertyHydrators, $propertyListReturn],

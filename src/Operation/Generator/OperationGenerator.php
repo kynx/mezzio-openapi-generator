@@ -92,9 +92,6 @@ final class OperationGenerator
         $typeStrings = [];
         foreach ($types as $type) {
             if ($type instanceof PropertyType) {
-                if ($type->isClassType()) {
-                    $namespace->addUse($type->toPhpType());
-                }
                 $typeStrings[] = $type->toPhpType();
             } else {
                 $namespace->addUse($type->getClassString());

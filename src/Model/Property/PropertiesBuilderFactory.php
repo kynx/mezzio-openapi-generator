@@ -21,6 +21,9 @@ final class PropertiesBuilderFactory
 {
     public function __invoke(ContainerInterface $container): PropertiesBuilder
     {
-        return new PropertiesBuilder(new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix()));
+        return new PropertiesBuilder(
+            new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix()),
+            $container->get(PropertyBuilder::class)
+        );
     }
 }

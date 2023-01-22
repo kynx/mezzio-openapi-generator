@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 
 use cebe\openapi\spec\Schema;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapper;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\DiscriminatorBuilder;
 
@@ -24,6 +25,7 @@ use function in_array;
 final class PropertyBuilder
 {
     public function __construct(
+        private readonly TypeMapper $typeMapper = new TypeMapper(),
         private readonly DiscriminatorBuilder $discriminatorBuilder = new DiscriminatorBuilder()
     ) {
     }
@@ -119,6 +121,6 @@ final class PropertyBuilder
         if (isset($classNames[$pointer])) {
             return new ClassString($classNames[$pointer], ModelUtil::isEnum($schema));
         }
-        return PropertyType::fromSchema($schema);
+        return $this->typeMapper->map($schema);
     }
 }

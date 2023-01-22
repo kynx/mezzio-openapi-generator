@@ -16,7 +16,6 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\UriInterface;
 
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
@@ -178,13 +177,10 @@ final class AbstractGeneratorTest extends TestCase
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
             'array_php'  => [[new ArrayProperty('$a', 'a', $metadata, false, PropertyType::String)], []],
-            'array_uri'  => [[new ArrayProperty('$a', 'a', $metadata, false, PropertyType::Uri)], [UriInterface::class => null]],
             'array'      => [[new ArrayProperty('$a', 'a', $metadata, false, $a)], ['\\A' => null]],
             'simple_php' => [[new SimpleProperty('$a', 'a', $metadata, PropertyType::String)], []],
-            'simple_uri' => [[new SimpleProperty('$a', 'a', $metadata, PropertyType::Uri)], [UriInterface::class => null]],
             'simple'     => [[new SimpleProperty('$a', 'a', $metadata, $a)], ['\\A' => null]],
             'union_php'  => [[new UnionProperty('$a', 'a', $metadata, null, PropertyType::String)], []],
-            'union_uri'  => [[new UnionProperty('$a', 'a', $metadata, null, PropertyType::Uri)], [UriInterface::class => null]],
             'union'      => [[new UnionProperty('$a', 'a', $metadata, null, $a, $b)], ['\\A' => null, '\\B' => null]],
         ];
         // phpcs:enable

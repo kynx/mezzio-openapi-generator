@@ -129,6 +129,11 @@ trait OperationTrait
     protected function getSimpleProperty(string $name, string|null $originalName = null): SimpleProperty
     {
         $originalName = $originalName ?? $name;
-        return new SimpleProperty('$' . $name, $originalName, new PropertyMetadata(...['required' => true]), PropertyType::String);
+        return new SimpleProperty(
+            '$' . $name,
+            $originalName,
+            new PropertyMetadata(...['required' => true]),
+            PropertyType::String
+        );
     }
 }

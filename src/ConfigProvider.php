@@ -14,6 +14,11 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriter;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriterFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels;
 use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModelsFactory;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateIntervalMapper;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateTimeImmutableMapper;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapper;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapperFactory;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\UriInterfaceMapper;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
@@ -22,6 +27,8 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderFactory;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
@@ -74,7 +81,12 @@ final class ConfigProvider
     private function getGeneratorConfig(): array
     {
         return [
-            'hydrators' => [
+            'type_mappers' => [
+                DateIntervalMapper::class,
+                DateTimeImmutableMapper::class,
+                UriInterfaceMapper::class,
+            ],
+            'hydrators'    => [
                 DateTimeImmutable::class => DateTimeImmutableHydrator::class,
             ],
         ];
@@ -99,6 +111,8 @@ final class ConfigProvider
                 OperationCollectionBuilder::class => OperationCollectionBuilderFactory::class,
                 OperationWriter::class            => OperationWriterFactory::class,
                 PropertiesBuilder::class          => PropertiesBuilderFactory::class,
+                PropertyBuilder::class            => PropertyBuilderFactory::class,
+                TypeMapper::class                 => TypeMapperFactory::class,
                 Writer::class                     => WriterFactory::class,
             ],
         ];

@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 
 use cebe\openapi\spec\Schema;
-use DateInterval;
-use DateTimeImmutable;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\UriInterface;
 use stdClass;
 
 use function implode;
@@ -137,36 +134,16 @@ final class PropertyTypeTest extends TestCase
         return [
             'array'    => [PropertyType::Array, 'array'],
             'bool'     => [PropertyType::Boolean, 'bool'],
-            'date'     => [PropertyType::Date, DateTimeImmutable::class],
-            'datetime' => [PropertyType::Date, DateTimeImmutable::class],
-            'duration' => [PropertyType::Duration, DateInterval::class],
+            'date'     => [PropertyType::Date, 'string'],
+            'datetime' => [PropertyType::Date, 'string'],
+            'duration' => [PropertyType::Duration, 'string'],
             'int'      => [PropertyType::Integer, 'int'],
             'float'    => [PropertyType::Number, 'float'],
             'null'     => [PropertyType::Null, 'null'],
             'object'   => [PropertyType::Object, 'object'],
             'string'   => [PropertyType::String, 'string'],
-            'uri'      => [PropertyType::Uri, UriInterface::class],
+            'uri'      => [PropertyType::Uri, 'string'],
             'other'    => [PropertyType::JsonPointer, 'string'],
-        ];
-    }
-
-    /**
-     * @dataProvider isClassTypeProvider
-     */
-    public function testIsClassType(PropertyType $type, bool $expected): void
-    {
-        $actual = $type->isClassType();
-        self::assertSame($expected, $actual);
-    }
-
-    public function isClassTypeProvider(): array
-    {
-        return [
-            'datetime' => [PropertyType::DateTime, true],
-            'date'     => [PropertyType::Date, true],
-            'duration' => [PropertyType::Duration, true],
-            'uri'      => [PropertyType::Uri, true],
-            'string'   => [PropertyType::String, false],
         ];
     }
 

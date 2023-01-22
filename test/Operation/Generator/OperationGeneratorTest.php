@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation\Generator;
 
-use DateTimeImmutable;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperation;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
@@ -145,7 +144,7 @@ final class OperationGeneratorTest extends TestCase
 
     public function testGenerateSetsUnionRequestBodyTypes(): void
     {
-        $types         = ['DateTimeImmutable' => DateTimeImmutable::class, 'string' => 'string'];
+        $types         = ['Bar' => '\\Foo\\Bar', 'string' => 'string'];
         $className     = self::NAMESPACE . '\\Operation';
         $pointer       = '/paths/foo/get';
         $requestBodies = [
@@ -156,7 +155,7 @@ final class OperationGeneratorTest extends TestCase
                     '',
                     new PropertyMetadata(),
                     new PropertyValue('foo', []),
-                    PropertyType::DateTime,
+                    new ClassString('\\Foo\\Bar'),
                     PropertyType::String
                 )
             ),
@@ -167,7 +166,7 @@ final class OperationGeneratorTest extends TestCase
         $namespace = $this->getNamespace($file, self::NAMESPACE);
 
         $uses = $namespace->getUses();
-        self::assertArrayHasKey('DateTimeImmutable', $uses);
+        self::assertArrayHasKey('Bar', $uses);
 
         $class       = $this->getClass($namespace, 'Operation');
         $constructor = $this->getMethod($class, '__construct');
