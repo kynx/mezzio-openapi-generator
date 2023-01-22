@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\PathItem;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Schema\PathItemLocatorInterface;
 
@@ -31,9 +32,10 @@ final class PathItemLocator implements PathItemLocatorInterface
     {
         $models     = [];
         $operations = $pathItem->getOperations();
+        $baseName   = "Path " . $baseName;
 
         foreach ($operations as $method => $operation) {
-            $name   = $baseName . ' ' . $method;
+            $name   = ModelUtil::getComponentName('pathItems', $pathItem) ?? "$baseName $method";
             $models = array_merge($models, $this->operationLocator->getNamedSpecifications($name, $operation));
         }
 

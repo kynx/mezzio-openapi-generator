@@ -10,6 +10,7 @@ use cebe\openapi\spec\RequestBody;
 use cebe\openapi\spec\Response;
 use cebe\openapi\spec\Responses;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_merge;
@@ -44,7 +45,9 @@ final class OperationLocator
                 throw ModelException::unresolvedReference($parameter);
             }
 
-            $models = array_merge($models, $this->parameterLocator->getNamedSpecifications($baseName, $parameter));
+            $name = ModelUtil::getComponentName('parameters', $parameter) ?? $baseName;
+
+            $models = array_merge($models, $this->parameterLocator->getNamedSpecifications($name, $parameter));
         }
 
         if ($operation->requestBody instanceof Reference) {
@@ -73,6 +76,9 @@ final class OperationLocator
                 } else {
                     $name = $baseName . ' ' . $code;
                 }
+
+                $name = ModelUtil::getComponentName('responses', $response) ?? $name;
+
                 $models = array_merge($models, $this->responseLocator->getNamedSchemas($name, $response));
             }
         }

@@ -28,10 +28,7 @@ final class SchemaLocator
      */
     public function getNamedSpecifications(string $name, Schema $schema): array
     {
-        if ($this->isReferenced($schema)) {
-            $paths = $schema->getDocumentPosition()?->getPath() ?? [];
-            $name  = (string) array_pop($paths);
-        }
+        $name = ModelUtil::getComponentName('schemas', $schema) ?? $name;
 
         if ($schema->type === 'array' && $schema->items instanceof Schema) {
             return $this->getNamedSpecifications($name . 'Item', $schema->items);
@@ -41,7 +38,7 @@ final class SchemaLocator
         }
 
         $models = [];
-        if ($this->isNamedSchema($schema)) {
+        if (ModelUtil::isNamedSchema($schema)) {
             $pointer          = $schema->getDocumentPosition()?->getPointer() ?? '';
             $models[$pointer] = new NamedSpecification($name, $schema);
         }
@@ -81,7 +78,7 @@ final class SchemaLocator
             }
 
             $allOf = $this->getNamedSpecifications($name . $i, $schema);
-            if (! $this->isReferenced($schema)) {
+            if (! ModelUtil::isComponent('schemas', $schema)) {
                 $pointer = $schema->getDocumentPosition()?->getPointer() ?? '';
                 unset($allOf[$pointer]);
             }
@@ -134,19 +131,5 @@ final class SchemaLocator
         }
 
         return $models;
-    }
-
-    private function isReferenced(Schema $schema): bool
-    {
-        if (! $this->isNamedSchema($schema)) {
-            return false;
-        }
-
-        return $schema->getDocumentPosition()?->parent()?->getPointer() === '/components/schemas';
-    }
-
-    private function isNamedSchema(Schema $schema): bool
-    {
-        return $schema->type === 'object' || $schema->allOf || $schema->anyOf || ModelUtil::isEnum($schema);
     }
 }

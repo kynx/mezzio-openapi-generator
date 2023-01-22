@@ -72,8 +72,8 @@ final class PathItemLocatorTest extends TestCase
         ]);
         $subPointer = '/responses/default/content/application~1json/schema';
         $expected   = [
-            '/paths/pet/get' . $subPointer  => new NamedSpecification('Foo get defaultResponse', $getSchema),
-            '/paths/pet/post' . $subPointer => new NamedSpecification('Foo post defaultResponse', $postSchema),
+            '/paths/pet/get' . $subPointer  => new NamedSpecification('Path Foo get defaultResponse', $getSchema),
+            '/paths/pet/post' . $subPointer => new NamedSpecification('Path Foo post defaultResponse', $postSchema),
         ];
 
         self::assertTrue($pathItem->validate(), implode("\n", $pathItem->getErrors()));

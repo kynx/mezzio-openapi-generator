@@ -67,8 +67,8 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         ];
 
         $models   = [
-            new ClassModel('\\First', $firstPointer, [], ...$firstProperties),
-            new ClassModel('\\Second', $secondPointer, [], ...$secondProperties),
+            new ClassModel('\\Schema\\First', $firstPointer, [], ...$firstProperties),
+            new ClassModel('\\Schema\\Second', $secondPointer, [], ...$secondProperties),
         ];
         $expected = new ModelCollection();
         foreach ($models as $model) {
@@ -89,7 +89,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
             new SimpleProperty('$id', 'id', new PropertyMetadata(), PropertyType::Integer),
             new SimpleProperty('$name', 'name', new PropertyMetadata(), PropertyType::String),
         ];
-        $anonClass      = '\\First\\Get\\Status200Response';
+        $anonClass      = '\\Path\\First\\Get\\Status200Response';
 
         $models   = [
             new ClassModel($anonClass, $anonPointer, [], ...$anonProperties),
@@ -109,7 +109,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         $unresolved = $this->getUnresolved('enum.yaml');
 
         $enumPointer = '/components/schemas/AnEnum';
-        $enumClass   = '\\AnEnum';
+        $enumClass   = '\\Schema\\AnEnum';
         $enumCases   = [
             new EnumCase('FirstVal', 'first val'),
             new EnumCase('SecondVal', 'second val'),
@@ -121,7 +121,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         ];
 
         $models   = [
-            new ClassModel('\\First', $firstPointer, [], ...$firstProperties),
+            new ClassModel('\\Schema\\First', $firstPointer, [], ...$firstProperties),
             new EnumModel($enumClass, $enumPointer, ...$enumCases),
         ];
         $expected = new ModelCollection();
@@ -143,7 +143,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
 
         $petPointer    = '/components/schemas/Pet';
         $petProperties = [$petTypeProperty];
-        $petInterface  = '\\PetInterface';
+        $petInterface  = '\\Schema\\PetInterface';
         $catPointer    = '/components/schemas/Cat';
         $catProperties = [
             $petTypeProperty,
@@ -156,10 +156,10 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         ];
 
         $models   = [
-            new ClassModel('\\Cat', $catPointer, [$petInterface], ...$catProperties),
+            new ClassModel('\\Schema\\Cat', $catPointer, [$petInterface], ...$catProperties),
             new InterfaceModel($petInterface, $petPointer, ...$petProperties),
-            new ClassModel('\\Pet', $petPointer, [$petInterface], ...$petProperties),
-            new ClassModel('\\Dog', $dogPointer, [$petInterface], ...$dogProperties),
+            new ClassModel('\\Schema\\Pet', $petPointer, [$petInterface], ...$petProperties),
+            new ClassModel('\\Schema\\Dog', $dogPointer, [$petInterface], ...$dogProperties),
         ];
         $expected = new ModelCollection();
         foreach ($models as $model) {
@@ -175,14 +175,14 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
     {
         $unresolved = $this->getUnresolved('any-of.yaml');
 
-        $enumClass   = '\\PetByType\\PetType';
+        $enumClass   = '\\Schema\\PetByType\\PetType';
         $enumPointer = '/components/schemas/PetByType/properties/pet_type';
         $enumCases   = [
             new EnumCase('Cat', 'Cat'),
             new EnumCase('Dog', 'Dog'),
         ];
 
-        $requestClass      = '\\PetRequest';
+        $requestClass      = '\\Schema\\PetRequest';
         $requestPointer    = '/components/schemas/PetRequest';
         $requestProperties = [
             new SimpleProperty('$age', 'age', new PropertyMetadata(), PropertyType::Integer),
@@ -220,7 +220,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         $nullable       = new PropertyMetadata(...['nullable' => true]);
         $union          = new UnionProperty('$foo', 'foo', $nullable, null, ...$types);
         $models         = [
-            new ClassModel('\\Untyped', $untypedPointer, [], $union),
+            new ClassModel('\\Schema\\Untyped', $untypedPointer, [], $union),
         ];
         $expected       = new ModelCollection();
         foreach ($models as $model) {
@@ -241,7 +241,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
             new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, PropertyType::String, PropertyType::Number),
         ];
         $models           = [
-            new ClassModel('\\Scalar', $scalarPointer, [], ...$scalarProperties),
+            new ClassModel('\\Schema\\Scalar', $scalarPointer, [], ...$scalarProperties),
         ];
         $expected         = new ModelCollection();
         foreach ($models as $model) {

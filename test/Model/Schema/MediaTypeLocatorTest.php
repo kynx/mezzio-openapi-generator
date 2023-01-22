@@ -81,7 +81,7 @@ final class MediaTypeLocatorTest extends TestCase
                 'schema' => $duplicate,
             ]),
         ];
-        $expected   = [$pointer => new NamedSpecification('Pet', $duplicate)];
+        $expected   = [$pointer => new NamedSpecification('schema Pet', $duplicate)];
 
         foreach ($mediaTypes as $mediaType) {
             self::assertTrue($mediaType->validate());

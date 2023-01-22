@@ -72,11 +72,11 @@ final class OperationLocatorTest extends TestCase
             ],
         ]);
         $expected  = [
-            '/paths/foo/get/parameters/0/schema' => new NamedSpecification("Foo idParam", $schema),
+            '/paths/foo/get/parameters/0/schema' => new NamedSpecification("Path Foo id", $schema),
         ];
 
         self::assertTrue($operation->validate());
-        $actual = $this->locator->getNamedSpecifications('Foo', $operation);
+        $actual = $this->locator->getNamedSpecifications('Path Foo', $operation);
         self::assertEquals($expected, $actual);
     }
 

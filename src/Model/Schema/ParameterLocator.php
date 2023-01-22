@@ -31,7 +31,7 @@ final class ParameterLocator
      */
     public function getNamedSpecifications(string $baseName, Parameter $parameter): array
     {
-        $name = $baseName . ' ' . $parameter->name . 'Param';
+        $name = $baseName . ' ' . $parameter->name;
 
         if ($parameter->schema instanceof Reference) {
             throw ModelException::unresolvedReference($parameter->schema);

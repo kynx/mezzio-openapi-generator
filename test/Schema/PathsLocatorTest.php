@@ -81,7 +81,7 @@ final class PathsLocatorTest extends TestCase
         ]);
         $schemaPointer = '/paths/~1my~1pets/get/responses/default/content/application~1json/schema';
         $expected      = [
-            $schemaPointer => new NamedSpecification('my pets get defaultResponse', $schema),
+            $schemaPointer => new NamedSpecification('Path my pets get defaultResponse', $schema),
         ];
 
         $actual = $this->locator->getNamedSpecifications($paths);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\RequestBody;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 /**
@@ -26,6 +27,7 @@ final class RequestBodyLocator
      */
     public function getNamedSchemas(string $baseName, RequestBody $requestBody): array
     {
-        return $this->mediaTypeLocator->getNamedSpecifications($baseName . ' RequestBody', $requestBody->content);
+        $name = ModelUtil::getComponentName('requestBodies', $requestBody) ?? "$baseName RequestBody";
+        return $this->mediaTypeLocator->getNamedSpecifications($name, $requestBody->content);
     }
 }

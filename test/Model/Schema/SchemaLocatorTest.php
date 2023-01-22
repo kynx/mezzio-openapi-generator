@@ -55,7 +55,7 @@ final class SchemaLocatorTest extends TestCase
         ]);
         $pointer = '/components/schemas/Foo';
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
-        $expected = [$pointer => new NamedSpecification('Foo', $schema)];
+        $expected = [$pointer => new NamedSpecification('schema Foo', $schema)];
 
         self::assertTrue($schema->validate());
         $actual = $this->locator->getNamedSpecifications('Bar', $schema);
@@ -141,7 +141,7 @@ final class SchemaLocatorTest extends TestCase
         ]);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
         $expected = [
-            $pointer => new NamedSpecification('Foo', $schema),
+            $pointer => new NamedSpecification('schema Foo', $schema),
         ];
 
         self::assertTrue($schema->validate());
@@ -175,8 +175,8 @@ final class SchemaLocatorTest extends TestCase
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
         $first->setDocumentContext(new OpenApi([]), new JsonPointer($firstPointer));
         $expected = [
-            $pointer      => new NamedSpecification('Foo', $schema),
-            $firstPointer => new NamedSpecification('Bar', $first),
+            $pointer      => new NamedSpecification('schema Foo', $schema),
+            $firstPointer => new NamedSpecification('schema Bar', $first),
         ];
 
         self::assertTrue($schema->validate());
@@ -224,7 +224,7 @@ final class SchemaLocatorTest extends TestCase
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
         $first->setDocumentContext(new OpenApi([]), new JsonPointer($firstPointer));
         $expected = [
-            $pointer => new NamedSpecification('Foo', $schema),
+            $pointer => new NamedSpecification('schema Foo', $schema),
         ];
 
         self::assertTrue($schema->validate());
@@ -265,8 +265,8 @@ final class SchemaLocatorTest extends TestCase
         $anyOf->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
         $first->setDocumentContext(new OpenApi([]), new JsonPointer($firstPointer));
         $expected = [
-            $pointer      => new NamedSpecification('Foo', $anyOf),
-            $firstPointer => new NamedSpecification('Bar', $first),
+            $pointer      => new NamedSpecification('schema Foo', $anyOf),
+            $firstPointer => new NamedSpecification('schema Bar', $first),
             ''            => new NamedSpecification('Baz', $schema),
         ];
 
@@ -313,8 +313,8 @@ final class SchemaLocatorTest extends TestCase
         ]);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
         $expected = [
-            $pointer . '/oneOf/0' => new NamedSpecification("Foo0", $first),
-            $pointer . '/oneOf/1' => new NamedSpecification("Foo1", $second),
+            $pointer . '/oneOf/0' => new NamedSpecification("schema Foo0", $first),
+            $pointer . '/oneOf/1' => new NamedSpecification("schema Foo1", $second),
         ];
 
         self::assertTrue($schema->validate());
@@ -355,8 +355,8 @@ final class SchemaLocatorTest extends TestCase
         ]);
         $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
         $expected = [
-            $pointer                     => new NamedSpecification('Foo', $schema),
-            $pointer . '/properties/pet' => new NamedSpecification('Foo pet', $propertySchema),
+            $pointer                     => new NamedSpecification('schema Foo', $schema),
+            $pointer . '/properties/pet' => new NamedSpecification('schema Foo pet', $propertySchema),
         ];
 
         self::assertTrue($schema->validate());

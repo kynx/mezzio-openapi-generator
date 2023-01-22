@@ -54,7 +54,7 @@ final class ParameterLocatorTest extends TestCase
             'in'     => 'query',
             'schema' => $schema,
         ]);
-        $expected  = ['' => new NamedSpecification('Foo barParam', $schema)];
+        $expected  = ['' => new NamedSpecification('Foo bar', $schema)];
 
         self::assertTrue($parameter->validate(), implode("\n", $parameter->getErrors()));
         $actual = $this->locator->getNamedSpecifications('Foo', $parameter);
@@ -73,7 +73,7 @@ final class ParameterLocatorTest extends TestCase
                 ],
             ],
         ]);
-        $expected  = ['' => new NamedSpecification('Foo barParam', $schema)];
+        $expected  = ['' => new NamedSpecification('Foo bar', $schema)];
 
         self::assertTrue($parameter->validate(), implode("\n", $parameter->getErrors()));
         $actual = $this->locator->getNamedSpecifications('Foo', $parameter);

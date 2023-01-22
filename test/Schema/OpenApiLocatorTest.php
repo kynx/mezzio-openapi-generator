@@ -90,7 +90,7 @@ final class OpenApiLocatorTest extends TestCase
         ]);
         $openApi->setDocumentContext($openApi, new JsonPointer(''));
         $expected = [
-            new NamedSpecification('my pets get defaultResponse', $schema),
+            new NamedSpecification('Path my pets get defaultResponse', $schema),
         ];
 
         self::assertTrue($openApi->validate(), implode("\n", $openApi->getErrors()));
