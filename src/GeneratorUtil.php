@@ -28,20 +28,30 @@ final class GeneratorUtil
     {
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public static function getNamespace(string $classString): string
     {
         $namespace = implode('\\', array_slice(explode('\\', $classString), 0, -1));
         return ltrim($namespace, '\\');
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public static function getClassName(string $fqn): string
     {
         $parts = explode('\\', $fqn);
         return array_pop($parts);
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public static function formatAsList(Dumper $dumper, array $list): string
     {
+        /** @psalm-suppress ImpureMethodCall */
         $dump = $dumper->dump($list);
         return preg_replace('/^\s*\[(.*)]\s*$/s', '$1', $dump);
     }

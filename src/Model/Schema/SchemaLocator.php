@@ -11,7 +11,6 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_merge;
-use function array_pop;
 
 /**
  * @internal

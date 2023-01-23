@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Generator;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 
@@ -46,6 +47,10 @@ final class ClassGenerator extends AbstractGenerator
             } elseif ($metadata->isNullable() || ! $metadata->isRequired()) {
                 $param->setDefaultValue(null);
             }
+
+            if ($property->getDocBlockType() !== null) {
+                $constructor->addComment('@param ' . $property->getDocBlockType() . ' ' . $property->getName());
+            }
         }
 
         $this->addMethods($class, $model);
@@ -62,7 +67,31 @@ final class ClassGenerator extends AbstractGenerator
             $method = $type->addMethod($this->getMethodName($property));
             $method->setPublic()
                 ->setReturnType($this->getType($property))
-                ->setBody(sprintf('return $this->%s;', $this->normalizePropertyName($property)));
+                ->setBody(sprintf('return $this->%s;', $this->normalizePropertyName($property)))
+                ->setComment($this->getDocBlock($property));
         }
+    }
+
+    private function getDocBlock(PropertyInterface $property): string|null
+    {
+        $metadata = $property->getMetadata();
+
+        $docBlock = '';
+        if ($metadata->getTitle()) {
+            $docBlock .= $metadata->getTitle() . "\n\n";
+        }
+        if ($metadata->getDescription()) {
+            $docBlock .= $metadata->getDescription() . "\n\n";
+        }
+        if ($metadata->isDeprecated()) {
+            $docBlock .= '@deprecated';
+        }
+
+        $type = $property->getDocBlockType();
+        if ($type !== null) {
+            $docBlock .= '@return ' . $type;
+        }
+
+        return $docBlock ?: null;
     }
 }

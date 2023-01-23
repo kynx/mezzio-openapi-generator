@@ -16,6 +16,7 @@ use function implode;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Property\UnionPropertyTest
  *
+ * @psalm-immutable
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */

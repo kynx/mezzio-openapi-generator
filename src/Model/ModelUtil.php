@@ -7,11 +7,11 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model;
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
-
 use cebe\openapi\SpecBaseObject;
 
 use function array_pop;
 use function assert;
+use function rtrim;
 
 /**
  * @internal
@@ -64,7 +64,7 @@ final class ModelUtil
 
     public static function isNamedSchema(Schema $schema): bool
     {
-        return $schema->type === 'object' || $schema->allOf || $schema->anyOf || ModelUtil::isEnum($schema);
+        return $schema->type === 'object' || $schema->allOf || $schema->anyOf || self::isEnum($schema);
     }
 
     public static function isEnum(Schema $schema): bool

@@ -58,9 +58,15 @@ final class ArrayPropertyTest extends TestCase
     /**
      * @dataProvider getDocBlockProvider
      */
-    public function testGetDocBlockTypeReturnsType(ClassString|PropertyType $type, bool $isList, string $expected): void
-    {
-        $property = new ArrayProperty('$foo', 'foo', new PropertyMetadata(), $isList, $type);
+    public function testGetDocBlockTypeReturnsType(
+        ClassString|PropertyType $type,
+        bool $isList,
+        bool $required,
+        bool $nullable,
+        string $expected
+    ): void {
+        $metadata = new PropertyMetadata(...['required' => $required, 'nullable' => $nullable]);
+        $property = new ArrayProperty('$foo', 'foo', $metadata, $isList, $type);
 
         $actual = $property->getDocBlockType();
         self::assertSame($expected, $actual);
@@ -69,10 +75,12 @@ final class ArrayPropertyTest extends TestCase
     public function getDocBlockProvider(): array
     {
         return [
-            'array_string' => [PropertyType::String, false, 'array<string, string>'],
-            'array_class'  => [new ClassString('\\A'), false, 'array<string, A>'],
-            'list_string'  => [PropertyType::String, true, 'list<string>'],
-            'list_class'   => [new ClassString('\\A\\B'), true, 'list<B>'],
+            'array_string'          => [PropertyType::String, false, false, false, 'array<string, string>|null'],
+            'array_string_required' => [PropertyType::String, false, true, false, 'array<string, string>'],
+            'array_string_nullable' => [PropertyType::String, false, true, true, 'array<string, string>|null'],
+            'array_class'           => [new ClassString('\\A'), false, true, false, 'array<string, A>'],
+            'list_string'           => [PropertyType::String, true, true, false, 'list<string>'],
+            'list_class'            => [new ClassString('\\A\\B'), true, true, false, 'list<B>'],
         ];
     }
 }

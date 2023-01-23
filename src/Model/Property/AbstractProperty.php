@@ -11,6 +11,7 @@ use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Property\AbstractPropertyTest
  *
+ * @psalm-immutable
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */

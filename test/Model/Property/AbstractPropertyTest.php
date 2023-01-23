@@ -22,7 +22,10 @@ final class AbstractPropertyTest extends TestCase
         $originalName = 'foo';
         $metadata     = new PropertyMetadata();
 
-        /** @psalm-suppress InternalClass */
+        /**
+         * @psalm-suppress InternalClass
+         * @psalm-suppress MissingImmutableAnnotation
+         */
         $property = new class ($name, $originalName, $metadata) extends AbstractProperty {
             public function __construct(
                 protected readonly string $name,
@@ -31,21 +34,25 @@ final class AbstractPropertyTest extends TestCase
             ) {
             }
 
+            /** @psalm-mutation-free  */
             public function getUses(): array
             {
                 return [];
             }
 
+            /** @psalm-mutation-free  */
             public function getPhpType(): string
             {
                 return '';
             }
 
+            /** @psalm-mutation-free  */
             public function getDocBlockType(): string|null
             {
                 return null;
             }
 
+            /** @psalm-mutation-free  */
             public function getTypes(): array
             {
                 return [PropertyType::String];

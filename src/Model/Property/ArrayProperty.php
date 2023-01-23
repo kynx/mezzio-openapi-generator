@@ -9,6 +9,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Property\ArrayPropertyTest
  *
+ * @psalm-immutable
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
@@ -46,11 +47,17 @@ final class ArrayProperty extends AbstractProperty
 
     public function getDocBlockType(): string|null
     {
+        $null     = '';
+        $metadata = $this->getMetadata();
+        if ($metadata->isNullable() || ! $metadata->isRequired()) {
+            $null = '|null';
+        }
+
         $type = $this->getShortType($this->type);
         if ($this->isList) {
-            return "list<$type>";
+            return "list<$type>$null";
         }
-        return "array<string, $type>";
+        return "array<string, $type>$null";
     }
 
     public function getTypes(): array

@@ -9,6 +9,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Property\SimplePropertyTest
  *
+ * @psalm-immutable
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  *
