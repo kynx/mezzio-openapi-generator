@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
-use cebe\openapi\Reader;
-use Kynx\Code\Normalizer\ClassNameNormalizer;
-use Kynx\Code\Normalizer\UniqueClassLabeler;
-use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Mezzio\OpenApiGenerator\Handler\Namer\FlatNamer;
-use Kynx\Mezzio\OpenApiGenerator\Handler\OpenApiParser;
-use Kynx\Mezzio\OpenApiGenerator\Route\Converter\FastRouteConverter;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiRouteDelegator;
+use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamer;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
-use Nette\PhpGenerator\PhpFile;
-use Nette\PhpGenerator\PsrPrinter;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
+use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
+use Mezzio\Application;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
-use function file_get_contents;
 use function trim;
 
 /**
@@ -25,76 +23,95 @@ use function trim;
  */
 final class RouteDelegatorGeneratorTest extends TestCase
 {
-    private const NAMESPACE = __NAMESPACE__ . '\\Asset';
+    use GeneratorTrait;
+
+    private const NAMESPACE = __NAMESPACE__ . '\\Api';
 
     private RouteDelegatorGenerator $generator;
 
     protected function setUp(): void
     {
-        $this->markTestSkipped("Awaiting refactor");
         parent::setUp();
 
-        $this->generator = new RouteDelegatorGenerator(new FastRouteConverter(), new DotSnakeCaseNamer('api'));
+        $converter = $this->createMock(ConverterInterface::class);
+        $converter->expects(self::once())
+            ->method('sort')
+            ->willReturnArgument(0);
+        $converter->method('convert')
+            ->willReturnCallback(fn (RouteModel $route): string => $route->getPath());
+
+        $this->generator = new RouteDelegatorGenerator($converter, new DotSnakeCaseNamer('api'));
     }
 
-    public function testGenerateCreatesRoutes(): void
+    public function testGenerateReturnsFile(): void
     {
-        $openApi = Reader::readFromYamlFile(__DIR__ . '/Asset/route-delegator.yaml');
-        self::assertTrue($openApi->validate(), "Invalid openapi schema");
+        $path        = '/foo';
+        $getPointer  = "/paths$path/get";
+        $getHandler  = self::NAMESPACE . "\\Handlers\\Foo\\GetHandler";
+        $postPointer = "/paths$path/post";
+        $postHandler = self::NAMESPACE . "\\Handlers\\Foo\\PostHandler";
 
-        $labeler  = new UniqueClassLabeler(new ClassNameNormalizer('Handler'), new NumberSuffix());
-        $locator  = new OpenApiParser(
-            $openApi,
-            new FlatNamer(self::NAMESPACE, $labeler)
-        );
-        $handlers = $locator->getHandlerCollection();
+        $expected = <<<INVOKE_BODY
+        \$app = \$callback();
+        assert(\$app instanceof Application);
+        
+        \$app->get('$path', GetHandler::class, 'api.foo.get')
+            ->setOptions([OpenApiOperationFactory::class => '$getPointer']);
+        \$app->post('$path', PostHandler::class, 'api.foo.post')
+            ->setOptions([OpenApiOperationFactory::class => '$postPointer']);
+        
+        return \$app;
+        INVOKE_BODY;
 
-        $file = PhpFile::fromCode(file_get_contents('src/OpenApiGenerator/Stub/RouteDelegator.php'));
+        $get        = new RouteModel("/paths$path/get", $path, 'get', [], []);
+        $post       = new RouteModel("/paths$path/post", $path, 'post', [], []);
+        $collection = new RouteCollection();
+        $collection->add($get);
+        $collection->add($post);
 
-        $expected  = trim($this->getExpectedCode());
-        $generated = $this->generator->generate($handlers, $file);
-        $actual    = trim((new PsrPrinter())->printFile($generated));
+        /** @var array<string, class-string> $map */
+        $map = [
+            $getPointer  => $getHandler,
+            $postPointer => $postHandler,
+        ];
 
-        self::assertSame($expected, $actual);
-    }
+        $file = $this->generator->generate($collection, self::NAMESPACE . "\\RouteDelegator", $map);
 
-    private function getExpectedCode(): string
-    {
-        // phpcs:disable Generic.Files.LineLength.TooLong
-        return <<<EXPECTED
-        <?php
-        
-        declare(strict_types=1);
-        
-        namespace Kynx\Mezzio\OpenApiGenerator\Stub;
-        
-        use Kynx\Mezzio\OpenApi\RouteOptionInterface;
-        use KynxTest\Mezzio\OpenApiGenerator\Route\Asset\GetMulti;
-        use KynxTest\Mezzio\OpenApiGenerator\Route\Asset\PostMulti;
-        use KynxTest\Mezzio\OpenApiGenerator\Route\Asset\TestGetTestIdGet;
-        use Mezzio\Application;
-        use Psr\Container\ContainerInterface;
-        
-        use function assert;
-        
-        final class RouteDelegator
-        {
-            public function __invoke(ContainerInterface \$container, string \$serviceName, callable \$callback): Application
-            {
-                \$app = \$callback();
-                assert(\$app instanceof Application);
-        
-                \$app->get('/test-get/{testId:\d+}', TestGetTestIdGet::class, 'api.test-get.test_id.get')
-                    ->setOptions([RouteOptionInterface::PATH => '/test-get/{testId}']);
-                \$app->get('/test-multi', GetMulti::class, 'api.get_multi')
-                    ->setOptions([RouteOptionInterface::PATH => '/test-multi']);
-                \$app->post('/test-multi', PostMulti::class, 'api.post_multi')
-                    ->setOptions([RouteOptionInterface::PATH => '/test-multi']);
-        
-                return \$app;
-            }
-        }
-        EXPECTED;
-        // phpcs:enable
+        self::assertTrue($file->hasStrictTypes());
+
+        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $class     = $this->getClass($namespace, 'RouteDelegator');
+        $method    = $this->getMethod($class, '__invoke');
+
+        $expectedUses = [
+            'OpenApiOperationFactory' => OpenApiOperationFactory::class,
+            'OpenApiRouteDelegator'   => OpenApiRouteDelegator::class,
+            'GetHandler'              => $getHandler,
+            'PostHandler'             => $postHandler,
+            'Application'             => Application::class,
+        ];
+        $actualUses   = $namespace->getUses();
+        self::assertSame($expectedUses, $actualUses);
+
+        $attributes = $class->getAttributes();
+        self::assertCount(1, $attributes);
+        $attribute = $attributes[0];
+        self::assertSame(OpenApiRouteDelegator::class, $attribute->getName());
+
+        $parameters = $method->getParameters();
+        self::assertCount(3, $parameters);
+        self::assertArrayHasKey('container', $parameters);
+        $container = $parameters['container'];
+        self::assertSame(ContainerInterface::class, $container->getType());
+        self::assertArrayHasKey('serviceName', $parameters);
+        $serviceName = $parameters['serviceName'];
+        self::assertSame('string', $serviceName->getType());
+        self::assertArrayHasKey('callback', $parameters);
+        $callback = $parameters['callback'];
+        self::assertSame('callable', $callback->getType());
+
+        self::assertSame(Application::class, $method->getReturnType());
+
+        self::assertSame($expected, trim($method->getBody()));
     }
 }

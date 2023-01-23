@@ -14,7 +14,12 @@ use function str_replace;
 use function trim;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Route\UtilTest
+ *
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class RouteUtil
 {

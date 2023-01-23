@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Route;
 
-use Kynx\Mezzio\OpenApi\RouteOptionInterface;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiRouteDelegator;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
 use Mezzio\Application;
-use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpFile;
@@ -21,7 +19,12 @@ use function assert;
 use function current;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorTest
+ *
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
 final class RouteDelegatorGenerator
 {
@@ -31,24 +34,27 @@ final class RouteDelegatorGenerator
     ) {
     }
 
-    public function generate(HandlerCollection $handlers, PhpFile $file): PhpFile
+    /**
+     * @param array<string, class-string> $handlerMap
+     */
+    public function generate(RouteCollection $routes, string $className, array $handlerMap): PhpFile
     {
-        $namespaces = $file->getNamespaces();
-        $namespace  = current($namespaces);
-        assert($namespace instanceof PhpNamespace);
+        $routes = $this->routeConverter->sort($routes);
 
-        $classes   = $file->getClasses();
-        $delegator = current($classes);
-        assert($delegator instanceof ClassType);
+        $file = new PhpFile();
+        $file->setStrictTypes();
 
+        $class = $file->addClass($className)
+            ->setFinal();
+
+        $namespace = current($file->getNamespaces());
         $namespace->addUse(Application::class);
-        $namespace->addUse(RouteOptionInterface::class);
+        $namespace->addUse(OpenApiOperationFactory::class);
+        $namespace->addUse(OpenApiRouteDelegator::class);
 
-        if ($delegator->hasMethod('__invoke')) {
-            $delegator->removeMethod('__invoke');
-        }
+        $class->addAttribute(OpenApiRouteDelegator::class);
 
-        $invoke = $delegator->addMethod('__invoke');
+        $invoke = $class->addMethod('__invoke');
         $invoke->addParameter('container')
             ->setType(ContainerInterface::class);
         $invoke->addParameter('serviceName')
@@ -63,8 +69,8 @@ final class RouteDelegatorGenerator
         ]);
         $invoke->addBody('');
 
-        foreach ($handlers as $handler) {
-            $this->addRoute($namespace, $invoke, $handler);
+        foreach ($routes as $route) {
+            $this->addRoute($namespace, $invoke, $route, $handlerMap);
         }
 
         $invoke->addBody('');
@@ -73,21 +79,29 @@ final class RouteDelegatorGenerator
         return $file;
     }
 
-    private function addRoute(PhpNamespace $namespace, Method $invoke, HandlerClass $handler): void
+    /**
+     * @param array<string, class-string> $handlerMap
+     */
+    private function addRoute(PhpNamespace $namespace, Method $invoke, RouteModel $route, array $handlerMap): void
     {
-        $route     = $handler->getRoute();
         $converted = $this->routeConverter->convert($route);
 
-        $namespace->addUse($handler->getClassName());
+        $pointer = $route->getJsonPointer();
+        assert(isset($handlerMap[$pointer]));
+        $handlerClass = $handlerMap[$pointer];
+
+        $namespace->addUse($handlerClass);
         $invoke->addBody('$app?(?, ?, ?)', [
             new Literal('->' . $route->getMethod()),
             $converted,
-            new Literal($namespace->simplifyName($handler->getClassName()) . '::class'),
+            new Literal($namespace->simplifyName($handlerClass) . '::class'),
             $this->routeNamer->getName($route),
         ]);
+
+        $openApiOperationClass = $namespace->simplifyName(OpenApiOperationFactory::class);
         $invoke->addBody('    ->setOptions([? => ?]);', [
-            new Literal($namespace->simplifyName(RouteOptionInterface::class) . '::PATH'),
-            $route->getPath(),
+            new Literal("$openApiOperationClass::class"),
+            $pointer,
         ]);
     }
 }

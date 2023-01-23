@@ -1,0 +1,75 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Kynx\Mezzio\OpenApiGenerator\Route;
+
+use cebe\openapi\spec\OpenApi;
+use cebe\openapi\spec\Operation;
+use cebe\openapi\spec\Parameter;
+use cebe\openapi\spec\Reference;
+use cebe\openapi\spec\Schema;
+
+use function array_filter;
+use function strtolower;
+
+/**
+ * @internal
+ *
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilderTest
+ *
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
+ */
+final class RouteCollectionBuilder
+{
+    public function getRouteCollection(OpenApi $openApi): RouteCollection
+    {
+        $collection = new RouteCollection();
+
+        /** @var string $path */
+        foreach ($openApi->paths as $path => $pathItem) {
+            foreach ($pathItem->getOperations() as $method => $operation) {
+                $pointer     = $operation->getDocumentPosition()?->getPointer() ?? '';
+                $method      = strtolower((string) $method);
+                $pathParams  = $this->getParams($operation, 'path');
+                $queryParams = $this->getParams($operation, 'query');
+
+                $collection->add(new RouteModel($pointer, $path, $method, $pathParams, $queryParams));
+            }
+        }
+
+        return $collection;
+    }
+
+    /**
+     * @return list<ParameterModel>
+     */
+    public function getParams(Operation $operation, string $in): array
+    {
+        $parameters = array_filter($operation->parameters, function (Parameter|Reference $param) use ($in): bool {
+            return $param instanceof Parameter && $param->in === $in;
+        });
+
+        $params = [];
+        foreach ($parameters as $parameter) {
+            $type    = $style = null;
+            $explode = false;
+            $schema  = $parameter->schema;
+            if ($schema instanceof Schema) {
+                $type    = $schema->type;
+                $style   = $parameter->style;
+                $explode = $parameter->explode;
+            }
+            $params[] = new ParameterModel(
+                $parameter->name,
+                $schema === null,
+                $type,
+                $style,
+                $explode
+            );
+        }
+
+        return $params;
+    }
+}

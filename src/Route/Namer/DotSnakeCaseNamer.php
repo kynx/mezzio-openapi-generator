@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Route\Namer;
 
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
-use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Laminas\Filter\Word\CamelCaseToUnderscore;
 
 use function array_map;
@@ -30,21 +30,16 @@ final class DotSnakeCaseNamer implements NamerInterface
         $this->filter = new CamelCaseToUnderscore();
     }
 
-    public function getName(OpenApiRoute $route): string
+    public function getName(RouteModel $route): string
     {
-        $operation = $route->getOperation();
-        $parts     = [$this->prefix];
+        $parts = [$this->prefix];
 
-        if (! empty($operation->operationId)) {
-            $parts[] = $operation->operationId;
-        } else {
-            $routeParts = array_map(
-                fn (string $part): string => preg_replace('/{(.+)}/', '$1', $part),
-                array_slice(explode('/', $route->getPath()), 1)
-            );
-            $parts      = array_merge($parts, $routeParts);
-            $parts[]    = $route->getMethod();
-        }
+        $routeParts = array_map(
+            fn (string $part): string => preg_replace('/{(.+)}/', '$1', $part),
+            array_slice(explode('/', $route->getPath()), 1)
+        );
+        $parts      = array_merge($parts, $routeParts);
+        $parts[]    = $route->getMethod();
 
         return implode(
             '.',

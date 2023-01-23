@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Route\Converter;
 
-use cebe\openapi\spec\Parameter;
-use cebe\openapi\spec\Reference;
-use cebe\openapi\spec\Schema;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerClass;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
-use Kynx\Mezzio\OpenApiGenerator\Route\OpenApiRoute;
+use Kynx\Mezzio\OpenApiGenerator\Route\ParameterModel;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil;
 
-use function array_filter;
 use function iterator_to_array;
 use function sprintf;
 use function str_replace;
@@ -29,19 +25,17 @@ final class FastRouteConverter implements ConverterInterface
      * @see https://spec.openapis.org/oas/v3.1.0#path-templating-matching
      * @see \FastRoute\DataGenerator\RegexBasedAbstract::addStaticRoute()
      *
-     * @inheritDoc
-     *
-     * Sort operations to avoid static route shadowing
+     * Sort routes to avoid static route shadowing
      */
-    public function sort(HandlerCollection $collection): HandlerCollection
+    public function sort(RouteCollection $collection): RouteCollection
     {
         $handlers = iterator_to_array($collection);
         usort(
             $handlers,
-            fn (HandlerClass $a, HandlerClass $b): int => $this->sortRoutes($a->getRoute(), $b->getRoute())
+            fn (RouteModel $a, RouteModel $b): int => $this->sortRoutes($a, $b)
         );
 
-        $sorted = new HandlerCollection();
+        $sorted = new RouteCollection();
         foreach ($handlers as $handler) {
             $sorted->add($handler);
         }
@@ -49,30 +43,25 @@ final class FastRouteConverter implements ConverterInterface
         return $sorted;
     }
 
-    public function convert(OpenApiRoute $route): string
+    public function convert(RouteModel $route): string
     {
-        $operation = $route->getOperation();
-
-        /** @var Parameter $pathParams */
-        $pathParams = array_filter($operation->parameters, function (Parameter|Reference $param): bool {
-            return $param instanceof Parameter && $param->in === 'path';
-        });
+        $pathParams = $route->getPathParams();
 
         $search = $replace = [];
         // The spec does _not_ support optional params
         foreach ($pathParams as $parameter) {
-            $search[]  = '{' . $parameter->name . '}';
+            $search[]  = '{' . $parameter->getName() . '}';
             $replace[] = sprintf(
                 '{%s:%s}',
-                $parameter->name,
-                $this->getRegexp($parameter->schema)
+                $parameter->getName(),
+                $this->getRegexp($parameter)
             );
         }
 
         return str_replace($search, $replace, RouteUtil::encodePath($route->getPath()));
     }
 
-    private function sortRoutes(OpenApiRoute $first, OpenApiRoute $second): int
+    private function sortRoutes(RouteModel $first, RouteModel $second): int
     {
         // replace '~' with space so '{' and '}' are sorted after it
         $firstPath  = str_replace('~', ' ', trim($first->getPath()));
@@ -88,15 +77,49 @@ final class FastRouteConverter implements ConverterInterface
      * @see https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-00#section-4.2.1
      * @see https://spec.openapis.org/oas/v3.1.0#data-types
      */
-    private function getRegexp(Schema $schema): string
+    private function getRegexp(ParameterModel $parameter): string
     {
-        // Do we need to support `null`, `array` and `object`?
-        // @fixme: We need to support different serialization styles: 'label' / 'matrix'
-        return match ($schema->type) {
-            'boolean' => '(true|false)', // + (1|0|yes|no) ?
+        if ($parameter->hasContent()) {
+            return '.+';
+        }
+
+        return match ($parameter->getStyle()) {
+            'simple' => $this->getSimpleRegexp($parameter),
+            'label' => $this->getLabelRegexp($parameter),
+            'matrix' => $this->getMatrixRegexp($parameter)
+        };
+    }
+
+    private function getSimpleRegexp(ParameterModel $parameter): string
+    {
+        if ($parameter->getExplode()) {
+            return match ($parameter->getType()) {
+                'array'   => '.+',
+                'boolean' => '(true|false|,)',
+                'integer' => '[\d,]+',
+                'number'  => '[\d.,]+',
+                'object'  => '.+',
+                default   => '.+'
+            };
+        }
+
+        return match ($parameter->getType()) {
+            'array'   => '.+',
+            'boolean' => '(true|false)',
             'integer' => '\d+',
             'number'  => '[\d.]+',
-            default => '.+',
+            'object'  => '.+',
+            default   => '.+'
         };
+    }
+
+    private function getLabelRegexp(ParameterModel $parameter): string
+    {
+        return '\.' . $this->getSimpleRegexp($parameter);
+    }
+
+    private function getMatrixRegexp(ParameterModel $parameter): string
+    {
+        return ';' . $this->getSimpleRegexp($parameter);
     }
 }
