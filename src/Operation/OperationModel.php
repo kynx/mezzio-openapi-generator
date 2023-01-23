@@ -7,6 +7,10 @@ namespace Kynx\Mezzio\OpenApiGenerator\Operation;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 
 use function array_filter;
+use function array_merge;
+use function array_unique;
+use function explode;
+use function implode;
 
 /**
  * @internal
@@ -90,5 +94,28 @@ final class OperationModel
     public function getRequestBodies(): array
     {
         return $this->requestBodies;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getRequestBodyUses(): array
+    {
+        $uses = [];
+        foreach ($this->requestBodies as $requestBody) {
+            $uses = array_merge($uses, $requestBody->getType()->getUses());
+        }
+        return array_unique($uses);
+    }
+
+    public function getRequestBodyType(): string
+    {
+        $types = [];
+        foreach ($this->getRequestBodies() as $requestBody) {
+            $types[] = $requestBody->getType()->getPhpType();
+        }
+
+        $allTypes = explode('|', implode('|', $types));
+        return implode('|', array_unique($allTypes));
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Operation\Generator;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
+use Kynx\Mezzio\OpenApi\Hydrator\HydratorUtil;
 use Kynx\Mezzio\OpenApi\Operation\ContentTypeNegotiator;
 use Kynx\Mezzio\OpenApi\Operation\Exception\InvalidContentTypeException;
 use Kynx\Mezzio\OpenApi\Operation\OperationFactoryInterface;
@@ -31,10 +32,7 @@ use Rize\UriTemplate;
 
 use function array_keys;
 use function array_map;
-use function array_merge;
-use function array_unique;
 use function assert;
-use function implode;
 use function str_contains;
 use function ucfirst;
 
@@ -68,7 +66,6 @@ final class OperationFactoryGenerator
 
         $namespace = $file->addNamespace(GeneratorUtil::getNamespace($operation->getClassName()));
         $namespace->addUse(OpenApiOperationFactory::class)
-            ->addUse(OperationUtil::class)
             ->addUse(OperationFactoryInterface::class)
             ->addUse(ServerRequestInterface::class)
             ->addUse($operation->getClassName());
@@ -112,7 +109,7 @@ final class OperationFactoryGenerator
         }
         if ($operation->getRequestBodies() !== []) {
             $arguments[] = new Literal(
-                $this->addRequestBodyParser($namespace, $class, $operation->getRequestBodies(), $hydratorMap)
+                $this->addRequestBodyParser($namespace, $class, $operation, $hydratorMap)
             );
         }
 
@@ -170,6 +167,8 @@ final class OperationFactoryGenerator
         string $type,
         array $hydratorMap
     ): string {
+        $namespace->addUse(OperationUtil::class);
+
         $template  = $this->getTemplate($params);
         $model     = $params->getModel();
         $className = $model->getClassName();
@@ -212,14 +211,18 @@ final class OperationFactoryGenerator
     private function addRequestBodyParser(
         PhpNamespace $namespace,
         ClassType $class,
-        array $requestBodies,
+        OperationModel $operation,
         array $hydratorMap
     ): string {
         $namespace->addUse(InvalidContentTypeException::class);
 
+        foreach ($operation->getRequestBodyUses() as $use) {
+            $namespace->addUse($use);
+        }
+
         $method = $class->addMethod('getRequestBody')
             ->setPrivate()
-            ->setReturnType($this->getRequestBodyReturnType($requestBodies));
+            ->setReturnType($operation->getRequestBodyType());
         $method->addParameter('request')
             ->setType(ServerRequestInterface::class);
 
@@ -227,7 +230,7 @@ final class OperationFactoryGenerator
         $method->addBody('$mimeType = $this->negotiator->negotiate($request);' . "\n");
 
         $literals = [];
-        foreach ($requestBodies as $requestBody) {
+        foreach ($operation->getRequestBodies() as $requestBody) {
             $return     = $this->getRequestBodyReturn($namespace, $requestBody, $hydratorMap);
             $literals[] = new Literal("? => $return", [$requestBody->getMimeType()]);
         }
@@ -242,39 +245,6 @@ final class OperationFactoryGenerator
     }
 
     /**
-     * @param list<RequestBodyModel> $requestBodies
-     */
-    private function getRequestBodyReturnType(array $requestBodies): string
-    {
-        $types = [];
-        foreach ($requestBodies as $requestBody) {
-            $types = array_merge($types, $this->getRequestBodyType($requestBody));
-        }
-
-        return implode('|', array_unique($types));
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function getRequestBodyType(RequestBodyModel $requestBody): array
-    {
-        $property = $requestBody->getType();
-        if ($property instanceof ArrayProperty) {
-            return ['array'];
-        }
-
-        $types = [];
-        foreach ($property->getTypes() as $member) {
-            $types[] = $member instanceof ClassString
-                ? $member->getClassString()
-                : $member->toPhpType();
-        }
-
-        return $types;
-    }
-
-    /**
      * @param array<string, string> $hydratorMap
      */
     private function getRequestBodyReturn(
@@ -284,7 +254,7 @@ final class OperationFactoryGenerator
     ): string {
         $property = $requestBody->getType();
         if ($property instanceof ArrayProperty) {
-            return $this->getArrayRequestBodyReturn();
+            return $this->getArrayRequestBodyReturn($namespace, $property, $hydratorMap);
         }
         if ($property instanceof SimpleProperty) {
             return $this->getSimpleRequestBodyReturn($namespace, $property, $hydratorMap);
@@ -294,8 +264,27 @@ final class OperationFactoryGenerator
         return $this->getUnionRequestBodyReturn($namespace, $property, $hydratorMap);
     }
 
-    private function getArrayRequestBodyReturn(): string
-    {
+    /**
+     * @param array<string, string> $hydratorMap
+     */
+    private function getArrayRequestBodyReturn(
+        PhpNamespace $namespace,
+        ArrayProperty $property,
+        array $hydratorMap
+    ): string {
+        $type = $property->getType();
+        if ($type instanceof ClassString) {
+            $classString   = $type->getClassString();
+            $hydrator      = $this->overrideHydrators[$classString] ?? $hydratorMap[$classString];
+            $hydratorClass = GeneratorUtil::getClassName($hydrator);
+
+            $namespace->addUse(HydratorUtil::class);
+            $namespace->addUse($classString);
+            $namespace->addUse($hydrator);
+
+            return "HydratorUtil::hydrateArray('body', \$body, $hydratorClass::class)";
+        }
+
         return '(array) $body';
     }
 

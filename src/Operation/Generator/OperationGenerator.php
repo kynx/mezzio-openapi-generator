@@ -6,7 +6,6 @@ namespace Kynx\Mezzio\OpenApiGenerator\Operation\Generator;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperation;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
@@ -16,8 +15,6 @@ use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
 
 use function array_filter;
-use function array_merge;
-use function implode;
 use function ucfirst;
 
 /**
@@ -84,22 +81,11 @@ final class OperationGenerator
             return;
         }
 
-        $types = [];
-        foreach ($operation->getRequestBodies() as $requestBody) {
-            $types = array_merge($types, $requestBody->getType()->getTypes());
+        foreach ($operation->getRequestBodyUses() as $use) {
+            $namespace->addUse($use);
         }
+        $type = $operation->getRequestBodyType();
 
-        $typeStrings = [];
-        foreach ($types as $type) {
-            if ($type instanceof PropertyType) {
-                $typeStrings[] = $type->toPhpType();
-            } else {
-                $namespace->addUse($type->getClassString());
-                $typeStrings[] = $type->getClassString();
-            }
-        }
-
-        $type = implode('|', $typeStrings);
         $this->addConstructorParam($constructor, 'requestBody', $type);
         $this->addGetter($class, 'requestBody', $type);
     }
