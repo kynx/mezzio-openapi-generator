@@ -133,6 +133,20 @@ final class GenerateCommandTest extends TestCase
         self::assertSame(0, $exit);
     }
 
+    public function testGenerateCreatesRouteDelegator(): void
+    {
+        // Gets very confused here and wants both 1 space before and 0 space before
+        // phpcs:ignore WebimpressCodingStandard.WhiteSpace.CommaSpacing.SpaceBeforeComma
+        [, , $routeCollection, $handlerCollection] = $this->configureModels();
+
+        $this->service->expects(self::once())
+            ->method('createRouteDelegator')
+            ->with($routeCollection, $handlerCollection);
+
+        $exit = $this->commandTester->execute([]);
+        self::assertSame(0, $exit);
+    }
+
     public function testGenerateCreatesHandler(): void
     {
         // Gets very confused here and wants both 1 space before and 0 space before

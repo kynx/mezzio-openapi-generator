@@ -29,6 +29,19 @@ final class HandlerCollection implements Countable, Iterator
         $this->index   = 0;
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function getHandlerMap(): array
+    {
+        $map = [];
+        foreach ($this->members as $handler) {
+            $map[$handler->getJsonPointer()] = $handler->getClassName();
+        }
+
+        return $map;
+    }
+
     public function add(HandlerModel $handler): void
     {
         $this->members[] = $handler;

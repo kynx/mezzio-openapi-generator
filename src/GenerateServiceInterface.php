@@ -27,5 +27,7 @@ interface GenerateServiceInterface
 
     public function createOperations(OperationCollection $collection, HydratorCollection $hydratorCollection): void;
 
+    public function createRouteDelegator(RouteCollection $routes, HandlerCollection $handlers): void;
+
     public function createHandlers(HandlerCollection $collection): void;
 }

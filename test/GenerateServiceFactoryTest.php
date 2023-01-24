@@ -18,6 +18,8 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriter;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterInterface;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
@@ -45,6 +47,7 @@ final class GenerateServiceFactoryTest extends TestCase
                 [ModelWriter::class, $this->createStub(ModelWriterInterface::class)],
                 [HydratorWriter::class, $this->createStub(HydratorWriterInterface::class)],
                 [OperationWriter::class, $this->createStub(OperationWriterInterface::class)],
+                [RouteDelegatorWriter::class, $this->createStub(RouteDelegatorWriterInterface::class)],
                 [HandlerWriter::class, $this->createStub(HandlerWriterInterface::class)],
             ]);
 

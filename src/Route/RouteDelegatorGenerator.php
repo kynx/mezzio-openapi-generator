@@ -30,27 +30,34 @@ final class RouteDelegatorGenerator
 {
     public function __construct(
         private readonly ConverterInterface $routeConverter,
-        private readonly NamerInterface $routeNamer
+        private readonly NamerInterface $routeNamer,
+        private readonly string $className
     ) {
     }
 
+    public function getClassName(): string
+    {
+        return $this->className;
+    }
+
     /**
-     * @param array<string, class-string> $handlerMap
+     * @param array<string, string> $handlerMap
      */
-    public function generate(RouteCollection $routes, string $className, array $handlerMap): PhpFile
+    public function generate(RouteCollection $routes, array $handlerMap): PhpFile
     {
         $routes = $this->routeConverter->sort($routes);
 
         $file = new PhpFile();
         $file->setStrictTypes();
 
-        $class = $file->addClass($className)
+        $class = $file->addClass($this->className)
             ->setFinal();
 
         $namespace = current($file->getNamespaces());
-        $namespace->addUse(Application::class);
-        $namespace->addUse(OpenApiOperationFactory::class);
-        $namespace->addUse(OpenApiRouteDelegator::class);
+        $namespace->addUse(Application::class)
+            ->addUse(OpenApiOperationFactory::class)
+            ->addUse(OpenApiRouteDelegator::class)
+            ->addUse(ContainerInterface::class);
 
         $class->addAttribute(OpenApiRouteDelegator::class);
 
@@ -80,7 +87,7 @@ final class RouteDelegatorGenerator
     }
 
     /**
-     * @param array<string, class-string> $handlerMap
+     * @param array<string, string> $handlerMap
      */
     private function addRoute(PhpNamespace $namespace, Method $invoke, RouteModel $route, array $handlerMap): void
     {

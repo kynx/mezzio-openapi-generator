@@ -7,9 +7,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiRouteDelegator;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
-use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamer;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
-use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Mezzio\Application;
@@ -24,23 +22,21 @@ use function trim;
 final class RouteDelegatorGeneratorTest extends TestCase
 {
     use GeneratorTrait;
+    use RouteTrait;
 
     private const NAMESPACE = __NAMESPACE__ . '\\Api';
-
-    private RouteDelegatorGenerator $generator;
 
     protected function setUp(): void
     {
         parent::setUp();
+    }
 
-        $converter = $this->createMock(ConverterInterface::class);
-        $converter->expects(self::once())
-            ->method('sort')
-            ->willReturnArgument(0);
-        $converter->method('convert')
-            ->willReturnCallback(fn (RouteModel $route): string => $route->getPath());
-
-        $this->generator = new RouteDelegatorGenerator($converter, new DotSnakeCaseNamer('api'));
+    public function testGetClassNameReturnsName(): void
+    {
+        $expected  = self::NAMESPACE . '\\RouteDelegator';
+        $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE);
+        $actual    = $generator->getClassName();
+        self::assertSame($expected, $actual);
     }
 
     public function testGenerateReturnsFile(): void
@@ -75,7 +71,12 @@ final class RouteDelegatorGeneratorTest extends TestCase
             $postPointer => $postHandler,
         ];
 
-        $file = $this->generator->generate($collection, self::NAMESPACE . "\\RouteDelegator", $map);
+        $converter = $this->createMock(ConverterInterface::class);
+        $converter->expects(self::once())
+            ->method('sort')
+            ->willReturnArgument(0);
+        $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE, $converter);
+        $file      = $generator->generate($collection, $map);
 
         self::assertTrue($file->hasStrictTypes());
 
@@ -89,6 +90,7 @@ final class RouteDelegatorGeneratorTest extends TestCase
             'GetHandler'              => $getHandler,
             'PostHandler'             => $postHandler,
             'Application'             => Application::class,
+            'ContainerInterface'      => ContainerInterface::class,
         ];
         $actualUses   = $namespace->getUses();
         self::assertSame($expectedUses, $actualUses);

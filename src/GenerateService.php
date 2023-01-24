@@ -18,6 +18,7 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator;
 
 final class GenerateService implements GenerateServiceInterface
@@ -32,6 +33,7 @@ final class GenerateService implements GenerateServiceInterface
         private readonly ModelWriterInterface $modelWriter,
         private readonly HydratorWriterInterface $hydratorWriter,
         private readonly OperationWriterInterface $operationWriter,
+        private readonly RouteDelegatorWriterInterface $routeDelegatorWriter,
         private readonly HandlerWriterInterface $handlerWriter
     ) {
     }
@@ -72,6 +74,11 @@ final class GenerateService implements GenerateServiceInterface
     public function createOperations(OperationCollection $collection, HydratorCollection $hydratorCollection): void
     {
         $this->operationWriter->write($collection, $hydratorCollection);
+    }
+
+    public function createRouteDelegator(RouteCollection $routes, HandlerCollection $handlers): void
+    {
+        $this->routeDelegatorWriter->write($routes, $handlers);
     }
 
     public function createHandlers(HandlerCollection $collection): void

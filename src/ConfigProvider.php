@@ -39,6 +39,12 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriterFactory;
+use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamerFactory;
+use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorFactory;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriter;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterFactory;
 use Symfony\Component\Console\Command\Command;
 
 /**
@@ -113,11 +119,14 @@ final class ConfigProvider
                 ModelCollectionBuilder::class     => ModelCollectionBuilderFactory::class,
                 ModelsBuilder::class              => ModelsBuilderFactory::class,
                 ModelWriter::class                => ModelWriterFactory::class,
+                NamerInterface::class             => DotSnakeCaseNamerFactory::class,
                 OperationBuilder::class           => OperationBuilderFactory::class,
                 OperationCollectionBuilder::class => OperationCollectionBuilderFactory::class,
                 OperationWriter::class            => OperationWriterFactory::class,
                 PropertiesBuilder::class          => PropertiesBuilderFactory::class,
                 PropertyBuilder::class            => PropertyBuilderFactory::class,
+                RouteDelegatorGenerator::class    => RouteDelegatorGeneratorFactory::class,
+                RouteDelegatorWriter::class       => RouteDelegatorWriterFactory::class,
                 TypeMapper::class                 => TypeMapperFactory::class,
                 Writer::class                     => WriterFactory::class,
             ],

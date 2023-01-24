@@ -27,7 +27,8 @@ final class Configuration implements JsonSerializable
         private readonly string $testDir = '',
         private readonly string $modelNamespace = '',
         private readonly string $operationNamespace = '',
-        private readonly string $handlerNamespace = ''
+        private readonly string $handlerNamespace = '',
+        private readonly string $routePrefix = 'api'
     ) {
     }
 
@@ -74,6 +75,11 @@ final class Configuration implements JsonSerializable
     public function getHandlerNamespace(): string
     {
         return $this->handlerNamespace;
+    }
+
+    public function getRoutePrefix(): string
+    {
+        return $this->routePrefix;
     }
 
     public function jsonSerialize(): mixed

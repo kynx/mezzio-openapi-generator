@@ -14,19 +14,27 @@ final class ConfigurationTest extends TestCase
 {
     public function testConstructorSetsProperties(): void
     {
-        $projectDir      = __DIR__;
-        $openApiFile     = 'foo.json';
-        $sourceNamespace = "\\Kynx\\Api";
-        $sourceDir       = "src/Api";
-        $testNamespace   = "\\KynxTest\Api";
-        $testDir         = "test/Api";
-        $configuration   = new Configuration(
+        $projectDir         = __DIR__;
+        $openApiFile        = 'foo.json';
+        $sourceNamespace    = "\\Kynx\\Api";
+        $sourceDir          = "src/Api";
+        $testNamespace      = "\\KynxTest\Api";
+        $testDir            = "test/Api";
+        $modelNamespace     = 'Model';
+        $operationNamespace = 'Operation';
+        $handlerNamespace   = 'Handler';
+        $routePrefix        = 'pet';
+        $configuration      = new Configuration(
             $projectDir,
             $openApiFile,
             $sourceNamespace,
             $sourceDir,
             $testNamespace,
-            $testDir
+            $testDir,
+            $modelNamespace,
+            $operationNamespace,
+            $handlerNamespace,
+            $routePrefix
         );
 
         self::assertSame($projectDir, $configuration->getProjectDir());
@@ -35,6 +43,9 @@ final class ConfigurationTest extends TestCase
         self::assertSame($sourceDir, $configuration->getBaseDir());
         self::assertSame($testNamespace, $configuration->getTestNamespace());
         self::assertSame($testDir, $configuration->getTestDir());
+        self::assertSame($modelNamespace, $configuration->getModelNamespace());
+        self::assertSame($operationNamespace, $configuration->getOperationNamespace());
+        self::assertSame($routePrefix, $configuration->getRoutePrefix());
     }
 
     public function testJsonSerializeRemovesProjectDir(): void
@@ -48,6 +59,7 @@ final class ConfigurationTest extends TestCase
             'modelNamespace'     => '',
             'operationNamespace' => '',
             'handlerNamespace'   => '',
+            'routePrefix'        => 'api',
         ];
         $configuration = new Configuration(__DIR__, ...$expected);
         $actual        = $configuration->jsonSerialize();

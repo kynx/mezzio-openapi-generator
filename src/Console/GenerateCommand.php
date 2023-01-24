@@ -75,9 +75,9 @@ final class GenerateCommand extends Command
         $operations = $this->generateService->getOperations($openApi, $models);
         $this->generateService->createOperations($operations, $hydrators);
 
-        $routes = $this->generateService->getRoutes($openApi);
-
+        $routes   = $this->generateService->getRoutes($openApi);
         $handlers = $this->generateService->getHandlers($routes, $operations);
+        $this->generateService->createRouteDelegator($routes, $handlers);
         $this->generateService->createHandlers($handlers);
 
         return 0;

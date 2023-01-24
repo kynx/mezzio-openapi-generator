@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
-use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
-use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use PHPUnit\Framework\TestCase;
 
 use function iterator_to_array;
@@ -15,13 +13,12 @@ use function iterator_to_array;
  */
 final class RouteCollectionTest extends TestCase
 {
+    use RouteTrait;
+
     public function testCollectionIsIterable(): void
     {
         $expected   = $this->getRoutes();
-        $collection = new RouteCollection();
-        foreach ($expected as $route) {
-            $collection->add($route);
-        }
+        $collection = $this->getRouteCollection($expected);
 
         $actual = iterator_to_array($collection);
         self::assertSame($expected, $actual);
@@ -29,23 +26,9 @@ final class RouteCollectionTest extends TestCase
 
     public function testCollectionIsCountable(): void
     {
-        $collection = new RouteCollection();
-        foreach ($this->getRoutes() as $route) {
-            $collection->add($route);
-        }
+        $collection = $this->getRouteCollection($this->getRoutes());
 
         $actual = $collection->count();
         self::assertSame(2, $actual);
-    }
-
-    /**
-     * @return list<RouteModel>
-     */
-    private function getRoutes(): array
-    {
-        return [
-            new RouteModel('/paths/foo', '/foo', 'get', [], []),
-            new RouteModel('/paths/foo', '/foo', 'post', [], []),
-        ];
     }
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator;
 
-use cebe\openapi\Reader;
-use cebe\openapi\spec\OpenApi;
 use Kynx\Mezzio\OpenApiGenerator\GenerateService;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
@@ -22,6 +20,7 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Schema\PathItemLocator as OperationPathItemLocator;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator;
@@ -30,8 +29,6 @@ use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-
-use function implode;
 
 /**
  * @covers \Kynx\Mezzio\OpenApiGenerator\GenerateService
@@ -53,16 +50,19 @@ final class GenerateServiceTest extends TestCase
     private OperationWriterInterface $operationWriter;
     /** @var HandlerWriterInterface&MockObject */
     private HandlerWriterInterface $handlerWriter;
+    /** @var RouteDelegatorWriterInterface&MockObject */
+    private RouteDelegatorWriterInterface $routeDelegatorWriter;
     private GenerateService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->modelWriter     = $this->createMock(ModelWriterInterface::class);
-        $this->hydratorWriter  = $this->createMock(HydratorWriterInterface::class);
-        $this->operationWriter = $this->createMock(OperationWriterInterface::class);
-        $this->handlerWriter   = $this->createMock(HandlerWriterInterface::class);
+        $this->modelWriter          = $this->createMock(ModelWriterInterface::class);
+        $this->hydratorWriter       = $this->createMock(HydratorWriterInterface::class);
+        $this->operationWriter      = $this->createMock(OperationWriterInterface::class);
+        $this->routeDelegatorWriter = $this->createMock(RouteDelegatorWriterInterface::class);
+        $this->handlerWriter        = $this->createMock(HandlerWriterInterface::class);
 
         $this->service = new GenerateService(
             new OpenApiLocator(new PathsLocator(new ModelPathItemLocator())),
@@ -74,6 +74,7 @@ final class GenerateServiceTest extends TestCase
             $this->modelWriter,
             $this->hydratorWriter,
             $this->operationWriter,
+            $this->routeDelegatorWriter,
             $this->handlerWriter
         );
     }
@@ -118,24 +119,39 @@ final class GenerateServiceTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    public function testCreateRouteDelegatorWritesRouteDelegator(): void
+    {
+        $routes       = $this->getRouteCollection();
+        $handlers     = $this->getHandlerCollection();
+        $actualRoutes = $actualHandlers = null;
+        $this->routeDelegatorWriter->method('write')
+            ->willReturnCallback(function (
+                RouteCollection $routeCollection,
+                HandlerCollection $handlerCollection
+            ) use (
+                &$actualRoutes,
+                &$actualHandlers
+            ): void {
+                $actualRoutes   = $routeCollection;
+                $actualHandlers = $handlerCollection;
+            });
+
+        $this->service->createRouteDelegator($routes, $handlers);
+        self::assertSame($routes, $actualRoutes);
+        self::assertSame($handlers, $actualHandlers);
+    }
+
     public function testCreateHandlersWritesCollection(): void
     {
         $expected = $this->getHandlerCollection();
         $actual   = null;
         $this->handlerWriter->method('write')
-            ->willReturnCallback(function (HandlerCollection $collection) use (&$actual) {
+            ->willReturnCallback(function (HandlerCollection $collection) use (&$actual): void {
                 $actual = $collection;
             });
 
         $this->service->createHandlers($expected);
         self::assertSame($expected, $actual);
-    }
-
-    private function getOpenApi(): OpenApi
-    {
-        $openApi = Reader::readFromYamlFile(self::DIR . '/generate-service.yaml');
-        self::assertTrue($openApi->validate(), implode("\n", $openApi->getErrors()));
-        return $openApi;
     }
 
     private function getModelCollection(): ModelCollection
