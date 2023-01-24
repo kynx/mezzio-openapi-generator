@@ -93,4 +93,13 @@ final class OperationModelTest extends TestCase
             'body'   => [null, null, null, null, $this->getRequestBodies(), true],
         ];
     }
+
+    public function testGetOperationFactoryClassName(): void
+    {
+        $expected       = 'Foo\\OperationFactory';
+        $operationModel = new OperationModel('Foo\\Operation', '/paths/foo/get', null, null, null, null, []);
+
+        $actual = $operationModel->getOperationFactoryClassName();
+        self::assertSame($expected, $actual);
+    }
 }

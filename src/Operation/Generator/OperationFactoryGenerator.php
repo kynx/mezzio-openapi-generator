@@ -71,8 +71,8 @@ final class OperationFactoryGenerator
             ->addUse($operation->getClassName());
 
         $operationClass = $operation->getClassName();
-        $parserClass    = GeneratorUtil::getNamespace($operationClass) . '\\OperationFactory';
-        $class          = $namespace->addClass(GeneratorUtil::getClassName($parserClass))
+        $factoryClass   = $operation->getOperationFactoryClassName();
+        $class          = $namespace->addClass(GeneratorUtil::getClassName($factoryClass))
             ->addImplement(OperationFactoryInterface::class)
             ->setFinal();
 

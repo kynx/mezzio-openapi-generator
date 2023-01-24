@@ -71,7 +71,6 @@ final class OperationFactoryGeneratorTest extends TestCase
         $expectedUses = [
             'OpenApiOperationFactory'   => OpenApiOperationFactory::class,
             'OperationFactoryInterface' => OperationFactoryInterface::class,
-            'OperationUtil'             => OperationUtil::class,
             'ServerRequestInterface'    => ServerRequestInterface::class,
         ];
         $uses         = $namespace->getUses();
@@ -257,6 +256,7 @@ final class OperationFactoryGeneratorTest extends TestCase
 
     /**
      * @dataProvider requestBodyParserProvider
+     * @param array<string, string> $hydrators
      */
     public function testGenerateAddsRequestBodyParser(
         RequestBodyModel $requestBody,

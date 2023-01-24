@@ -15,7 +15,7 @@ use function implode;
 /**
  * @internal
  *
- * @see \KynxTest\Mezzio\OpenApiGenerator\Model\OperationModelTest
+ * @see \KynxTest\Mezzio\OpenApiGenerator\Operation\OperationModelTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
@@ -43,6 +43,11 @@ final class OperationModel
             || $this->headerParams !== null
             || $this->cookieParams !== null
             || $this->requestBodies !== [];
+    }
+
+    public function getOperationFactoryClassName(): string
+    {
+        return $this->className . 'Factory';
     }
 
     /**
