@@ -8,7 +8,6 @@ use Kynx\Mezzio\OpenApiGenerator\GenerateService;
 use Kynx\Mezzio\OpenApiGenerator\GenerateServiceFactory;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriter;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriterInterface;
-use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterInterface;
@@ -35,7 +34,6 @@ final class GenerateServiceFactoryTest extends TestCase
             ->willReturnMap([
                 [ModelCollectionBuilder::class, $this->getModelCollectionBuilder(__NAMESPACE__)],
                 [OperationCollectionBuilder::class, $this->getOperationCollectionBuilder(__NAMESPACE__)],
-                [ExistingModels::class, new ExistingModels(__NAMESPACE__, __DIR__)],
                 [ModelWriter::class, $this->createStub(ModelWriterInterface::class)],
                 [HydratorWriter::class, $this->createStub(HydratorWriterInterface::class)],
                 [OperationWriter::class, $this->createStub(OperationWriterInterface::class)],

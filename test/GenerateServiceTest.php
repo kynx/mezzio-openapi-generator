@@ -10,7 +10,6 @@ use Kynx\Mezzio\OpenApiGenerator\GenerateService;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
-use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator as ModelPathItemLocator;
@@ -59,21 +58,10 @@ final class GenerateServiceTest extends TestCase
             new OpenApiLocator(new PathsLocator(new OperationPathItemLocator())),
             $this->getModelCollectionBuilder(self::NAMESPACE),
             $this->getOperationCollectionBuilder(self::NAMESPACE),
-            new ExistingModels(self::NAMESPACE, self::DIR),
             $this->modelWriter,
             $this->hydratorWriter,
             $this->operationWriter
         );
-    }
-
-    public function testGetModelsRenamesExisting(): void
-    {
-        $openApi = $this->getOpenApi();
-
-        $models = $this->service->getModels($openApi);
-        self::assertCount(1, $models);
-        $actual = $models->current();
-        self::assertSame(self::NAMESPACE . '\\ExistingModel', $actual->getClassName());
     }
 
     public function testCreateModelsWriteCollection(): void

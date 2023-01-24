@@ -19,7 +19,6 @@ use function current;
 /**
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator

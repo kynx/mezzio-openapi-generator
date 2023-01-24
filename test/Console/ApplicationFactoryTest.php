@@ -15,8 +15,6 @@ use PHPUnit\Framework\TestCase;
  * @uses \Kynx\Mezzio\OpenApiGenerator\Console\CommandLoader
  * @uses \Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommand
  * @uses \Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommandFactory
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModelsFactory
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator

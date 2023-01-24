@@ -7,7 +7,6 @@ namespace Kynx\Mezzio\OpenApiGenerator;
 use cebe\openapi\spec\OpenApi;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriterInterface;
-use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterInterface;
@@ -23,7 +22,6 @@ final class GenerateService implements GenerateServiceInterface
         private readonly OpenApiLocator $operationLocator,
         private readonly ModelCollectionBuilder $modelCollectionBuilder,
         private readonly OperationCollectionBuilder $operationCollectionBuilder,
-        private readonly ExistingModels $existingModels,
         private readonly ModelWriterInterface $modelWriter,
         private readonly HydratorWriterInterface $hydratorWriter,
         private readonly OperationWriterInterface $operationWriter
@@ -33,8 +31,7 @@ final class GenerateService implements GenerateServiceInterface
     public function getModels(OpenApi $openApi): ModelCollection
     {
         $namedSpecifications = $this->modelLocator->getNamedSpecifications($openApi);
-        $collection          = $this->modelCollectionBuilder->getModelCollection($namedSpecifications);
-        return $this->existingModels->updateClassNames($collection);
+        return $this->modelCollectionBuilder->getModelCollection($namedSpecifications);
     }
 
     public function getOperations(OpenApi $openApi, ModelCollection $modelCollection): OperationCollection
