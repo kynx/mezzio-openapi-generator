@@ -7,6 +7,9 @@ namespace KynxTest\Mezzio\OpenApiGenerator;
 use cebe\openapi\Reader;
 use cebe\openapi\spec\OpenApi;
 use Kynx\Mezzio\OpenApiGenerator\GenerateService;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
@@ -17,8 +20,12 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Schema\PathItemLocator as OperationPathItemLocator;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator;
+use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -31,6 +38,7 @@ use function implode;
  */
 final class GenerateServiceTest extends TestCase
 {
+    use HandlerTrait;
     use ModelTrait;
     use OperationTrait;
 
@@ -43,6 +51,8 @@ final class GenerateServiceTest extends TestCase
     private HydratorWriterInterface $hydratorWriter;
     /** @var OperationWriterInterface&MockObject */
     private OperationWriterInterface $operationWriter;
+    /** @var HandlerWriterInterface&MockObject */
+    private HandlerWriterInterface $handlerWriter;
     private GenerateService $service;
 
     protected function setUp(): void
@@ -52,15 +62,19 @@ final class GenerateServiceTest extends TestCase
         $this->modelWriter     = $this->createMock(ModelWriterInterface::class);
         $this->hydratorWriter  = $this->createMock(HydratorWriterInterface::class);
         $this->operationWriter = $this->createMock(OperationWriterInterface::class);
+        $this->handlerWriter   = $this->createMock(HandlerWriterInterface::class);
 
         $this->service = new GenerateService(
             new OpenApiLocator(new PathsLocator(new ModelPathItemLocator())),
             new OpenApiLocator(new PathsLocator(new OperationPathItemLocator())),
             $this->getModelCollectionBuilder(self::NAMESPACE),
             $this->getOperationCollectionBuilder(self::NAMESPACE),
+            new RouteCollectionBuilder(),
+            $this->getHandlerCollectionBuilder(self::NAMESPACE),
             $this->modelWriter,
             $this->hydratorWriter,
-            $this->operationWriter
+            $this->operationWriter,
+            $this->handlerWriter
         );
     }
 
@@ -104,6 +118,19 @@ final class GenerateServiceTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    public function testCreateHandlersWritesCollection(): void
+    {
+        $expected = $this->getHandlerCollection();
+        $actual   = null;
+        $this->handlerWriter->method('write')
+            ->willReturnCallback(function (HandlerCollection $collection) use (&$actual) {
+                $actual = $collection;
+            });
+
+        $this->service->createHandlers($expected);
+        self::assertSame($expected, $actual);
+    }
+
     private function getOpenApi(): OpenApi
     {
         $openApi = Reader::readFromYamlFile(self::DIR . '/generate-service.yaml');
@@ -124,7 +151,7 @@ final class GenerateServiceTest extends TestCase
         $collection = new OperationCollection();
         $model      = new OperationModel(
             self::NAMESPACE . '\\Get',
-            '/paths/foo/get',
+            '/paths/~1foo/get',
             null,
             null,
             null,
@@ -132,6 +159,22 @@ final class GenerateServiceTest extends TestCase
             []
         );
         $collection->add($model);
+
+        return $collection;
+    }
+
+    private function getRouteCollection(): RouteCollection
+    {
+        $collection = new RouteCollection();
+        $collection->add(new RouteModel('/paths/~1foo/get', '/foo', 'get', [], []));
+
+        return $collection;
+    }
+
+    private function getHandlerCollection(): HandlerCollection
+    {
+        $collection = new HandlerCollection();
+        $collection->add(new HandlerModel('/paths/~1foo/get', self::NAMESPACE . '\\GetHandler', null));
 
         return $collection;
     }

@@ -10,64 +10,33 @@ use Iterator;
 use function count;
 
 /**
+ * @internal
+ *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerCollectionTest
+ *
+ * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
+ * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
-final class HandlerCollection implements Iterator, Countable
+final class HandlerCollection implements Countable, Iterator
 {
-    /** @var list<HandlerClass> */
-    private array $handlers;
+    /** @var list<HandlerModel> */
+    private array $members;
     private int $index;
 
     public function __construct()
     {
-        $this->handlers = [];
-        $this->index    = 0;
+        $this->members = [];
+        $this->index   = 0;
     }
 
-    /**
-     * Adds HandlerFile to collection
-     */
-    public function add(HandlerClass $handler): void
+    public function add(HandlerModel $handler): void
     {
-        if ($this->has($handler)) {
-            throw HandlerException::handlerExists($handler);
-        }
-
-        $this->handlers[] = $handler;
+        $this->members[] = $handler;
     }
 
-    /**
-     * Returns true if collection contains matching handler
-     *
-     * Handlers match if either the class names are the same, the path and methods are the same or if the operationId
-     * is the same.
-     */
-    public function has(HandlerClass $handler): bool
+    public function current(): HandlerModel
     {
-        $operation = $handler->getRoute()->getOperation();
-        foreach ($this->handlers as $existing) {
-            if ($existing->getClassName() === $handler->getClassName()) {
-                return true;
-            }
-            if ($existing->matches($handler)) {
-                return true;
-            }
-
-            $existingOp = $existing->getRoute()->getOperation();
-            if (empty($existingOp->operationId) && empty($operation->operationId)) {
-                return false;
-            }
-            if ($existingOp->operationId === $operation->operationId) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function current(): HandlerClass
-    {
-        return $this->handlers[$this->index];
+        return $this->members[$this->index];
     }
 
     public function next(): void
@@ -82,7 +51,7 @@ final class HandlerCollection implements Iterator, Countable
 
     public function valid(): bool
     {
-        return isset($this->handlers[$this->index]);
+        return isset($this->members[$this->index]);
     }
 
     public function rewind(): void
@@ -92,6 +61,6 @@ final class HandlerCollection implements Iterator, Countable
 
     public function count(): int
     {
-        return count($this->handlers);
+        return count($this->members);
     }
 }

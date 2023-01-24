@@ -8,6 +8,10 @@ use DateTimeImmutable;
 use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
 use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommand;
 use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommandFactory;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilderFactory;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriter;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriterFactory;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGeneratorFactory;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriter;
@@ -102,6 +106,8 @@ final class ConfigProvider
                 ExistingModels::class             => ExistingModelsFactory::class,
                 GenerateCommand::class            => GenerateCommandFactory::class,
                 GenerateService::class            => GenerateServiceFactory::class,
+                HandlerCollectionBuilder::class   => HandlerCollectionBuilderFactory::class,
+                HandlerWriter::class              => HandlerWriterFactory::class,
                 HydratorGenerator::class          => HydratorGeneratorFactory::class,
                 HydratorWriter::class             => HydratorWriterFactory::class,
                 ModelCollectionBuilder::class     => ModelCollectionBuilderFactory::class,
