@@ -42,11 +42,11 @@ trait HandlerTrait
     /**
      * @return list<HandlerModel>
      */
-    protected function getHandlers(): array
+    protected function getHandlers(string $namespace = ''): array
     {
         return [
-            new HandlerModel('/paths/~1foo/get', '\\Foo\\GetHandler', null),
-            new HandlerModel('/paths/~1bar/get', '\\Bar\\GetHandler', null),
+            new HandlerModel('/paths/~1foo/get', $namespace . '\\Foo\\GetHandler', null),
+            new HandlerModel('/paths/~1bar/get', $namespace . '\\Bar\\GetHandler', null),
         ];
     }
 }

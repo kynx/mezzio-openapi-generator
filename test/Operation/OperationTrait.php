@@ -19,7 +19,9 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
 use Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ParameterBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
@@ -135,5 +137,45 @@ trait OperationTrait
             new PropertyMetadata(...['required' => true]),
             PropertyType::String
         );
+    }
+
+    /**
+     * @param list<OperationModel> $operations
+     */
+    protected function getOperationCollection(array $operations): OperationCollection
+    {
+        $collection = new OperationCollection();
+        foreach ($operations as $operation) {
+            $collection->add($operation);
+        }
+
+        return $collection;
+    }
+
+    /**
+     * @return list<OperationModel>
+     */
+    protected function getOperations(string $namespace): array
+    {
+        return [
+            new OperationModel(
+                $namespace . '\\Foo\\Get\\Operation',
+                '/paths/~1foo/get',
+                $this->getPathParams(),
+                null,
+                null,
+                null,
+                []
+            ),
+            new OperationModel(
+                $namespace . '\\Bar\\Get\\Operation',
+                '/paths/~1bar/get',
+                null,
+                $this->getQueryParams(),
+                null,
+                null,
+                []
+            ),
+        ];
     }
 }

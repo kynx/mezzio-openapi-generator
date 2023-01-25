@@ -30,4 +30,6 @@ interface GenerateServiceInterface
     public function createRouteDelegator(RouteCollection $routes, HandlerCollection $handlers): void;
 
     public function createHandlers(HandlerCollection $collection): void;
+
+    public function createConfigProvider(OperationCollection $operations, HandlerCollection $handlers): void;
 }

@@ -6,6 +6,10 @@ namespace Kynx\Mezzio\OpenApiGenerator;
 
 use DateTimeImmutable;
 use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGenerator;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGeneratorFactory;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriter;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriterFactory;
 use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommand;
 use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommandFactory;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilder;
@@ -109,6 +113,8 @@ final class ConfigProvider
     {
         return [
             'factories' => [
+                ConfigProviderGenerator::class    => ConfigProviderGeneratorFactory::class,
+                ConfigProviderWriter::class       => ConfigProviderWriterFactory::class,
                 ExistingModels::class             => ExistingModelsFactory::class,
                 GenerateCommand::class            => GenerateCommandFactory::class,
                 GenerateService::class            => GenerateServiceFactory::class,

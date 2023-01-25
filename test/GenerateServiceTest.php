@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator;
 
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\GenerateService;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
@@ -52,6 +53,8 @@ final class GenerateServiceTest extends TestCase
     private HandlerWriterInterface $handlerWriter;
     /** @var RouteDelegatorWriterInterface&MockObject */
     private RouteDelegatorWriterInterface $routeDelegatorWriter;
+    /** @var ConfigProviderWriterInterface&MockObject */
+    private ConfigProviderWriterInterface $configProviderWriter;
     private GenerateService $service;
 
     protected function setUp(): void
@@ -63,6 +66,7 @@ final class GenerateServiceTest extends TestCase
         $this->operationWriter      = $this->createMock(OperationWriterInterface::class);
         $this->routeDelegatorWriter = $this->createMock(RouteDelegatorWriterInterface::class);
         $this->handlerWriter        = $this->createMock(HandlerWriterInterface::class);
+        $this->configProviderWriter = $this->createMock(ConfigProviderWriterInterface::class);
 
         $this->service = new GenerateService(
             new OpenApiLocator(new PathsLocator(new ModelPathItemLocator())),
@@ -75,7 +79,8 @@ final class GenerateServiceTest extends TestCase
             $this->hydratorWriter,
             $this->operationWriter,
             $this->routeDelegatorWriter,
-            $this->handlerWriter
+            $this->handlerWriter,
+            $this->configProviderWriter
         );
     }
 
@@ -152,6 +157,30 @@ final class GenerateServiceTest extends TestCase
 
         $this->service->createHandlers($expected);
         self::assertSame($expected, $actual);
+    }
+
+    public function testCreateConfigProviderWritesConfigProvider(): void
+    {
+        $operations       = $this->getOperationCollection();
+        $handlers         = $this->getHandlerCollection();
+        $actualOperations = $actualHandlers = null;
+        $this->configProviderWriter->method('write')
+            ->willReturnCallback(
+                function (
+                    OperationCollection $operationCollection,
+                    HandlerCollection $handlerCollection
+                ) use (
+                    &$actualOperations,
+                    &$actualHandlers
+                ): void {
+                    $actualOperations = $operationCollection;
+                    $actualHandlers   = $handlerCollection;
+                }
+            );
+
+        $this->service->createConfigProvider($operations, $handlers);
+        self::assertSame($operations, $actualOperations);
+        self::assertSame($handlers, $actualHandlers);
     }
 
     private function getModelCollection(): ModelCollection

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator;
 
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriter;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\GenerateService;
 use Kynx\Mezzio\OpenApiGenerator\GenerateServiceFactory;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilder;
@@ -49,6 +51,7 @@ final class GenerateServiceFactoryTest extends TestCase
                 [OperationWriter::class, $this->createStub(OperationWriterInterface::class)],
                 [RouteDelegatorWriter::class, $this->createStub(RouteDelegatorWriterInterface::class)],
                 [HandlerWriter::class, $this->createStub(HandlerWriterInterface::class)],
+                [ConfigProviderWriter::class, $this->createStub(ConfigProviderWriterInterface::class)],
             ]);
 
         $factory = new GenerateServiceFactory();

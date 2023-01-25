@@ -80,6 +80,8 @@ final class GenerateCommand extends Command
         $this->generateService->createRouteDelegator($routes, $handlers);
         $this->generateService->createHandlers($handlers);
 
+        $this->generateService->createConfigProvider($operations, $handlers);
+
         return 0;
     }
 

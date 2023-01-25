@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator;
 
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriter;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriter;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriter;
@@ -34,7 +35,8 @@ final class GenerateServiceFactory
             $container->get(HydratorWriter::class),
             $container->get(OperationWriter::class),
             $container->get(RouteDelegatorWriter::class),
-            $container->get(HandlerWriter::class)
+            $container->get(HandlerWriter::class),
+            $container->get(ConfigProviderWriter::class)
         );
     }
 }

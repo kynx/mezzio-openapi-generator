@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator;
 
 use cebe\openapi\spec\OpenApi;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriterInterface;
@@ -34,7 +35,8 @@ final class GenerateService implements GenerateServiceInterface
         private readonly HydratorWriterInterface $hydratorWriter,
         private readonly OperationWriterInterface $operationWriter,
         private readonly RouteDelegatorWriterInterface $routeDelegatorWriter,
-        private readonly HandlerWriterInterface $handlerWriter
+        private readonly HandlerWriterInterface $handlerWriter,
+        private readonly ConfigProviderWriterInterface $configProviderWriter
     ) {
     }
 
@@ -84,5 +86,14 @@ final class GenerateService implements GenerateServiceInterface
     public function createHandlers(HandlerCollection $collection): void
     {
         $this->handlerWriter->write($collection);
+    }
+
+    public function createConfigProvider(OperationCollection $operations, HandlerCollection $handlers): void
+    {
+        $this->configProviderWriter->write(
+            $operations,
+            $handlers,
+            $this->routeDelegatorWriter->getDelegatorClassName()
+        );
     }
 }
