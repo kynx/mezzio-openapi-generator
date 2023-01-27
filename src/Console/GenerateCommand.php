@@ -62,7 +62,7 @@ final class GenerateCommand extends Command
         $specFile      = $this->projectDir . '/' . $specification;
 
         $openApi = $this->readSpecification($specFile, $output);
-        if ($openApi === null) {
+        if ($openApi === null || ! $this->validateOpenApi($openApi, $output)) {
             return 1;
         }
 
@@ -107,5 +107,18 @@ final class GenerateCommand extends Command
         }
 
         return $openApi;
+    }
+
+    private function validateOpenApi(OpenApi $openApi, OutputInterface $output): bool
+    {
+        if ($openApi->validate()) {
+            return true;
+        }
+
+        foreach ($openApi->getErrors() as $error) {
+            $output->writeln('<error>' . $error . '</error>');
+        }
+
+        return false;
     }
 }

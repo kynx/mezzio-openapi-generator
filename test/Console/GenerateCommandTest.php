@@ -99,6 +99,17 @@ final class GenerateCommandTest extends TestCase
         self::assertStringStartsWith($expected, $actual);
     }
 
+    public function testExecuteInvalidSpecificationOutputsError(): void
+    {
+        $specFile = $this->projectDir . '/invalid.yaml';
+        $expected = "OpenApi is missing required property: paths";
+
+        $exit = $this->commandTester->execute(['specification' => 'invalid.yaml']);
+        self::assertSame(1, $exit);
+        $actual = trim($this->commandTester->getDisplay());
+        self::assertStringContainsString($expected, $actual);
+    }
+
     public function testGenerateCreatesModels(): void
     {
         [$modelCollection] = $this->configureModels();
