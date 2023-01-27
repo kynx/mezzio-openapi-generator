@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\json\JsonPointer;
+use cebe\openapi\Reader;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Reference;
@@ -37,7 +38,7 @@ final class OperationLocatorTest extends TestCase
         $this->locator = new OperationLocator();
     }
 
-    public function testGetNamedSchemasReferencedParameterThrowsException(): void
+    public function testGetNamedSpecificationsReferencedParameterThrowsException(): void
     {
         $ref       = '#/components/parameters/Pet';
         $operation = new Operation([
@@ -51,7 +52,7 @@ final class OperationLocatorTest extends TestCase
         $this->locator->getNamedSpecifications('', $operation);
     }
 
-    public function testGetNamedSchemasReturnsParameterSchema(): void
+    public function testGetNamedSpecificationsReturnsParameterSchema(): void
     {
         $schema    = $this->getSchema();
         $operation = $this->getOperation([
@@ -80,7 +81,7 @@ final class OperationLocatorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetNamedSchemasReferencedRequestBodyThrowsException(): void
+    public function testGetNamedSpecificationsReferencedRequestBodyThrowsException(): void
     {
         $ref       = '#/components/requestBodies/Foo';
         $operation = $this->getOperation([
@@ -100,7 +101,7 @@ final class OperationLocatorTest extends TestCase
         $this->locator->getNamedSpecifications('', $operation);
     }
 
-    public function testGetNamedSchemasReturnsRequestBody(): void
+    public function testGetNamedSpecificationsReturnsRequestBody(): void
     {
         $schema    = $this->getSchema();
         $operation = $this->getOperation([
@@ -130,7 +131,7 @@ final class OperationLocatorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetNamedSchemasReferencedResponseThrowsException(): void
+    public function testGetNamedSpecificationsReferencedResponseThrowsException(): void
     {
         $ref       = '#/components/responses/Foo';
         $operation = $this->getOperation([
@@ -144,7 +145,18 @@ final class OperationLocatorTest extends TestCase
         $this->locator->getNamedSpecifications('', $operation);
     }
 
-    public function testGetNamedSchemasReturnsResponse(): void
+    public function testGetNamedSpecificationsInvalidResponseThrowsException(): void
+    {
+        $openApi = Reader::readFromYamlFile(__DIR__ . '/../Asset/broken-response.yaml');
+
+        $operation = $openApi->paths['/foo']->getOperations()['get'];
+
+        self::expectExceptionMessage(ModelException::class);
+        self::expectExceptionMessage("Cannot parse response");
+        $this->locator->getNamedSpecifications('', $operation);
+    }
+
+    public function testGetNamedSpecificationsReturnsResponse(): void
     {
         $schema    = $this->getSchema();
         $operation = $this->getOperation([
@@ -169,7 +181,7 @@ final class OperationLocatorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetNamedSchemasUsesDefaultStatusForName(): void
+    public function testGetNamedSpecificationsUsesDefaultStatusForName(): void
     {
         $schema    = $this->getSchema();
         $operation = $this->getOperation([

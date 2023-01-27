@@ -1,0 +1,14 @@
+openapi: 3.0.3
+info:
+  title: Broken response
+  version: 1.0.0
+paths:
+  "/foo":
+    get:
+      responses:
+        "200":
+          $ref: "#/components/schemas/Foo"
+components:
+  schemas:
+    Foo:
+      type: string

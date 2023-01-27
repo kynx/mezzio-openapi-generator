@@ -65,11 +65,9 @@ final class OperationLocator
                 if ($response instanceof Reference) {
                     throw ModelException::unresolvedReference($response);
                 }
-
-                // The docblock says it can be null, but normally that'll throw TypeErrorException in the constructor.
-                // The only way to do it is to manually `Responses::addResponse($status, null)`, which psalm / your IDE
-                // should flag anyway...
-                assert($response instanceof Response);
+                if (! $response instanceof Response) {
+                    throw ModelException::invalidSchemaItem('response', $operation->responses);
+                }
 
                 if (is_numeric($code)) {
                     $name = $baseName . ' Status' . $code;
