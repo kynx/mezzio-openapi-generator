@@ -28,11 +28,11 @@ final class OperationModel
     public function __construct(
         private readonly string $className,
         private readonly string $jsonPointer,
-        private readonly PathOrQueryParams|null $pathParams,
-        private readonly PathOrQueryParams|null $queryParams,
-        private readonly CookieOrHeaderParams|null $headerParams,
-        private readonly CookieOrHeaderParams|null $cookieParams,
-        private readonly array $requestBodies
+        private readonly PathOrQueryParams|null $pathParams = null,
+        private readonly PathOrQueryParams|null $queryParams = null,
+        private readonly CookieOrHeaderParams|null $headerParams = null,
+        private readonly CookieOrHeaderParams|null $cookieParams = null,
+        private readonly array $requestBodies = []
     ) {
     }
 
@@ -99,6 +99,14 @@ final class OperationModel
     public function getRequestBodies(): array
     {
         return $this->requestBodies;
+    }
+
+    /**
+     * @return list<ResponseModel>
+     */
+    public function getResponses(): array
+    {
+        return $this->responses;
     }
 
     /**

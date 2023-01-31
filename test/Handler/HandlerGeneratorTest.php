@@ -82,7 +82,7 @@ final class HandlerGeneratorTest extends TestCase
 
         $pointer   = '/paths/~1foo/get';
         $className = __NAMESPACE__ . '\\GetHandler';
-        $operation = new OperationModel('\\Foo\\Operation', $pointer, null, null, null, null, []);
+        $operation = new OperationModel('\\Foo\\Operation', $pointer);
         $handler   = new HandlerModel($pointer, $className, $operation);
 
         $file      = $this->generator->generate($handler);

@@ -54,7 +54,7 @@ final class OperationWriterTest extends TestCase
         $this->writer->expects(self::never())
             ->method('write');
         $collection         = $this->getOperationCollection([
-            new OperationModel('\\Foo', '/paths/foo/get', null, null, null, null, []),
+            new OperationModel('\\Foo', '/paths/foo/get'),
         ]);
         $hydratorCollection = HydratorCollection::fromModelCollection(new ModelCollection());
 
@@ -80,7 +80,7 @@ final class OperationWriterTest extends TestCase
             });
 
         $collection         = $this->getOperationCollection([
-            new OperationModel('\\Operation', '/paths/foo/get', $pathParams, null, null, null, []),
+            new OperationModel('\\Operation', '/paths/foo/get', $pathParams),
         ]);
         $modelCollection    = new ModelCollection();
         $hydratorCollection = HydratorCollection::fromModelCollection($modelCollection);

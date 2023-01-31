@@ -45,7 +45,7 @@ final class OperationGeneratorTest extends TestCase
     {
         $className = self::NAMESPACE . '\\Operation';
         $pointer   = '/paths/foo/get';
-        $operation = new OperationModel($className, $pointer, null, null, null, null, []);
+        $operation = new OperationModel($className, $pointer);
 
         $file = $this->generator->generate($operation);
         self::assertTrue($file->hasStrictTypes());
@@ -76,7 +76,7 @@ final class OperationGeneratorTest extends TestCase
         $className  = self::NAMESPACE . '\\Operation';
         $pointer    = '/paths/foo/get';
         $pathParams = $this->getPathParams(self::NAMESPACE);
-        $operation  = new OperationModel($className, $pointer, $pathParams, null, null, null, []);
+        $operation  = new OperationModel($className, $pointer, $pathParams);
 
         $file      = $this->generator->generate($operation);
         $namespace = $this->getNamespace($file, self::NAMESPACE);

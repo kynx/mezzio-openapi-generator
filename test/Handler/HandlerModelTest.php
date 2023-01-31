@@ -17,7 +17,7 @@ final class HandlerModelTest extends TestCase
     {
         $jsonPointer = '/paths/~1foo/get';
         $className   = 'Handler\\Foo\\GetHandler';
-        $operation   = new OperationModel('Operation\\Foo\\Get\\Operation', $jsonPointer, null, null, null, null, []);
+        $operation   = new OperationModel('Operation\\Foo\\Get\\Operation', $jsonPointer);
         $model       = new HandlerModel($jsonPointer, $className, $operation);
 
         self::assertSame($jsonPointer, $model->getJsonPointer());

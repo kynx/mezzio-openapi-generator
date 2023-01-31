@@ -194,15 +194,7 @@ final class GenerateServiceTest extends TestCase
     private function getOperationCollection(): OperationCollection
     {
         $collection = new OperationCollection();
-        $model      = new OperationModel(
-            self::NAMESPACE . '\\Get',
-            '/paths/~1foo/get',
-            null,
-            null,
-            null,
-            null,
-            []
-        );
+        $model      = new OperationModel(self::NAMESPACE . '\\Get', '/paths/~1foo/get');
         $collection->add($model);
 
         return $collection;

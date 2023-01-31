@@ -97,7 +97,7 @@ final class OperationModelTest extends TestCase
     public function testGetOperationFactoryClassName(): void
     {
         $expected       = 'Foo\\OperationFactory';
-        $operationModel = new OperationModel('Foo\\Operation', '/paths/foo/get', null, null, null, null, []);
+        $operationModel = new OperationModel('Foo\\Operation', '/paths/foo/get');
 
         $actual = $operationModel->getOperationFactoryClassName();
         self::assertSame($expected, $actual);

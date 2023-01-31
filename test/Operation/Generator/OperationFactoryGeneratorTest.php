@@ -62,7 +62,7 @@ final class OperationFactoryGeneratorTest extends TestCase
     {
         $expected = 'return new Operation();';
 
-        $operation = new OperationModel(self::CLASS_NAME, self::POINTER, null, null, null, null, []);
+        $operation = new OperationModel(self::CLASS_NAME, self::POINTER);
 
         $file = $this->generator->generate($operation, []);
         self::assertTrue($file->hasStrictTypes());
@@ -184,7 +184,7 @@ final class OperationFactoryGeneratorTest extends TestCase
         $model     = new ClassModel(self::NAMESPACE . '\\PathParams', '/foo', [], $property);
         $param     = new PathOrQueryParams($template, $model);
         $hydrators = [self::NAMESPACE . '\\PathParams' => self::NAMESPACE . '\\PathParmsHydrator'];
-        $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param, null, null, null, []);
+        $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param);
 
         $file = $this->generator->generate($operation, $hydrators);
         $body = $this->getGetOperationBody($file);
@@ -210,7 +210,7 @@ final class OperationFactoryGeneratorTest extends TestCase
         $model     = new ClassModel(self::NAMESPACE . '\\PathParams', '/foo', [], $property);
         $param     = new PathOrQueryParams('{foo}', $model);
         $hydrators = [self::NAMESPACE . '\\PathParams' => self::NAMESPACE . '\\PathParmsHydrator'];
-        $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param, null, null, null, []);
+        $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param);
 
         $file   = $this->generator->generate($operation, $hydrators);
         $class  = $this->getClass($this->getNamespace($file, self::NAMESPACE), 'OperationFactory');

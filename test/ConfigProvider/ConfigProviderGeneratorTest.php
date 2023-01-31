@@ -111,15 +111,7 @@ final class ConfigProviderGeneratorTest extends TestCase
         $expectedConfig = "return ['operation-factories' => []];";
 
         $operations = $this->getOperationCollection([
-            new OperationModel(
-                self::OPERATION_NAMESPACE . '\\Foo\\Get\\Operation',
-                '/paths/~1foo/get',
-                null,
-                null,
-                null,
-                null,
-                []
-            ),
+            new OperationModel(self::OPERATION_NAMESPACE . '\\Foo\\Get\\Operation', '/paths/~1foo/get'),
         ]);
         $handlers   = $this->getHandlerCollection($this->getHandlers(self::HANDLER_NAMESPACE));
 

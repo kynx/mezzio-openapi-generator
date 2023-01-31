@@ -40,8 +40,8 @@ final class HandlerCollectionBuilderTest extends TestCase
             new RouteModel('/paths/~1bar/post', '/bar', 'post', [], []),
         ];
         $operations = [
-            new OperationModel('\\Foo\\Operation', '/paths/~1foo/get', null, null, null, null, []),
-            new OperationModel('\\Bar\\Operation', '/paths/~1bar/post', $this->getPathParams(), null, null, null, []),
+            new OperationModel('\\Foo\\Operation', '/paths/~1foo/get'),
+            new OperationModel('\\Bar\\Operation', '/paths/~1bar/post', $this->getPathParams()),
         ];
         $classNames = [
             self::NAMESPACE . '\\Foo\\GetHandler',

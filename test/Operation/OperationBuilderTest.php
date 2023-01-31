@@ -33,7 +33,7 @@ final class OperationBuilderTest extends TestCase
     {
         $className = '\\Operation';
         $pointer   = '/paths/{foo}/get';
-        $expected  = new OperationModel($className, $pointer, null, null, null, null, []);
+        $expected  = new OperationModel($className, $pointer);
         $namedSpec = $this->getNamedSpecification('get', []);
 
         $actual = $this->builder->getOperationModel($namedSpec, [$pointer => $className]);
@@ -70,10 +70,10 @@ final class OperationBuilderTest extends TestCase
 
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'path'   => ['path', 'foo', new OperationModel($class, $pointer, $this->getPathParams(), null, null, null, [])],
-            'query'  => ['query', 'bar', new OperationModel($class, $pointer, null, $this->getQueryParams(), null, null, [])],
-            'header' => ['header', 'X-Foo', new OperationModel($class, $pointer, null, null, $this->getHeaderParams(), null, [])],
-            'cookie' => ['cookie', 'cook', new OperationModel($class, $pointer, null, null, null, $this->getCookieParams(), [])],
+            'path'   => ['path', 'foo', new OperationModel($class, $pointer, $this->getPathParams())],
+            'query'  => ['query', 'bar', new OperationModel($class, $pointer, null, $this->getQueryParams())],
+            'header' => ['header', 'X-Foo', new OperationModel($class, $pointer, null, null, $this->getHeaderParams())],
+            'cookie' => ['cookie', 'cook', new OperationModel($class, $pointer, null, null, null, $this->getCookieParams())],
         ];
         // phpcs:enable
     }

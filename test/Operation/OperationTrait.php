@@ -158,24 +158,8 @@ trait OperationTrait
     protected function getOperations(string $namespace): array
     {
         return [
-            new OperationModel(
-                $namespace . '\\Foo\\Get\\Operation',
-                '/paths/~1foo/get',
-                $this->getPathParams(),
-                null,
-                null,
-                null,
-                []
-            ),
-            new OperationModel(
-                $namespace . '\\Bar\\Get\\Operation',
-                '/paths/~1bar/get',
-                null,
-                $this->getQueryParams(),
-                null,
-                null,
-                []
-            ),
+            new OperationModel($namespace . '\\Foo\\Get\\Operation', '/paths/~1foo/get', $this->getPathParams()),
+            new OperationModel($namespace . '\\Bar\\Get\\Operation', '/paths/~1bar/get', null, $this->getQueryParams()),
         ];
     }
 }

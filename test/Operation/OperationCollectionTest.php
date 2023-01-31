@@ -44,8 +44,8 @@ final class OperationCollectionTest extends TestCase
     public function getOperations(): array
     {
         return [
-            new OperationModel('\\Foo', '/paths/foo/get', null, null, null, null, []),
-            new OperationModel('\\Bar', '/paths/bar/get', null, null, null, null, []),
+            new OperationModel('\\Foo', '/paths/foo/get'),
+            new OperationModel('\\Bar', '/paths/bar/get'),
         ];
     }
 }
