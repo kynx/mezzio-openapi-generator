@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation\Generator;
 
-use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperation;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequest;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
@@ -23,27 +23,27 @@ use function array_keys;
 use function implode;
 
 /**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationGenerator
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestGenerator
  */
-final class OperationGeneratorTest extends TestCase
+final class RequestGeneratorTest extends TestCase
 {
     use GeneratorTrait;
     use OperationTrait;
 
     private const NAMESPACE = __NAMESPACE__ . '\\Foo\\Get';
 
-    private OperationGenerator $generator;
+    private RequestGenerator $generator;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->generator = new OperationGenerator();
+        $this->generator = new RequestGenerator();
     }
 
     public function testGenerateReturnsOperationFile(): void
     {
-        $className = self::NAMESPACE . '\\Operation';
+        $className = self::NAMESPACE . '\\Request';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel($className, $pointer);
 
@@ -52,18 +52,18 @@ final class OperationGeneratorTest extends TestCase
 
         $namespace    = $this->getNamespace($file, self::NAMESPACE);
         $expectedUses = [
-            'OpenApiOperation' => OpenApiOperation::class,
+            'OpenApiRequest' => OpenApiRequest::class,
         ];
         $uses         = $namespace->getUses();
         self::assertSame($expectedUses, $uses);
 
-        $class = $this->getClass($namespace, 'Operation');
+        $class = $this->getClass($namespace, 'Request');
         self::assertTrue($class->isFinal());
 
         $attributes = $class->getAttributes();
         self::assertCount(1, $attributes);
         $attribute = $attributes[0];
-        self::assertSame(OpenApiOperation::class, $attribute->getName());
+        self::assertSame(OpenApiRequest::class, $attribute->getName());
         self::assertSame([$pointer], $attribute->getArguments());
 
         $constructor = $this->getMethod($class, '__construct');
@@ -73,7 +73,7 @@ final class OperationGeneratorTest extends TestCase
 
     public function testGenerateAddsConstructorParameterAndGetter(): void
     {
-        $className  = self::NAMESPACE . '\\Operation';
+        $className  = self::NAMESPACE . '\\Request';
         $pointer    = '/paths/foo/get';
         $pathParams = $this->getPathParams(self::NAMESPACE);
         $operation  = new OperationModel($className, $pointer, $pathParams);
@@ -81,7 +81,7 @@ final class OperationGeneratorTest extends TestCase
         $file      = $this->generator->generate($operation);
         $namespace = $this->getNamespace($file, self::NAMESPACE);
 
-        $class = $this->getClass($namespace, 'Operation');
+        $class = $this->getClass($namespace, 'Request');
 
         $constructor = $this->getMethod($class, '__construct');
         $parameters  = $constructor->getParameters();
@@ -124,7 +124,7 @@ final class OperationGeneratorTest extends TestCase
             self::assertArrayHasKey($use, $uses);
         }
 
-        $class = $this->getClass($namespace, 'Operation');
+        $class = $this->getClass($namespace, 'Request');
 
         $constructor = $this->getMethod($class, '__construct');
         $parameters  = $constructor->getParameters();
@@ -168,7 +168,7 @@ final class OperationGeneratorTest extends TestCase
         $uses = $namespace->getUses();
         self::assertArrayHasKey('Bar', $uses);
 
-        $class       = $this->getClass($namespace, 'Operation');
+        $class       = $this->getClass($namespace, 'Request');
         $constructor = $this->getMethod($class, '__construct');
 
         $parameters = $constructor->getParameters();

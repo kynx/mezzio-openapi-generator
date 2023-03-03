@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator;
 
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use Nette\PhpGenerator\Dumper;
 use PHPUnit\Framework\TestCase;
 
@@ -51,6 +57,27 @@ final class GeneratorUtilTest extends TestCase
             'fully_qualified' => ['Api\\Model\\Foo', 'Foo'],
             'no_namespace'    => ['\\Foo', 'Foo'],
             'no_slash'        => ['Foo', 'Foo'],
+        ];
+    }
+
+    /**
+     * @dataProvider getMethodNameProvider
+     */
+    public function testGetMethodName(PropertyInterface $property, string $expected): void
+    {
+        $actual = GeneratorUtil::getMethodName($property);
+        self::assertSame($expected, $actual);
+    }
+
+    public function getMethodNameProvider(): array
+    {
+        $a = new ClassString('\\A');
+        return [
+            'bool'      => [new SimpleProperty('$a', 'a', new PropertyMetadata(), PropertyType::Boolean), 'isA'],
+            'bool_is'   => [new SimpleProperty('$isA', 'isA', new PropertyMetadata(), PropertyType::Boolean), 'isA'],
+            'string'    => [new SimpleProperty('$a', 'a', new PropertyMetadata(), PropertyType::String), 'getA'],
+            'string_is' => [new SimpleProperty('$isA', 'isA', new PropertyMetadata(), PropertyType::String), 'getIsA'],
+            'union'     => [new UnionProperty('$a', 'a', new PropertyMetadata(), null, $a), 'getA'],
         ];
     }
 

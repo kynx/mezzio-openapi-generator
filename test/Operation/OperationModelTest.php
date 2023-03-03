@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
+use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseModel;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -94,12 +99,207 @@ final class OperationModelTest extends TestCase
         ];
     }
 
-    public function testGetOperationFactoryClassName(): void
+    public function testGetRequestFactoryClassName(): void
     {
-        $expected       = 'Foo\\OperationFactory';
+        $expected       = 'Foo\\RequestFactory';
         $operationModel = new OperationModel('Foo\\Operation', '/paths/foo/get');
 
-        $actual = $operationModel->getOperationFactoryClassName();
+        $actual = $operationModel->getRequestFactoryClassName();
+        self::assertSame($expected, $actual);
+    }
+
+    public function testGetRequestBodyUsesReturnsUses(): void
+    {
+        $class          = "Foo\Bar";
+        $expected       = [$class];
+        $operationModel = new OperationModel(
+            'Foo\\Operation',
+            '/paths/foo/get',
+            null,
+            null,
+            null,
+            null,
+            [
+                new RequestBodyModel(
+                    'text/plain',
+                    new SimpleProperty('', '', new PropertyMetadata(), PropertyType::String)
+                ),
+                new RequestBodyModel(
+                    'application/json',
+                    new SimpleProperty('', '', new PropertyMetadata(), new ClassString($class))
+                ),
+            ]
+        );
+
+        $actual = $operationModel->getRequestBodyUses();
+        self::assertSame($expected, $actual);
+    }
+
+    public function testGetRequestBodyTypeReturnsType(): void
+    {
+        $first          = "Foo\Bar";
+        $second         = "Foo\Baz";
+        $expected       = "$first|$second";
+        $requestBodies  = [
+            new RequestBodyModel(
+                'application/json',
+                new SimpleProperty('', '', new PropertyMetadata(), new ClassString($first))
+            ),
+            new RequestBodyModel(
+                'application/xml',
+                new SimpleProperty('', '', new PropertyMetadata(), new ClassString($second))
+            ),
+        ];
+        $operationModel = new OperationModel(
+            'Foo\\Operation',
+            '/paths/foo/get',
+            ...['requestBodies' => $requestBodies]
+        );
+
+        $actual = $operationModel->getRequestBodyType();
+        self::assertSame($expected, $actual);
+    }
+
+    public function testResponsesRequireNegotiationReturnsTrue(): void
+    {
+        $class          = new ClassString('Foo\\Response');
+        $respopnses     = [
+            new ResponseModel(
+                '200',
+                'OK',
+                'application/json',
+                new SimpleProperty('', '', new PropertyMetadata(), $class)
+            ),
+            new ResponseModel(
+                '200',
+                'OK',
+                'application/xml',
+                new SimpleProperty('', '', new PropertyMetadata(), $class)
+            ),
+        ];
+        $operationModel = new OperationModel(
+            'Foo\\Operation',
+            '/paths/foo/get',
+            ...['responses' => $respopnses]
+        );
+
+        $actual = $operationModel->responsesRequireNegotiation();
+        self::assertTrue($actual);
+    }
+
+    public function testResponseStatusRequiresNegotiationReturnsTrue(): void
+    {
+        $class          = new ClassString('Foo\\Response');
+        $respopnses     = [
+            new ResponseModel(
+                '200',
+                'OK',
+                'application/json',
+                new SimpleProperty('', '', new PropertyMetadata(), $class)
+            ),
+            new ResponseModel(
+                '200',
+                'OK',
+                'application/xml',
+                new SimpleProperty('', '', new PropertyMetadata(), $class)
+            ),
+        ];
+        $operationModel = new OperationModel(
+            'Foo\\Operation',
+            '/paths/foo/get',
+            ...['responses' => $respopnses]
+        );
+
+        $actual = $operationModel->responseStatusRequiresNegotiation('200');
+        self::assertTrue($actual);
+    }
+
+    public function testResponseStatusRequiresNegotiationReturnsFalse(): void
+    {
+        $class          = new ClassString('Foo\\Response');
+        $respopnses     = [
+            new ResponseModel(
+                '200',
+                'OK',
+                'application/json',
+                new SimpleProperty('', '', new PropertyMetadata(), $class)
+            ),
+        ];
+        $operationModel = new OperationModel(
+            'Foo\\Operation',
+            '/paths/foo/get',
+            ...['responses' => $respopnses]
+        );
+
+        $actual = $operationModel->responseStatusRequiresNegotiation('200');
+        self::assertFalse($actual);
+    }
+
+    public function testGetResponseStatusReturnsStatuses(): void
+    {
+        $expected       = ['200', '404'];
+        $respopnses     = [
+            new ResponseModel(
+                '200',
+                'OK',
+                'application/json',
+                new SimpleProperty('', '', new PropertyMetadata(), new ClassString('Foo\\Bar'))
+            ),
+            new ResponseModel(
+                '404',
+                'Not found',
+                'text/plaiin',
+                new SimpleProperty('', '', new PropertyMetadata(), PropertyType::String)
+            ),
+        ];
+        $operationModel = new OperationModel(
+            'Foo\\Operation',
+            '/paths/foo/get',
+            ...['responses' => $respopnses]
+        );
+
+        $actual = $operationModel->getResponseStatuses();
+        self::assertSame($expected, $actual);
+    }
+
+    public function testGetResponsesOfStatusReturnsStatuses(): void
+    {
+        $expected       = [
+            new ResponseModel(
+                '200',
+                'OK',
+                'application/json',
+                new SimpleProperty('', '', new PropertyMetadata(), new ClassString('Foo\\Bar'))
+            ),
+        ];
+        $operationModel = new OperationModel(
+            'Foo\\Operation',
+            '/paths/foo/get',
+            ...['responses' => $expected]
+        );
+
+        $actual = $operationModel->getResponsesOfStatus('200');
+        self::assertSame($expected, $actual);
+    }
+
+    public function testGetResponsesOfStatusReturnsEmpty(): void
+    {
+        $expected       = [];
+        $responses      = [
+            new ResponseModel(
+                '200',
+                'OK',
+                'application/json',
+                new SimpleProperty('', '', new PropertyMetadata(), new ClassString('Foo\\Bar'))
+            ),
+        ];
+        $operationModel = new OperationModel(
+            'Foo\\Operation',
+            '/paths/foo/get',
+            ...['responses' => $responses]
+        );
+
+        $actual = $operationModel->getResponsesOfStatus('404');
         self::assertSame($expected, $actual);
     }
 }

@@ -35,8 +35,8 @@ final class ConfigProviderWriterFactoryTest extends TestCase
         $factory  = new ConfigProviderWriterFactory();
         $instance = $factory($container);
 
-        $operations = $this->getOperationCollection($this->getOperations('Api\\Operation'));
-        $handlers   = $this->getHandlerCollection($this->getHandlers('Api\\Handler'));
+        $operations = $this->getOperationCollection($this->getOperations());
+        $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
         $writer->expects(self::once())
             ->method('write');
 

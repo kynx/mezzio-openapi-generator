@@ -7,6 +7,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Hydrator;
 use DateTimeImmutable;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiHydrator;
 use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
+use Kynx\Mezzio\OpenApi\Hydrator\Exception\ExtractionException;
 use Kynx\Mezzio\OpenApi\Hydrator\Exception\HydrationException;
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
@@ -66,10 +67,11 @@ final class HydratorGeneratorTest extends TestCase
         $file         = $this->generator->generate($model, $hydratorMap);
         $namespace    = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $expectedUses = [
-            'OpenApiHydrator'    => OpenApiHydrator::class,
-            'HydrationException' => HydrationException::class,
-            'HydratorInterface'  => HydratorInterface::class,
-            'TypeError'          => TypeError::class,
+            'OpenApiHydrator'     => OpenApiHydrator::class,
+            'ExtractionException' => ExtractionException::class,
+            'HydrationException'  => HydrationException::class,
+            'HydratorInterface'   => HydratorInterface::class,
+            'TypeError'           => TypeError::class,
         ];
         self::assertSame($expectedUses, $namespace->getUses());
 
@@ -329,7 +331,7 @@ final class HydratorGeneratorTest extends TestCase
 
     private function getHydrateMethod(ClassType $class): Method
     {
-        self::assertCount(1, $class->getMethods());
+        self::assertCount(2, $class->getMethods());
         return $this->getMethod($class, 'hydrate');
     }
 }

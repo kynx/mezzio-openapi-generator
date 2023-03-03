@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 
 use function iterator_to_array;
@@ -14,10 +15,11 @@ use function iterator_to_array;
 final class HandlerCollectionTest extends TestCase
 {
     use HandlerTrait;
+    use OperationTrait;
 
     public function testCollectionIsIterable(): void
     {
-        $expected   = $this->getHandlers();
+        $expected   = $this->getHandlers($this->getOperationCollection($this->getOperations()));
         $collection = $this->getHandlerCollection($expected);
 
         $actual = iterator_to_array($collection);
@@ -26,7 +28,8 @@ final class HandlerCollectionTest extends TestCase
 
     public function testCollectionIsCountable(): void
     {
-        $collection = $this->getHandlerCollection($this->getHandlers());
+        $handlers   = $this->getHandlers($this->getOperationCollection($this->getOperations()));
+        $collection = $this->getHandlerCollection($handlers);
 
         $actual = $collection->count();
         self::assertSame(2, $actual);
@@ -35,11 +38,12 @@ final class HandlerCollectionTest extends TestCase
     public function testGetHandlerMapReturnsMap(): void
     {
         $expected = [
-            '/paths/~1foo/get' => '\\Foo\\GetHandler',
-            '/paths/~1bar/get' => '\\Bar\\GetHandler',
+            '/paths/~1foo/get' => 'Api\Handler\Foo\GetHandler',
+            '/paths/~1bar/get' => 'Api\Handler\Bar\GetHandler',
         ];
 
-        $collection = $this->getHandlerCollection($this->getHandlers());
+        $handlers   = $this->getHandlers($this->getOperationCollection($this->getOperations()));
+        $collection = $this->getHandlerCollection($handlers);
 
         $actual = $collection->getHandlerMap();
         self::assertSame($expected, $actual);

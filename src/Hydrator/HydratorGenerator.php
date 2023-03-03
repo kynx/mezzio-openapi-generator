@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Hydrator;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiHydrator;
+use Kynx\Mezzio\OpenApi\Hydrator\Exception\ExtractionException;
 use Kynx\Mezzio\OpenApi\Hydrator\Exception\HydrationException;
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorUtil;
@@ -25,6 +26,7 @@ use Nette\PhpGenerator\PhpNamespace;
 use TypeError;
 
 use function array_filter;
+use function array_keys;
 use function array_map;
 use function array_values;
 use function assert;
@@ -40,12 +42,13 @@ use function sprintf;
 final class HydratorGenerator
 {
     private const PROPERTY_MAP            = 'PROPERTY_MAP';
+    private const EXTRACT_MAP             = 'EXTRACT_MAP';
     private const VALUE_DISCRIMINATORS    = 'VALUE_DISCRIMINATORS';
     private const PROPERTY_DISCRIMINATORS = 'PROPERTY_DISCRIMINATORS';
     private const PROPERTY_HYDRATORS      = 'PROPERTY_HYDRATORS';
+    private const PROPERTY_EXTRACTORS     = 'PROPERTY_EXTRACTORS';
     private const ARRAY_PROPERTIES        = 'ARRAY_PROPERTIES';
     private const ENUMS                   = 'ENUMS';
-
     /**
      * @param array<string, class-string<HydratorInterface>> $overrideHydrators
      */
@@ -67,6 +70,7 @@ final class HydratorGenerator
 
         $namespace = $file->addNamespace($this->getHydratorNamespace($model->getClassName()));
         $namespace->addUse(HydrationException::class)
+            ->addUse(ExtractionException::class)
             ->addUse(HydratorInterface::class)
             ->addUse(OpenApiHydrator::class)
             ->addUse(TypeError::class)
@@ -79,13 +83,15 @@ final class HydratorGenerator
         $class->addAttribute(OpenApiHydrator::class, [$classModel->getJsonPointer()]);
 
         $propertyMap            = $this->getPropertyMap($classModel);
+        $extractMap             = $this->getExtractMap($classModel);
         $valueDiscriminators    = $this->getValueDiscriminators($classModel, $hydratorMap);
         $propertyDiscriminators = $this->getPropertyDiscriminators($classModel, $hydratorMap);
         $propertyHydrators      = $this->getPropertyHydrators($classModel, $hydratorMap);
+        $propertyExtractors     = $this->getPropertyExtractors($classModel, $hydratorMap);
         $enums                  = $this->getEnums($classModel);
 
-        $all = $valueDiscriminators + $propertyDiscriminators + $propertyHydrators + $enums;
-        if ($all !== [] || $propertyMap !== []) {
+        $all = $valueDiscriminators + $propertyDiscriminators + $propertyHydrators + $propertyExtractors + $enums;
+        if ($all !== [] || $propertyMap !== [] || $extractMap !== []) {
             $namespace->addUse(HydratorUtil::class);
         }
         if ($all !== []) {
@@ -94,9 +100,11 @@ final class HydratorGenerator
         }
 
         $this->addPropertyMapConstant($class, $propertyMap);
+        $this->addExtractMapConstant($class, $extractMap);
         $this->addValueDiscriminatorConstant($namespace, $class, $valueDiscriminators);
         $this->addListDiscriminatorConstant($namespace, $class, $propertyDiscriminators);
         $this->addPropertyHydratorConstant($namespace, $class, $propertyHydrators);
+        $this->addPropertyExtractorConstant($namespace, $class, $propertyExtractors);
         $this->addEnumConstant($namespace, $class, $enums);
 
         $this->addHydrateMethod(
@@ -108,6 +116,7 @@ final class HydratorGenerator
             $propertyHydrators,
             $enums
         );
+        $this->addExtractMethod($namespace, $classModel, $class, $propertyExtractors, $enums);
 
         return $file;
     }
@@ -119,6 +128,12 @@ final class HydratorGenerator
         }
 
         $class->addConstant(self::PROPERTY_MAP, $propertyMap)
+            ->setPrivate();
+    }
+
+    private function addExtractMapConstant(ClassType $class, array $extractMap): void
+    {
+        $class->addConstant(self::EXTRACT_MAP, $extractMap)
             ->setPrivate();
     }
 
@@ -194,10 +209,32 @@ final class HydratorGenerator
         $values = [];
         foreach ($hydrators as $name => $fullyQualified) {
             $namespace->addUse($fullyQualified);
-            $values[$name] = new Literal(GeneratorUtil::getClassName($fullyQualified) . '::class');
+            $values[$name] = new Literal($namespace->simplifyName($fullyQualified) . '::class');
         }
 
         $class->addConstant(self::PROPERTY_HYDRATORS, $values)
+            ->setPrivate();
+    }
+
+    /**
+     * @param array<string, string> $extractors
+     */
+    private function addPropertyExtractorConstant(PhpNamespace $namespace, ClassType $class, array $extractors): void
+    {
+        if ($extractors === []) {
+            return;
+        }
+
+        $literals = [];
+        foreach ($extractors as $name => $fullyQualified) {
+            $namespace->addUse($name);
+            $namespace->addUse($fullyQualified);
+            $className     = $namespace->simplifyName($name) . '::class';
+            $extractorName = $namespace->simplifyName($fullyQualified) . '::class';
+            $literals[]    = new Literal("$className => $extractorName");
+        }
+
+        $class->addConstant(self::PROPERTY_EXTRACTORS, $literals)
             ->setPrivate();
     }
 
@@ -261,6 +298,41 @@ final class HydratorGenerator
             throw HydrationException::fromThrowable($className::class, \$error);
         }
         EOB);
+    }
+
+    private function addExtractMethod(
+        PhpNamespace $namespace,
+        ClassModel $model,
+        ClassType $class,
+        array $propertyExtractors,
+        array $enums
+    ): void {
+        $className = $namespace->simplifyName($model->getClassName());
+        $method    = $class->addMethod('extract')
+            ->setStatic()
+            ->setReturnType('bool|array|float|int|string|null');
+        $method->addParameter('object')
+            ->setType('mixed');
+
+        $method->addBody(<<<FOO
+            if (! \$object instanceof $className) {
+                throw ExtractionException::invalidObject(\$object, $className::class);
+            }
+            
+            FOO
+        );
+        $method->addBody('$data = HydratorUtil::extractData($object, self::EXTRACT_MAP);');
+
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        if ($enums !== []) {
+            $method->addBody('$data = HydratorUtil::extractEnums($data, self::ARRAY_PROPERTIES, self::ENUMS);');
+        }
+        if ($propertyExtractors !== []) {
+            $method->addBody('$data = HydratorUtil::extractProperties($data, self::ARRAY_PROPERTIES, self::PROPERTY_EXTRACTORS);');
+        }
+        // phpcs:enable
+
+        $method->addBody('return $data;');
     }
 
     /**
@@ -341,6 +413,43 @@ final class HydratorGenerator
     }
 
     /**
+     * @param array<string, string> $extractorMap
+     * @return array<string, string>
+     */
+    private function getPropertyExtractors(ClassModel $model, array $extractorMap): array
+    {
+        $extractors = [];
+        foreach ($this->getClassStringProperties($model) as $property) {
+            $type = $property->getType();
+            assert($type instanceof ClassString);
+
+            if (! $type->isEnum()) {
+                $name              = $type->getClassString();
+                $fullyQualified    = $this->getFullQualified($extractorMap[$name]);
+                $extractors[$name] = $this->overrideHydrators[$name] ?? $fullyQualified;
+            }
+        }
+        foreach ($model->getProperties() as $property) {
+            if (! $property instanceof UnionProperty) {
+                continue;
+            }
+
+            $classes       = [];
+            $discriminator = $property->getDiscriminator();
+            if ($discriminator instanceof PropertyList) {
+                $classes = array_keys($discriminator->getClassMap());
+            } elseif ($discriminator instanceof PropertyValue) {
+                $classes = array_values($discriminator->getValueMap());
+            }
+            foreach ($classes as $name) {
+                $fullyQualified    = $this->getFullQualified($extractorMap[$name]);
+                $extractors[$name] = $this->overrideHydrators[$name] ?? $fullyQualified;
+            }
+        }
+        return $extractors;
+    }
+
+    /**
      * @return list<string>
      */
     private function getArrayProperties(ClassModel $model): array
@@ -387,6 +496,16 @@ final class HydratorGenerator
         }
 
         return $hasMap ? $map : [];
+    }
+
+    private function getExtractMap(ClassModel $model): array
+    {
+        $map = [];
+        foreach ($model->getProperties() as $property) {
+            $map[$property->getOriginalName()] = GeneratorUtil::getMethodName($property);
+        }
+
+        return $map;
     }
 
     /**

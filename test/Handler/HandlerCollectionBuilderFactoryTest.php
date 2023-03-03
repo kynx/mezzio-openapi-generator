@@ -8,13 +8,11 @@ use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Mezzio\OpenApiGenerator\Configuration;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilderFactory;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
 use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
-use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -23,20 +21,21 @@ use Psr\Container\ContainerInterface;
  */
 final class HandlerCollectionBuilderFactoryTest extends TestCase
 {
-    private const NAMESPACE = __NAMESPACE__ . '\\Handler';
+    use HandlerTrait;
+    use OperationTrait;
 
     public function testInvokeReturnsConfiguredInstance(): void
     {
-        $expected = new HandlerCollection();
-        $expected->add(new HandlerModel('/paths/~1foo/get', self::NAMESPACE . '\\Foo\\GetHandler', null));
+        $operations = $this->getOperationCollection($this->getOperations());
+        $expected   = $this->getHandlerCollection($this->getHandlers($operations));
 
         $configuration = new Configuration(...[
             'projectDir'       => __DIR__,
-            'baseNamespace'    => __NAMESPACE__,
+            'baseNamespace'    => 'Api',
             'handlerNamespace' => 'Handler',
         ]);
         $classLabeler  = new UniqueClassLabeler(new ClassNameNormalizer('Handler'), new NumberSuffix());
-        $classNamer    = new NamespacedNamer(self::NAMESPACE, $classLabeler);
+        $classNamer    = new NamespacedNamer('Api\\Handler', $classLabeler);
         $container     = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
@@ -49,9 +48,9 @@ final class HandlerCollectionBuilderFactoryTest extends TestCase
 
         $routeCollection = new RouteCollection();
         $routeCollection->add(new RouteModel('/paths/~1foo/get', '/foo', 'get', [], []));
-        $operationCollection = new OperationCollection();
+        $routeCollection->add(new RouteModel('/paths/~1bar/get', '/bar', 'get', [], []));
 
-        $actual = $instance->getHandlerCollection($routeCollection, $operationCollection);
+        $actual = $instance->getHandlerCollection($routeCollection, $operations);
         self::assertEquals($expected, $actual);
     }
 }

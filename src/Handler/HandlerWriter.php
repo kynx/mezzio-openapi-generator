@@ -18,6 +18,7 @@ final class HandlerWriter implements HandlerWriterInterface
 {
     public function __construct(
         private readonly HandlerGenerator $generator,
+        private readonly HandlerFactoryGenerator $factoryGenerator,
         private readonly WriterInterface $writer
     ) {
     }
@@ -27,6 +28,11 @@ final class HandlerWriter implements HandlerWriterInterface
         foreach ($handlerCollection as $handlerModel) {
             $file = $this->generator->generate($handlerModel);
             $this->writer->write($file);
+
+            if ($handlerModel->getOperation()->responsesRequireSerialization()) {
+                $file = $this->factoryGenerator->generate($handlerModel);
+                $this->writer->write($file);
+            }
         }
     }
 }

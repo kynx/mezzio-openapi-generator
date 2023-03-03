@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Generator;
 
+use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Nette\PhpGenerator\InterfaceType;
 use Nette\PhpGenerator\PhpNamespace;
@@ -41,7 +42,7 @@ final class InterfaceGenerator extends AbstractGenerator
     private function addMethods(InterfaceType $type, InterfaceModel $model): void
     {
         foreach ($this->getOrderedParameters($model) as $property) {
-            $method = $type->addMethod($this->getMethodName($property));
+            $method = $type->addMethod(GeneratorUtil::getMethodName($property));
             $method->setPublic()
                 ->setReturnType($this->getType($property));
         }

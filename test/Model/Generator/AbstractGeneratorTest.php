@@ -53,11 +53,6 @@ final class AbstractGeneratorTest extends TestCase
                 return parent::getClassLikeName($modelClass);
             }
 
-            public function getMethodName(PropertyInterface $property): string
-            {
-                return parent::getMethodName($property);
-            }
-
             public function getType(PropertyInterface $property): string
             {
                 return parent::getType($property);
@@ -110,27 +105,6 @@ final class AbstractGeneratorTest extends TestCase
         $model    = new ClassModel('\\A\\B\\C', '/c', []);
         $actual   = $this->generator->getClassLikeName($model);
         self::assertSame($expected, $actual);
-    }
-
-    /**
-     * @dataProvider getMethodNameProvider
-     */
-    public function testGetMethodName(PropertyInterface $property, string $expected): void
-    {
-        $actual = $this->generator->getMethodName($property);
-        self::assertSame($expected, $actual);
-    }
-
-    public function getMethodNameProvider(): array
-    {
-        $a = new ClassString('\\A');
-        return [
-            'bool'      => [new SimpleProperty('$a', 'a', new PropertyMetadata(), PropertyType::Boolean), 'isA'],
-            'bool_is'   => [new SimpleProperty('$isA', 'isA', new PropertyMetadata(), PropertyType::Boolean), 'isA'],
-            'string'    => [new SimpleProperty('$a', 'a', new PropertyMetadata(), PropertyType::String), 'getA'],
-            'string_is' => [new SimpleProperty('$isA', 'isA', new PropertyMetadata(), PropertyType::String), 'getIsA'],
-            'union'     => [new UnionProperty('$a', 'a', new PropertyMetadata(), null, $a), 'getA'],
-        ];
     }
 
     /**

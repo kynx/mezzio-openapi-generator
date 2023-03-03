@@ -6,10 +6,9 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Operation\Generator;
 
 use DateTimeImmutable;
 use Generator;
-use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestFactory;
 use Kynx\Mezzio\OpenApi\Operation\ContentTypeNegotiator;
-use Kynx\Mezzio\OpenApi\Operation\OperationFactoryInterface;
-use Kynx\Mezzio\OpenApi\Operation\OperationUtil;
+use Kynx\Mezzio\OpenApi\Operation\RequestFactoryInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
@@ -20,7 +19,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
@@ -36,9 +35,9 @@ use function trim;
 use function ucfirst;
 
 /**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGenerator
+ * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestFactoryGenerator
  */
-final class OperationFactoryGeneratorTest extends TestCase
+final class RequestFactoryGeneratorTest extends TestCase
 {
     use GeneratorTrait;
     use OperationTrait;
@@ -47,20 +46,20 @@ final class OperationFactoryGeneratorTest extends TestCase
     private const CLASS_NAME = __NAMESPACE__ . '\\Foo\\Get\\Operation';
     private const POINTER    = '/paths/foo/get';
 
-    private OperationFactoryGenerator $generator;
+    private RequestFactoryGenerator $generator;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->generator = new OperationFactoryGenerator([
+        $this->generator = new RequestFactoryGenerator([
             DateTimeImmutable::class => __NAMESPACE__ . '\\DateTimeImmutableHydrator',
         ]);
     }
 
     public function testGenerateReturnsParserFile(): void
     {
-        $expected = 'return new Operation();';
+        $expected = 'return new Request();';
 
         $operation = new OperationModel(self::CLASS_NAME, self::POINTER);
 
@@ -69,28 +68,28 @@ final class OperationFactoryGeneratorTest extends TestCase
 
         $namespace    = $this->getNamespace($file, self::NAMESPACE);
         $expectedUses = [
-            'OpenApiOperationFactory'   => OpenApiOperationFactory::class,
-            'OperationFactoryInterface' => OperationFactoryInterface::class,
-            'ServerRequestInterface'    => ServerRequestInterface::class,
+            'OpenApiRequestFactory'   => OpenApiRequestFactory::class,
+            'RequestFactoryInterface' => RequestFactoryInterface::class,
+            'ServerRequestInterface'  => ServerRequestInterface::class,
         ];
         $uses         = $namespace->getUses();
         self::assertSame($expectedUses, $uses);
 
-        $class = $this->getClass($namespace, 'OperationFactory');
-        self::assertSame([OperationFactoryInterface::class], $class->getImplements());
+        $class = $this->getClass($namespace, 'RequestFactory');
+        self::assertSame([RequestFactoryInterface::class], $class->getImplements());
         self::assertTrue($class->isFinal());
 
         $attributes = $class->getAttributes();
         self::assertCount(1, $attributes);
         $attribute = $attributes[0];
-        self::assertSame(OpenApiOperationFactory::class, $attribute->getName());
+        self::assertSame(OpenApiRequestFactory::class, $attribute->getName());
         self::assertSame([self::POINTER], $attribute->getArguments());
 
         self::assertFalse($class->hasMethod('__construct'));
 
         $method = $this->getMethod($class, 'getOperation');
         self::assertTrue($method->isPublic());
-        self::assertSame($operation->getClassName(), $method->getReturnType());
+        self::assertSame($operation->getRequestClassName(), $method->getReturnType());
 
         $parameters = $method->getParameters();
         self::assertCount(1, $parameters);
@@ -122,7 +121,7 @@ final class OperationFactoryGeneratorTest extends TestCase
 
         $file        = $this->generator->generate($operation, [$paramClass => $hydratorClass]);
         $namespace   = $this->getNamespace($file, self::NAMESPACE);
-        $class       = $this->getClass($namespace, 'OperationFactory');
+        $class       = $this->getClass($namespace, 'RequestFactory');
         $constructor = $this->getMethod($class, '__construct');
         $getter      = $this->getMethod($class, $getMethod);
         $body        = $this->getGetOperationBody($file);
@@ -143,7 +142,7 @@ final class OperationFactoryGeneratorTest extends TestCase
         $parameter = $parameters['request'];
         self::assertSame(ServerRequestInterface::class, $parameter->getType());
 
-        self::assertSame("return new Operation(\$this->$getMethod(\$request));", trim($body));
+        self::assertSame("return new Request(\$this->$getMethod(\$request));", trim($body));
         self::assertSame($expected, trim($getter->getBody()));
     }
 
@@ -213,7 +212,7 @@ final class OperationFactoryGeneratorTest extends TestCase
         $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param);
 
         $file   = $this->generator->generate($operation, $hydrators);
-        $class  = $this->getClass($this->getNamespace($file, self::NAMESPACE), 'OperationFactory');
+        $class  = $this->getClass($this->getNamespace($file, self::NAMESPACE), 'RequestFactory');
         $getter = $this->getMethod($class, 'getPathParams');
 
         self::assertStringContainsString($expected, trim($getter->getBody()));
@@ -239,7 +238,7 @@ final class OperationFactoryGeneratorTest extends TestCase
 
         $file        = $this->generator->generate($operation, $hydrators);
         $namespace   = $this->getNamespace($file, self::NAMESPACE);
-        $class       = $this->getClass($namespace, 'OperationFactory');
+        $class       = $this->getClass($namespace, 'RequestFactory');
         $constructor = $this->getMethod($class, '__construct');
 
         $uses = $namespace->getUses();
@@ -279,7 +278,7 @@ final class OperationFactoryGeneratorTest extends TestCase
 
         $file      = $this->generator->generate($operation, $hydrators);
         $namespace = $this->getNamespace($file, self::NAMESPACE);
-        $class     = $this->getClass($namespace, 'OperationFactory');
+        $class     = $this->getClass($namespace, 'RequestFactory');
         $method    = $this->getMethod($class, 'getRequestBody');
 
         self::assertTrue($method->isPrivate());
@@ -293,7 +292,7 @@ final class OperationFactoryGeneratorTest extends TestCase
 
         $parse = $this->getGetOperationBody($file);
 
-        self::assertSame("return new Operation(\$this->getRequestBody(\$request));", trim($parse));
+        self::assertSame("return new Request(\$this->getRequestBody(\$request));", trim($parse));
     }
 
     public function requestBodyParserProvider(): array
@@ -379,7 +378,7 @@ final class OperationFactoryGeneratorTest extends TestCase
     private function getGetOperationBody(PhpFile $file): string
     {
         $namespace = $this->getNamespace($file, self::NAMESPACE);
-        $class     = $this->getClass($namespace, 'OperationFactory');
+        $class     = $this->getClass($namespace, 'RequestFactory');
         $method    = $this->getMethod($class, 'getOperation');
         return $method->getBody();
     }

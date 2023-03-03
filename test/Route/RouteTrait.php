@@ -16,7 +16,7 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 trait RouteTrait
 {
     /**
-     * @param ConverterInterface&MockObject|null $converter
+     * @param ConverterInterface&\PHPUnit\Framework\MockObject\MockObject|null $converter
      */
     protected function getRouteDelegatorGenerator(
         string $namespace = '',

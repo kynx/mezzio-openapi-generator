@@ -9,8 +9,9 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestFactoryGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\ResponseFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter;
@@ -43,22 +44,28 @@ final class OperationWriterTest extends TestCase
         $this->operationWriter = new OperationWriter(
             new ModelGenerator(),
             new HydratorGenerator([]),
-            new OperationGenerator(),
-            new OperationFactoryGenerator([]),
+            new RequestGenerator(),
+            new RequestFactoryGenerator([]),
+            new ResponseFactoryGenerator([]),
             $this->writer
         );
     }
 
-    public function testWriteDoesNotWriteEmptyOperation(): void
+    public function testWriteNoRequestParamsWritesResponseFactory(): void
     {
-        $this->writer->expects(self::never())
-            ->method('write');
+        $expected           = [
+            'ResponseFactory',
+        ];
         $collection         = $this->getOperationCollection([
             new OperationModel('\\Foo', '/paths/foo/get'),
         ]);
         $hydratorCollection = HydratorCollection::fromModelCollection(new ModelCollection());
+        $written            = [];
+        $this->configureWriter($written);
 
         $this->operationWriter->write($collection, $hydratorCollection);
+
+        self::assertSame($expected, $written);
     }
 
     public function testWriteWritesModels(): void
@@ -68,16 +75,13 @@ final class OperationWriterTest extends TestCase
         $expected   = [
             $modelName,
             $modelName . 'Hydrator',
-            'Operation',
-            'OperationFactory',
+            'Request',
+            'RequestFactory',
+            'ResponseFactory',
         ];
 
         $written = [];
-        $this->writer->method('write')
-            ->willReturnCallback(function (PhpFile $file) use (&$written) {
-                assert(is_array($written));
-                $written[] = $file;
-            });
+        $this->configureWriter($written);
 
         $collection         = $this->getOperationCollection([
             new OperationModel('\\Operation', '/paths/foo/get', $pathParams),
@@ -87,9 +91,16 @@ final class OperationWriterTest extends TestCase
 
         $this->operationWriter->write($collection, $hydratorCollection);
 
-        assert(is_array($written));
-        $actual = $this->getWrittenClassNames($written);
-        self::assertSame($expected, $actual);
+        self::assertSame($expected, $written);
+    }
+
+    private function configureWriter(array &$written): void
+    {
+        $this->writer->method('write')
+            ->willReturnCallback(function (PhpFile $file) use (&$written) {
+                assert(is_array($written));
+                $written[] = current($file->getClasses())->getName();
+            });
     }
 
     /**

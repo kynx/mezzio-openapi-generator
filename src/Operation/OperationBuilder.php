@@ -27,7 +27,8 @@ final class OperationBuilder
 {
     public function __construct(
         private readonly ParameterBuilder $parameterBuilder,
-        private readonly RequestBodyBuilder $requestBodyBuilder = new RequestBodyBuilder()
+        private readonly RequestBodyBuilder $requestBodyBuilder = new RequestBodyBuilder(),
+        private readonly ResponseBuilder $responseBuilder = new ResponseBuilder()
     ) {
     }
 
@@ -64,6 +65,7 @@ final class OperationBuilder
         }
 
         $properties['requestBodies'] = $this->requestBodyBuilder->getRequestBodyModels($operation, $classNames);
+        $properties['responses']     = $this->responseBuilder->getResponseModels($operation, $classNames);
 
         $pointer = $operation->getDocumentPosition()?->getPointer() ?? '';
         /** @psalm-suppress PossiblyInvalidArgument Don't get this one :| */

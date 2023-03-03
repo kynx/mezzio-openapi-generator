@@ -101,7 +101,6 @@ final class GenerateCommandTest extends TestCase
 
     public function testExecuteInvalidSpecificationOutputsError(): void
     {
-        $specFile = $this->projectDir . '/invalid.yaml';
         $expected = "OpenApi is missing required property: paths";
 
         $exit = $this->commandTester->execute(['specification' => 'invalid.yaml']);

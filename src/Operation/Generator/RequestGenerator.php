@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Operation\Generator;
 
-use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperation;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequest;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
@@ -25,20 +25,21 @@ use function ucfirst;
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
-final class OperationGenerator
+final class RequestGenerator
 {
     public function generate(OperationModel $operation): PhpFile
     {
         $file = new PhpFile();
         $file->setStrictTypes();
 
-        $namespace = $file->addNamespace(GeneratorUtil::getNamespace($operation->getClassName()));
-        $namespace->addUse(OpenApiOperation::class);
+        $className = $operation->getRequestClassName();
+        $namespace = $file->addNamespace(GeneratorUtil::getNamespace($className));
+        $namespace->addUse(OpenApiRequest::class);
 
-        $class = $namespace->addClass(GeneratorUtil::getClassName($operation->getClassName()))
+        $class = $namespace->addClass(GeneratorUtil::getClassName($className))
             ->setFinal();
 
-        $class->addAttribute(OpenApiOperation::class, [$operation->getJsonPointer()]);
+        $class->addAttribute(OpenApiRequest::class, [$operation->getJsonPointer()]);
 
         $constructor = $class->addMethod('__construct');
         foreach ($this->getParameters($operation) as $name => $parameter) {

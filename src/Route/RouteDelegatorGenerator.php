@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Route;
 
-use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestFactory;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiRouteDelegator;
+use Kynx\Mezzio\OpenApi\Middleware\OpenApiOperationMiddleware;
+use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
 use Mezzio\Application;
@@ -55,7 +57,8 @@ final class RouteDelegatorGenerator
 
         $namespace = current($file->getNamespaces());
         $namespace->addUse(Application::class)
-            ->addUse(OpenApiOperationFactory::class)
+            ->addUse(OpenApiOperationMiddleware::class)
+            ->addUse(OpenApiRequestFactory::class)
             ->addUse(OpenApiRouteDelegator::class)
             ->addUse(ContainerInterface::class);
 
@@ -91,21 +94,26 @@ final class RouteDelegatorGenerator
      */
     private function addRoute(PhpNamespace $namespace, Method $invoke, RouteModel $route, array $handlerMap): void
     {
-        $converted = $this->routeConverter->convert($route);
-
         $pointer = $route->getJsonPointer();
         assert(isset($handlerMap[$pointer]));
         $handlerClass = $handlerMap[$pointer];
+        $alias        = GeneratorUtil::getAlias($namespace->simplifyName($handlerClass));
+        $namespace->addUse($handlerClass, $alias);
 
-        $namespace->addUse($handlerClass);
+        $middleware = [
+            new Literal($namespace->simplifyName(OpenApiOperationMiddleware::class) . '::class'),
+            new Literal($alias . '::class'),
+        ];
+        $converted  = $this->routeConverter->convert($route);
+
         $invoke->addBody('$app?(?, ?, ?)', [
             new Literal('->' . $route->getMethod()),
             $converted,
-            new Literal($namespace->simplifyName($handlerClass) . '::class'),
+            $middleware,
             $this->routeNamer->getName($route),
         ]);
 
-        $openApiOperationClass = $namespace->simplifyName(OpenApiOperationFactory::class);
+        $openApiOperationClass = $namespace->simplifyName(OpenApiRequestFactory::class);
         $invoke->addBody('    ->setOptions([? => ?]);', [
             new Literal("$openApiOperationClass::class"),
             $pointer,

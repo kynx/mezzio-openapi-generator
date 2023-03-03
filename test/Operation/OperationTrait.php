@@ -25,6 +25,7 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ParameterBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
+use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseModel;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function implode;
@@ -128,6 +129,12 @@ trait OperationTrait
         ];
     }
 
+    protected function getResponse(): ResponseModel
+    {
+        $property = new SimpleProperty('', '', new PropertyMetadata(), PropertyType::String);
+        return new ResponseModel('default', 'Hello world', 'text/plain', $property);
+    }
+
     protected function getSimpleProperty(string $name, string|null $originalName = null): SimpleProperty
     {
         $originalName = $originalName ?? $name;
@@ -155,7 +162,7 @@ trait OperationTrait
     /**
      * @return list<OperationModel>
      */
-    protected function getOperations(string $namespace): array
+    protected function getOperations(string $namespace = 'Api\\Operation'): array
     {
         return [
             new OperationModel($namespace . '\\Foo\\Get\\Operation', '/paths/~1foo/get', $this->getPathParams()),

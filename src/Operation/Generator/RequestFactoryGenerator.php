@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Operation\Generator;
 
-use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestFactory;
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorUtil;
 use Kynx\Mezzio\OpenApi\Operation\ContentTypeNegotiator;
 use Kynx\Mezzio\OpenApi\Operation\Exception\InvalidContentTypeException;
-use Kynx\Mezzio\OpenApi\Operation\OperationFactoryInterface;
 use Kynx\Mezzio\OpenApi\Operation\OperationUtil;
+use Kynx\Mezzio\OpenApi\Operation\RequestFactoryInterface;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\DiscriminatorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
@@ -33,6 +33,7 @@ use Rize\UriTemplate;
 use function array_keys;
 use function array_map;
 use function assert;
+use function current;
 use function str_contains;
 use function ucfirst;
 
@@ -44,7 +45,7 @@ use function ucfirst;
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
-final class OperationFactoryGenerator
+final class RequestFactoryGenerator
 {
     /**
      * @param array<string, string> $overrideHydrators
@@ -64,25 +65,24 @@ final class OperationFactoryGenerator
         $file = new PhpFile();
         $file->setStrictTypes();
 
-        $namespace = $file->addNamespace(GeneratorUtil::getNamespace($operation->getClassName()));
-        $namespace->addUse(OpenApiOperationFactory::class)
-            ->addUse(OperationFactoryInterface::class)
-            ->addUse(ServerRequestInterface::class)
-            ->addUse($operation->getClassName());
-
-        $operationClass = $operation->getClassName();
-        $factoryClass   = $operation->getOperationFactoryClassName();
-        $class          = $namespace->addClass(GeneratorUtil::getClassName($factoryClass))
-            ->addImplement(OperationFactoryInterface::class)
+        $requestClass = $operation->getRequestClassName();
+        $factoryClass = $operation->getRequestFactoryClassName();
+        $class        = $file->addClass($factoryClass)
+            ->addImplement(RequestFactoryInterface::class)
             ->setFinal();
 
-        $class->addAttribute(OpenApiOperationFactory::class, [$operation->getJsonPointer()]);
+        $namespace = current($file->getNamespaces());
+        $namespace->addUse(OpenApiRequestFactory::class)
+            ->addUse(RequestFactoryInterface::class)
+            ->addUse(ServerRequestInterface::class);
+
+        $class->addAttribute(OpenApiRequestFactory::class, [$operation->getJsonPointer()]);
 
         $this->addConstructor($namespace, $class, $operation);
 
         $getOperation = $class->addMethod('getOperation')
             ->setPublic()
-            ->setReturnType($operationClass);
+            ->setReturnType($requestClass);
         $getOperation->addParameter('request')
             ->setType(ServerRequestInterface::class);
 
@@ -113,7 +113,7 @@ final class OperationFactoryGenerator
             );
         }
 
-        $className = GeneratorUtil::getClassName($operationClass);
+        $className = GeneratorUtil::getClassName($requestClass);
         $arguments = GeneratorUtil::formatAsList($this->dumper, $arguments);
         $getOperation->addBody("return new $className($arguments);");
 

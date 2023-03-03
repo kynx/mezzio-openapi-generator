@@ -9,6 +9,7 @@ use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,6 +23,7 @@ use function trim;
 final class HandlerGeneratorTest extends TestCase
 {
     use GeneratorTrait;
+    use OperationTrait;
 
     private HandlerGenerator $generator;
 
@@ -36,7 +38,8 @@ final class HandlerGeneratorTest extends TestCase
     {
         $pointer   = '/paths/~1foo/get';
         $className = __NAMESPACE__ . '\\GetHandler';
-        $handler   = new HandlerModel($pointer, $className, null);
+        $operation = new OperationModel('\\Foo\\Operation', $pointer);
+        $handler   = new HandlerModel($pointer, $className, $operation);
 
         $file      = $this->generator->generate($handler);
         $namespace = $this->getNamespace($file, __NAMESPACE__);
@@ -44,6 +47,7 @@ final class HandlerGeneratorTest extends TestCase
         $method    = $this->getMethod($class, 'handle');
 
         $expectedUses = [
+            'ResponseFactory'         => $operation->getResponseFactoryClassName(),
             'OpenApiHandler'          => OpenApiHandler::class,
             'ResponseInterface'       => ResponseInterface::class,
             'ServerRequestInterface'  => ServerRequestInterface::class,
@@ -74,15 +78,15 @@ final class HandlerGeneratorTest extends TestCase
     public function testGenerateAddsOperation(): void
     {
         $expected = <<<HANDLE_BODY
-        \$operation = \$request->getAttribute(Operation::class);
-        assert(\$operation instanceof Operation);
+        \$operation = \$request->getAttribute(OpenApiRequest::class);
+        assert(\$operation instanceof Request);
         
         // @todo Add your handler logic...
         HANDLE_BODY;
 
         $pointer   = '/paths/~1foo/get';
         $className = __NAMESPACE__ . '\\GetHandler';
-        $operation = new OperationModel('\\Foo\\Operation', $pointer);
+        $operation = new OperationModel('\\Foo\\Operation', $pointer, $this->getPathParams('Foo'));
         $handler   = new HandlerModel($pointer, $className, $operation);
 
         $file      = $this->generator->generate($handler);
@@ -91,7 +95,8 @@ final class HandlerGeneratorTest extends TestCase
         $method    = $this->getMethod($class, 'handle');
 
         $uses = $namespace->getUses();
-        self::assertArrayHasKey('Operation', $uses);
+        self::assertArrayHasKey('OpenApiRequest', $uses);
+        self::assertArrayHasKey('Request', $uses);
 
         $actual = trim($method->getBody());
         self::assertSame($expected, $actual);

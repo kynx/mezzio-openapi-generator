@@ -35,8 +35,8 @@ final class ConfigProviderGeneratorFactoryTest extends TestCase
         $factory  = new ConfigProviderGeneratorFactory();
         $instance = $factory($container);
 
-        $operations = $this->getOperationCollection($this->getOperations(self::NAMESPACE . '\\Operation'));
-        $handlers   = $this->getHandlerCollection($this->getHandlers(self::NAMESPACE . '\\Handler'));
+        $operations = $this->getOperationCollection($this->getOperations());
+        $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
 
         $file      = $instance->generate($operations, $handlers, self::NAMESPACE . '\\RouteDelegator');
         $namespace = $this->getNamespace($file, self::NAMESPACE);

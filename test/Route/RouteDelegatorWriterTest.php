@@ -8,6 +8,7 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriter;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +20,7 @@ final class RouteDelegatorWriterTest extends TestCase
 {
     use GeneratorTrait;
     use HandlerTrait;
+    use OperationTrait;
     use RouteTrait;
 
     /** @var WriterInterface&MockObject */
@@ -45,8 +47,9 @@ final class RouteDelegatorWriterTest extends TestCase
 
     public function testWriteWritesRouteDelegator(): void
     {
-        $handlers = $this->getHandlerCollection($this->getHandlers());
-        $routes   = $this->getRouteCollection($this->getRoutes());
+        $operations = $this->getOperationCollection($this->getOperations());
+        $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
+        $routes     = $this->getRouteCollection($this->getRoutes());
 
         $written = null;
         $this->writer->expects(self::once())

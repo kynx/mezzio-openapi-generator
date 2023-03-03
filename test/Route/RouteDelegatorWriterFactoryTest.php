@@ -10,6 +10,7 @@ use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -21,6 +22,7 @@ final class RouteDelegatorWriterFactoryTest extends TestCase
 {
     use GeneratorTrait;
     use HandlerTrait;
+    use OperationTrait;
     use RouteTrait;
 
     public function testInvokeReturnsConfiguredInstance(): void
@@ -44,8 +46,9 @@ final class RouteDelegatorWriterFactoryTest extends TestCase
                 $written = $file;
             });
 
-        $routes   = $this->getRouteCollection($this->getRoutes());
-        $handlers = $this->getHandlerCollection($this->getHandlers());
+        $routes     = $this->getRouteCollection($this->getRoutes());
+        $operations = $this->getOperationCollection($this->getOperations());
+        $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
         $instance->write($routes, $handlers);
 
         self::assertInstanceOf(PhpFile::class, $written);

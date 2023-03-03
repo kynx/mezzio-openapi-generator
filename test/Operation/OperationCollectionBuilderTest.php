@@ -33,9 +33,10 @@ final class OperationCollectionBuilderTest extends TestCase
 
     public function testGetOperationCollectionReturnsOperations(): void
     {
+        $responses  = [$this->getResponse()];
         $operations = [
-            new OperationModel(__NAMESPACE__ . '\\Foo\\Get', '/paths/foo/get'),
-            new OperationModel(__NAMESPACE__ . '\\Bar\\Get', '/paths/bar/get'),
+            new OperationModel(__NAMESPACE__ . '\\Foo\\Get', '/paths/foo/get', null, null, null, null, [], $responses),
+            new OperationModel(__NAMESPACE__ . '\\Bar\\Get', '/paths/bar/get', null, null, null, null, [], $responses),
         ];
         $expected   = new OperationCollection();
         foreach ($operations as $operation) {

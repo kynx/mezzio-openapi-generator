@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriter;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Nette\PhpGenerator\PhpFile;
@@ -30,7 +32,7 @@ final class HandlerWriterTest extends TestCase
         parent::setUp();
 
         $this->writer        = $this->createMock(WriterInterface::class);
-        $this->handlerWriter = new HandlerWriter(new HandlerGenerator(), $this->writer);
+        $this->handlerWriter = new HandlerWriter(new HandlerGenerator(), new HandlerFactoryGenerator(), $this->writer);
     }
 
     public function testWriteWritesClass(): void
@@ -43,7 +45,8 @@ final class HandlerWriterTest extends TestCase
 
         $className  = __NAMESPACE__ . '\\GetHandler';
         $collection = new HandlerCollection();
-        $collection->add(new HandlerModel('/paths/~1foo/get', $className, null));
+        $operation  = new OperationModel('Api\\Operation', '/paths/~1foo/get');
+        $collection->add(new HandlerModel('/paths/~1foo/get', $className, $operation));
 
         $this->handlerWriter->write($collection);
         self::assertInstanceOf(PhpFile::class, $written);

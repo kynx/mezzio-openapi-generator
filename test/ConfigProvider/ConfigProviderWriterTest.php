@@ -24,8 +24,8 @@ final class ConfigProviderWriterTest extends TestCase
 
     public function testWriteWritesFile(): void
     {
-        $operations = $this->getOperationCollection($this->getOperations('Api\\Operation'));
-        $handlers   = $this->getHandlerCollection($this->getHandlers('Api\\Handler'));
+        $operations = $this->getOperationCollection($this->getOperations());
+        $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
         $generator  = new ConfigProviderGenerator('Api\\ConfigProvider');
         $writer     = $this->createMock(WriterInterface::class);
         $written    = null;

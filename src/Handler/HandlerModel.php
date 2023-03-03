@@ -18,7 +18,7 @@ final class HandlerModel
     public function __construct(
         private readonly string $jsonPointer,
         private readonly string $className,
-        private readonly OperationModel|null $operation
+        private readonly OperationModel $operation
     ) {
     }
 
@@ -32,7 +32,12 @@ final class HandlerModel
         return $this->className;
     }
 
-    public function getOperation(): ?OperationModel
+    public function getFactoryClassName(): string
+    {
+        return $this->className . 'Factory';
+    }
+
+    public function getOperation(): OperationModel
     {
         return $this->operation;
     }

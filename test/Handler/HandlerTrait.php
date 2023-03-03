@@ -12,6 +12,15 @@ use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
 use Kynx\Mezzio\OpenApiGenerator\Namer\NamerInterface;
 use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
+
+use function array_map;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function iterator_to_array;
 
 trait HandlerTrait
 {
@@ -27,7 +36,7 @@ trait HandlerTrait
     }
 
     /**
-     * @param list<HandlerModel> $handlers
+     * @param array<int, HandlerModel> $handlers
      */
     protected function getHandlerCollection(array $handlers): HandlerCollection
     {
@@ -40,13 +49,19 @@ trait HandlerTrait
     }
 
     /**
-     * @return list<HandlerModel>
+     * @return array<int, HandlerModel>
      */
-    protected function getHandlers(string $namespace = ''): array
-    {
-        return [
-            new HandlerModel('/paths/~1foo/get', $namespace . '\\Foo\\GetHandler', null),
-            new HandlerModel('/paths/~1bar/get', $namespace . '\\Bar\\GetHandler', null),
-        ];
+    protected function getHandlers(
+        OperationCollection $operations,
+        string $operationNamespace = 'Api\\Operation',
+        string $namespace = 'Api\\Handler'
+    ): array {
+        return array_map(function (OperationModel $operation) use ($operationNamespace, $namespace): HandlerModel {
+            $parts     = explode('\\', $operation->getClassName());
+            $className = $namespace . '\\'
+                . implode('\\', array_slice($parts, count(explode('\\', $operationNamespace)), -1))
+                . 'Handler';
+            return new HandlerModel($operation->getJsonPointer(), $className, $operation);
+        }, iterator_to_array($operations));
     }
 }

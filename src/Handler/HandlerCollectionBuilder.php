@@ -41,7 +41,7 @@ final class HandlerCollectionBuilder
             $pointer = $route->getJsonPointer();
             assert(isset($classNames[$pointer]));
             $className = $classNames[$pointer];
-            $collection->add(new HandlerModel($pointer, $className, $handlerOperations[$pointer] ?? null));
+            $collection->add(new HandlerModel($pointer, $className, $handlerOperations[$pointer]));
         }
 
         return $collection;
@@ -54,9 +54,7 @@ final class HandlerCollectionBuilder
     {
         $handlerOperations = [];
         foreach ($operations as $operation) {
-            if ($operation->hasParameters()) {
-                $handlerOperations[$operation->getJsonPointer()] = $operation;
-            }
+            $handlerOperations[$operation->getJsonPointer()] = $operation;
         }
 
         return $handlerOperations;

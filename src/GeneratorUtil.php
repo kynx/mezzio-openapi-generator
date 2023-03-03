@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Nette\PhpGenerator\Dumper;
 
 use function array_pop;
@@ -12,6 +15,8 @@ use function explode;
 use function implode;
 use function ltrim;
 use function preg_replace;
+use function str_starts_with;
+use function ucfirst;
 
 /**
  * @internal
@@ -44,6 +49,25 @@ final class GeneratorUtil
     {
         $parts = explode('\\', $fqn);
         return array_pop($parts);
+    }
+
+    public static function getMethodName(PropertyInterface $property): string
+    {
+        $propertyName = self::normalizePropertyName($property);
+        if ($property instanceof SimpleProperty && $property->getType() === PropertyType::Boolean) {
+            return str_starts_with($propertyName, 'is') ? $propertyName : 'is' . ucfirst($propertyName);
+        }
+        return 'get' . ucfirst($propertyName);
+    }
+
+    public static function getAlias(string $shortName): string
+    {
+        return implode('', array_slice(explode('\\', $shortName), 1));
+    }
+
+    public static function normalizePropertyName(PropertyInterface $property): string
+    {
+        return preg_replace('/^\$/', '', $property->getName());
     }
 
     /**

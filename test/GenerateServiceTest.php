@@ -7,7 +7,6 @@ namespace KynxTest\Mezzio\OpenApiGenerator;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\GenerateService;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
-use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriterInterface;
@@ -16,18 +15,17 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator as ModelPathItemLocator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
-use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Schema\PathItemLocator as OperationPathItemLocator;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterInterface;
-use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use KynxTest\Mezzio\OpenApiGenerator\Route\RouteTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -39,6 +37,7 @@ final class GenerateServiceTest extends TestCase
     use HandlerTrait;
     use ModelTrait;
     use OperationTrait;
+    use RouteTrait;
 
     private const NAMESPACE = __NAMESPACE__ . '\\Asset';
     private const DIR       = __DIR__ . '/Asset';
@@ -112,7 +111,7 @@ final class GenerateServiceTest extends TestCase
 
     public function testCreateOperationsWritesCollection(): void
     {
-        $expected  = $this->getOperationCollection();
+        $expected  = $this->getOperationCollection($this->getOperations());
         $hydrators = HydratorCollection::fromModelCollection($this->getModelCollection());
         $actual    = null;
         $this->operationWriter->method('write')
@@ -126,8 +125,9 @@ final class GenerateServiceTest extends TestCase
 
     public function testCreateRouteDelegatorWritesRouteDelegator(): void
     {
-        $routes       = $this->getRouteCollection();
-        $handlers     = $this->getHandlerCollection();
+        $routes       = $this->getRouteCollection($this->getRoutes());
+        $operations   = $this->getOperationCollection($this->getOperations());
+        $handlers     = $this->getHandlerCollection($this->getHandlers($operations));
         $actualRoutes = $actualHandlers = null;
         $this->routeDelegatorWriter->method('write')
             ->willReturnCallback(function (
@@ -148,8 +148,9 @@ final class GenerateServiceTest extends TestCase
 
     public function testCreateHandlersWritesCollection(): void
     {
-        $expected = $this->getHandlerCollection();
-        $actual   = null;
+        $operations = $this->getOperationCollection($this->getOperations());
+        $expected   = $this->getHandlerCollection($this->getHandlers($operations));
+        $actual     = null;
         $this->handlerWriter->method('write')
             ->willReturnCallback(function (HandlerCollection $collection) use (&$actual): void {
                 $actual = $collection;
@@ -161,8 +162,8 @@ final class GenerateServiceTest extends TestCase
 
     public function testCreateConfigProviderWritesConfigProvider(): void
     {
-        $operations       = $this->getOperationCollection();
-        $handlers         = $this->getHandlerCollection();
+        $operations       = $this->getOperationCollection($this->getOperations());
+        $handlers         = $this->getHandlerCollection($this->getHandlers($operations));
         $actualOperations = $actualHandlers = null;
         $this->configProviderWriter->method('write')
             ->willReturnCallback(
@@ -187,31 +188,6 @@ final class GenerateServiceTest extends TestCase
     {
         $collection = new ModelCollection();
         $collection->add(new ClassModel(self::NAMESPACE . '\\Foo', '/components/schemas/Foo', []));
-
-        return $collection;
-    }
-
-    private function getOperationCollection(): OperationCollection
-    {
-        $collection = new OperationCollection();
-        $model      = new OperationModel(self::NAMESPACE . '\\Get', '/paths/~1foo/get');
-        $collection->add($model);
-
-        return $collection;
-    }
-
-    private function getRouteCollection(): RouteCollection
-    {
-        $collection = new RouteCollection();
-        $collection->add(new RouteModel('/paths/~1foo/get', '/foo', 'get', [], []));
-
-        return $collection;
-    }
-
-    private function getHandlerCollection(): HandlerCollection
-    {
-        $collection = new HandlerCollection();
-        $collection->add(new HandlerModel('/paths/~1foo/get', self::NAMESPACE . '\\GetHandler', null));
 
         return $collection;
     }

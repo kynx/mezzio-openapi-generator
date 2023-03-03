@@ -6,6 +6,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiConfigProvider;
 use Kynx\Mezzio\OpenApi\ConfigProvider;
+use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Laminas\ServiceManager\Factory\InvokableFactory;
@@ -15,12 +16,9 @@ use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
 
-use function array_slice;
+use function asort;
 use function current;
-use function explode;
-use function implode;
 use function ksort;
-use function sort;
 
 /**
  * @internal
@@ -82,8 +80,8 @@ final class ConfigProviderGenerator
             if (! $operation->hasParameters()) {
                 continue;
             }
-            $factoryName = $operation->getOperationFactoryClassName();
-            $alias       = $this->getAlias($namespace->simplifyName($factoryName));
+            $factoryName = $operation->getRequestFactoryClassName();
+            $alias       = GeneratorUtil::getAlias($namespace->simplifyName($factoryName));
             $namespace->addUse($factoryName, $alias);
             $factories[$operation->getJsonPointer()] = new Literal($alias . '::class');
         }
@@ -108,23 +106,28 @@ final class ConfigProviderGenerator
         $classNames = [];
         foreach ($handlers as $handler) {
             $className = $handler->getClassName();
-            $alias     = $this->getAlias($namespace->simplifyName($className));
+            $alias     = GeneratorUtil::getAlias($namespace->simplifyName($className));
             $namespace->addUse($className, $alias);
-            $classNames[] = $alias;
+            if ($handler->getOperation()->responsesRequireSerialization()) {
+                $factory = GeneratorUtil::getAlias($namespace->simplifyName($handler->getFactoryClassName()));
+                $namespace->addUse($handler->getFactoryClassName(), $factory);
+            } else {
+                $factory = $namespace->simplifyName(InvokableFactory::class);
+            }
+            $classNames[$alias] = $factory;
         }
-        sort($classNames);
+        asort($classNames);
 
         $delegators = [
             new Literal(
-                $namespace->simplifyName(Application::class) . '::class => '
-                . $namespace->simplifyName($routeDelegatorClassName) . '::class'
+                $namespace->simplifyName(Application::class) . '::class => ['
+                . $namespace->simplifyName($routeDelegatorClassName) . '::class]'
             ),
         ];
 
-        $invokableFactory = $namespace->simplifyName(InvokableFactory::class) . '::class';
-        $factories        = [];
-        foreach ($classNames as $dependency) {
-            $factories[] = new Literal($dependency . '::class => ' . $invokableFactory);
+        $factories = [];
+        foreach ($classNames as $alias => $factory) {
+            $factories[] = new Literal($alias . '::class => ' . $factory . '::class');
         }
         $dependencies = [
             'delegators' => $delegators,
@@ -135,10 +138,5 @@ final class ConfigProviderGenerator
             ->setPrivate()
             ->setReturnType('array')
             ->addBody('return ?;', [$dependencies]);
-    }
-
-    private function getAlias(string $shortName): string
-    {
-        return implode('', array_slice(explode('\\', $shortName), 1));
     }
 }

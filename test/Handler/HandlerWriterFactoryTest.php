@@ -7,6 +7,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriterFactory;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +33,8 @@ final class HandlerWriterFactoryTest extends TestCase
         $instance = $factory($container);
 
         $collection = new HandlerCollection();
-        $collection->add(new HandlerModel('/paths/~1foo/get', 'Foo\\GetHandler', null));
+        $operation  = new OperationModel('Foo\\Operation', '/paths/~1foo/get');
+        $collection->add(new HandlerModel('/paths/~1foo/get', 'Foo\\GetHandler', $operation));
 
         $instance->write($collection);
     }

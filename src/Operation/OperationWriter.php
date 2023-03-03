@@ -8,8 +8,9 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationFactoryGenerator;
-use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\OperationGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestFactoryGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\ResponseFactoryGenerator;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 
 use function array_merge;
@@ -27,8 +28,9 @@ final class OperationWriter implements OperationWriterInterface
     public function __construct(
         private readonly ModelGenerator $modelGenerator,
         private readonly HydratorGenerator $hydratorGenerator,
-        private readonly OperationGenerator $operationGenerator,
-        private readonly OperationFactoryGenerator $operationFactoryGenerator,
+        private readonly RequestGenerator $operationGenerator,
+        private readonly RequestFactoryGenerator $operationFactoryGenerator,
+        private readonly ResponseFactoryGenerator $responseFactoryGenerator,
         private readonly WriterInterface $writer
     ) {
     }
@@ -50,15 +52,16 @@ final class OperationWriter implements OperationWriterInterface
 
         $hydratorMap = array_merge($hydratorCollection->getHydratorMap(), $hydratorMap);
         foreach ($operations as $operation) {
-            if (! $operation->hasParameters()) {
-                continue;
+            if ($operation->hasParameters()) {
+                $file = $this->operationGenerator->generate($operation);
+                $this->writer->write($file);
+
+                $factory = $this->operationFactoryGenerator->generate($operation, $hydratorMap);
+                $this->writer->write($factory);
             }
 
-            $file = $this->operationGenerator->generate($operation);
-            $this->writer->write($file);
-
-            $factory = $this->operationFactoryGenerator->generate($operation, $hydratorMap);
-            $this->writer->write($factory);
+            $responseFactory = $this->responseFactoryGenerator->generate($operation, $hydratorMap);
+            $this->writer->write($responseFactory);
         }
     }
 

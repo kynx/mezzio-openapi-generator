@@ -81,16 +81,16 @@ final class ModelExceptionTest extends TestCase
 
     public function testInvalidSchemaReturnsUnknown(): void
     {
-        $expected = "Cannot parse foo at pointer 'unknown'";
+        $expected  = "Cannot parse foo at pointer 'unknown'";
         $exception = ModelException::invalidSchemaItem('foo', null);
         self::assertSame($expected, $exception->getMessage());
     }
 
     public function testInvalidSchemaReturnsPointer(): void
     {
-        $pointer = '/paths/~foo/get/responses';
+        $pointer  = '/paths/~foo/get/responses';
         $expected = "Cannot parse foo at pointer '$pointer'";
-        $parent = new Responses([]);
+        $parent   = new Responses([]);
         $parent->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
         $exception = ModelException::invalidSchemaItem('foo', $parent);
         self::assertSame($expected, $exception->getMessage());

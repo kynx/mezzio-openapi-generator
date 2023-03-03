@@ -33,7 +33,8 @@ final class OperationBuilderTest extends TestCase
     {
         $className = '\\Operation';
         $pointer   = '/paths/{foo}/get';
-        $expected  = new OperationModel($className, $pointer);
+        $responses = [$this->getResponse()];
+        $expected  = new OperationModel($className, $pointer, null, null, null, null, [], $responses);
         $namedSpec = $this->getNamedSpecification('get', []);
 
         $actual = $this->builder->getOperationModel($namedSpec, [$pointer => $className]);
@@ -65,24 +66,35 @@ final class OperationBuilderTest extends TestCase
 
     public function addParameterProvider(): array
     {
-        $class   = '\\Operation';
-        $pointer = '/paths/{foo}/get';
+        $class     = '\\Operation';
+        $pointer   = '/paths/{foo}/get';
+        $responses = [$this->getResponse()];
 
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'path'   => ['path', 'foo', new OperationModel($class, $pointer, $this->getPathParams())],
-            'query'  => ['query', 'bar', new OperationModel($class, $pointer, null, $this->getQueryParams())],
-            'header' => ['header', 'X-Foo', new OperationModel($class, $pointer, null, null, $this->getHeaderParams())],
-            'cookie' => ['cookie', 'cook', new OperationModel($class, $pointer, null, null, null, $this->getCookieParams())],
+            'path'   => ['path', 'foo', new OperationModel($class, $pointer, $this->getPathParams(), null, null, null, [], $responses)],
+            'query'  => ['query', 'bar', new OperationModel($class, $pointer, null, $this->getQueryParams(), null, null, [], $responses)],
+            'header' => ['header', 'X-Foo', new OperationModel($class, $pointer, null, null, $this->getHeaderParams(), null, [], $responses)],
+            'cookie' => ['cookie', 'cook', new OperationModel($class, $pointer, null, null, null, $this->getCookieParams(), [], $responses)],
         ];
         // phpcs:enable
     }
 
     public function testGetOperationModelAddsRequestBodies(): void
     {
-        $class    = '\\Operation';
-        $pointer  = '/paths/{foo}/get';
-        $expected = new OperationModel($class, $pointer, null, null, null, null, $this->getRequestBodies());
+        $class     = '\\Operation';
+        $pointer   = '/paths/{foo}/get';
+        $responses = [$this->getResponse()];
+        $expected  = new OperationModel(
+            $class,
+            $pointer,
+            null,
+            null,
+            null,
+            null,
+            $this->getRequestBodies(),
+            $responses
+        );
 
         $namedSpec = $this->getNamedSpecification('get', spec: [
             'requestBody' => [

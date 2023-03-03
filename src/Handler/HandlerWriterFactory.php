@@ -21,6 +21,7 @@ final class HandlerWriterFactory
     {
         return new HandlerWriter(
             new HandlerGenerator(),
+            new HandlerFactoryGenerator(),
             $container->get(Writer::class)
         );
     }

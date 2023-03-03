@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
-use Kynx\Mezzio\OpenApi\Attribute\OpenApiOperationFactory;
+use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestFactory;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiRouteDelegator;
+use Kynx\Mezzio\OpenApi\Middleware\OpenApiOperationMiddleware;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
@@ -51,10 +52,10 @@ final class RouteDelegatorGeneratorTest extends TestCase
         \$app = \$callback();
         assert(\$app instanceof Application);
         
-        \$app->get('$path', GetHandler::class, 'api.foo.get')
-            ->setOptions([OpenApiOperationFactory::class => '$getPointer']);
-        \$app->post('$path', PostHandler::class, 'api.foo.post')
-            ->setOptions([OpenApiOperationFactory::class => '$postPointer']);
+        \$app->get('$path', [OpenApiOperationMiddleware::class, FooGetHandler::class], 'api.foo.get')
+            ->setOptions([OpenApiRequestFactory::class => '$getPointer']);
+        \$app->post('$path', [OpenApiOperationMiddleware::class, FooPostHandler::class], 'api.foo.post')
+            ->setOptions([OpenApiRequestFactory::class => '$postPointer']);
         
         return \$app;
         INVOKE_BODY;
@@ -85,12 +86,13 @@ final class RouteDelegatorGeneratorTest extends TestCase
         $method    = $this->getMethod($class, '__invoke');
 
         $expectedUses = [
-            'OpenApiOperationFactory' => OpenApiOperationFactory::class,
-            'OpenApiRouteDelegator'   => OpenApiRouteDelegator::class,
-            'GetHandler'              => $getHandler,
-            'PostHandler'             => $postHandler,
-            'Application'             => Application::class,
-            'ContainerInterface'      => ContainerInterface::class,
+            'OpenApiRequestFactory'      => OpenApiRequestFactory::class,
+            'OpenApiRouteDelegator'      => OpenApiRouteDelegator::class,
+            'OpenApiOperationMiddleware' => OpenApiOperationMiddleware::class,
+            'FooGetHandler'              => $getHandler,
+            'FooPostHandler'             => $postHandler,
+            'Application'                => Application::class,
+            'ContainerInterface'         => ContainerInterface::class,
         ];
         $actualUses   = $namespace->getUses();
         self::assertSame($expectedUses, $actualUses);

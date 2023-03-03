@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Operation;
 
+use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 
 use function array_filter;
+use function array_map;
 use function array_merge;
 use function array_unique;
+use function count;
 use function explode;
 use function implode;
 
@@ -24,6 +27,7 @@ final class OperationModel
 {
     /**
      * @param list<RequestBodyModel> $requestBodies
+     * @param list<ResponseModel> $responses
      */
     public function __construct(
         private readonly string $className,
@@ -32,7 +36,8 @@ final class OperationModel
         private readonly PathOrQueryParams|null $queryParams = null,
         private readonly CookieOrHeaderParams|null $headerParams = null,
         private readonly CookieOrHeaderParams|null $cookieParams = null,
-        private readonly array $requestBodies = []
+        private readonly array $requestBodies = [],
+        private readonly array $responses = []
     ) {
     }
 
@@ -45,9 +50,19 @@ final class OperationModel
             || $this->requestBodies !== [];
     }
 
-    public function getOperationFactoryClassName(): string
+    public function getRequestClassName(): string
     {
-        return $this->className . 'Factory';
+        return GeneratorUtil::getNamespace($this->className) . '\\Request';
+    }
+
+    public function getRequestFactoryClassName(): string
+    {
+        return $this->getRequestClassName() . 'Factory';
+    }
+
+    public function getResponseFactoryClassName(): string
+    {
+        return GeneratorUtil::getNamespace($this->className) . '\\ResponseFactory';
     }
 
     /**
@@ -102,14 +117,6 @@ final class OperationModel
     }
 
     /**
-     * @return list<ResponseModel>
-     */
-    public function getResponses(): array
-    {
-        return $this->responses;
-    }
-
-    /**
      * @return array<int, string>
      */
     public function getRequestBodyUses(): array
@@ -130,5 +137,74 @@ final class OperationModel
 
         $allTypes = explode('|', implode('|', $types));
         return implode('|', array_unique($allTypes));
+    }
+
+    public function responsesRequireNegotiation(): bool
+    {
+        foreach ($this->getResponseStatuses() as $status) {
+            if ($this->responseStatusRequiresNegotiation($status)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function responseStatusRequiresNegotiation(string $status): bool
+    {
+        $mimeTypes = array_map(
+            fn (ResponseModel $model): string|null => $model->getMimeType(),
+            $this->getResponsesOfStatus($status)
+        );
+        return count($mimeTypes) > 1;
+    }
+
+    public function responsesRequireSerialization(): bool
+    {
+        foreach ($this->getResponseStatuses() as $status) {
+            if ($this->responseStatusRequiresSerialization($status)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function responseStatusRequiresSerialization(string $status): bool
+    {
+        foreach ($this->getResponsesOfStatus($status) as $response) {
+            if ($response->getType() !== null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getResponseStatuses(): array
+    {
+        return array_unique(array_map(
+            fn (ResponseModel $response): string => $response->getStatus(),
+            $this->responses
+        ));
+    }
+
+    /**
+     * @return array<int, ResponseModel>
+     */
+    public function getResponsesOfStatus(string $status): array
+    {
+        return array_filter($this->responses, fn (ResponseModel $model): bool => $model->getStatus() === $status);
+    }
+
+    public function getResponseHeaders(string $status): array
+    {
+        foreach ($this->getResponsesOfStatus($status) as $response) {
+            return $response->getHeaders();
+        }
+
+        return [];
     }
 }

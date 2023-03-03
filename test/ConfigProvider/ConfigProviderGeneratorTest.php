@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\ConfigProvider;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiConfigProvider;
-use Kynx\Mezzio\OpenApi\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
@@ -50,22 +49,22 @@ final class ConfigProviderGeneratorTest extends TestCase
         $expectedConfig = <<<CONFIG_BODY
         return [
             'operation-factories' => [
-                '/paths/~1bar/get' => BarGetOperationFactory::class,
-                '/paths/~1foo/get' => FooGetOperationFactory::class,
+                '/paths/~1bar/get' => BarGetRequestFactory::class,
+                '/paths/~1foo/get' => FooGetRequestFactory::class,
             ],
         ];
         CONFIG_BODY;
         // phpcs:disable Generic.Files.LineLength.TooLong
         $expectedDependencies = <<<DEPENDENCIES_BODY
         return [
-            'delegators' => [Application::class => RouteDelegator::class],
-            'factories' => [BarGetHandler::class => InvokableFactory::class, FooGetHandler::class => InvokableFactory::class],
+            'delegators' => [Application::class => [RouteDelegator::class]],
+            'factories' => [FooGetHandler::class => InvokableFactory::class, BarGetHandler::class => InvokableFactory::class],
         ];
         DEPENDENCIES_BODY;
         // phpcs:enable
 
-        $operations = $this->getOperationCollection($this->getOperations(self::OPERATION_NAMESPACE));
-        $handlers   = $this->getHandlerCollection($this->getHandlers(self::HANDLER_NAMESPACE));
+        $operations = $this->getOperationCollection($this->getOperations());
+        $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
         $delegator  = 'Api\\RouteDelegator';
 
         $file = $this->generator->generate($operations, $handlers, $delegator);
@@ -77,13 +76,13 @@ final class ConfigProviderGeneratorTest extends TestCase
         $getDependencies  = $this->getMethod($class, 'getDependencyConfig');
 
         $expectedUses = [
-            'BarGetHandler'          => self::HANDLER_NAMESPACE . '\\Bar\\GetHandler',
-            'FooGetHandler'          => self::HANDLER_NAMESPACE . '\\Foo\\GetHandler',
-            'BarGetOperationFactory' => self::OPERATION_NAMESPACE . '\\Bar\\Get\\OperationFactory',
-            'FooGetOperationFactory' => self::OPERATION_NAMESPACE . '\\Foo\\Get\\OperationFactory',
-            'OpenApiConfigProvider'  => OpenApiConfigProvider::class,
-            'InvokableFactory'       => InvokableFactory::class,
-            'Application'            => Application::class,
+            'BarGetHandler'         => self::HANDLER_NAMESPACE . '\\Bar\\GetHandler',
+            'FooGetHandler'         => self::HANDLER_NAMESPACE . '\\Foo\\GetHandler',
+            'BarGetRequestFactory'  => self::OPERATION_NAMESPACE . '\\Bar\\Get\\RequestFactory',
+            'FooGetRequestFactory'  => self::OPERATION_NAMESPACE . '\\Foo\\Get\\RequestFactory',
+            'OpenApiConfigProvider' => OpenApiConfigProvider::class,
+            'InvokableFactory'      => InvokableFactory::class,
+            'Application'           => Application::class,
         ];
         $uses         = $namespace->getUses();
         self::assertSame($expectedUses, $uses);
@@ -113,7 +112,9 @@ final class ConfigProviderGeneratorTest extends TestCase
         $operations = $this->getOperationCollection([
             new OperationModel(self::OPERATION_NAMESPACE . '\\Foo\\Get\\Operation', '/paths/~1foo/get'),
         ]);
-        $handlers   = $this->getHandlerCollection($this->getHandlers(self::HANDLER_NAMESPACE));
+        $handlers   = $this->getHandlerCollection(
+            $this->getHandlers($operations, self::OPERATION_NAMESPACE, self::HANDLER_NAMESPACE)
+        );
 
         $file = $this->generator->generate($operations, $handlers, 'Api\\RouteDelegator');
 

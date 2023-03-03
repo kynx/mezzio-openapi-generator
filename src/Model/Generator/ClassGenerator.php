@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Generator;
 
+use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Nette\PhpGenerator\ClassType;
@@ -36,7 +37,7 @@ final class ClassGenerator extends AbstractGenerator
 
         $constructor = $class->addMethod('__construct');
         foreach ($this->getOrderedParameters($model) as $property) {
-            $param = $constructor->addPromotedParameter($this->normalizePropertyName($property))
+            $param = $constructor->addPromotedParameter(GeneratorUtil::normalizePropertyName($property))
                 ->setType($this->getType($property))
                 ->setPrivate()
                 ->setReadOnly();
@@ -64,10 +65,10 @@ final class ClassGenerator extends AbstractGenerator
     private function addMethods(ClassType $type, ClassModel $model): void
     {
         foreach ($model->getProperties() as $property) {
-            $method = $type->addMethod($this->getMethodName($property));
+            $method = $type->addMethod(GeneratorUtil::getMethodName($property));
             $method->setPublic()
                 ->setReturnType($this->getType($property))
-                ->setBody(sprintf('return $this->%s;', $this->normalizePropertyName($property)))
+                ->setBody(sprintf('return $this->%s;', GeneratorUtil::normalizePropertyName($property)))
                 ->setComment($this->getDocBlock($property));
         }
     }

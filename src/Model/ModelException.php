@@ -6,8 +6,6 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
 use cebe\openapi\DocumentContextInterface;
 use cebe\openapi\spec\Reference;
-use cebe\openapi\SpecBaseObject;
-use cebe\openapi\SpecObjectInterface;
 use ReflectionClass;
 use RuntimeException;
 use Throwable;
@@ -67,7 +65,7 @@ final class ModelException extends RuntimeException
     public static function invalidSchemaItem(string $item, mixed $parent): self
     {
         $pointer = $parent instanceof DocumentContextInterface
-            ? $parent->getDocumentPosition()->getPointer()
+            ? ($parent->getDocumentPosition()?->getPointer() ?? 'unknown')
             : 'unknown';
         return new self(sprintf(
             "Cannot parse $item at pointer '%s'",

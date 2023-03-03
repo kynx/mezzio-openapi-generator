@@ -9,8 +9,6 @@ use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 
 use function array_combine;
 use function array_merge;
@@ -22,9 +20,6 @@ use function explode;
 use function implode;
 use function in_array;
 use function ksort;
-use function preg_replace;
-use function str_starts_with;
-use function ucfirst;
 use function uksort;
 use function usort;
 
@@ -73,15 +68,6 @@ abstract class AbstractGenerator
         return GeneratorUtil::getClassName($modelClass->getClassName());
     }
 
-    protected function getMethodName(PropertyInterface $property): string
-    {
-        $propertyName = $this->normalizePropertyName($property);
-        if ($property instanceof SimpleProperty && $property->getType() === PropertyType::Boolean) {
-            return str_starts_with($propertyName, 'is') ? $propertyName : 'is' . ucfirst($propertyName);
-        }
-        return 'get' . ucfirst($propertyName);
-    }
-
     protected function getType(PropertyInterface $property): string
     {
         $types = [$property->getPhpType()];
@@ -114,11 +100,6 @@ abstract class AbstractGenerator
         ksort($aliased);
 
         return $aliased;
-    }
-
-    protected function normalizePropertyName(PropertyInterface $property): string
-    {
-        return preg_replace('/^\$/', '', $property->getName());
     }
 
     /**
