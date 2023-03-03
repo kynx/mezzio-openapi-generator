@@ -28,6 +28,7 @@ final class ConfigProviderGeneratorTest extends TestCase
 
     private const OPERATION_NAMESPACE = 'Api\\Operation';
     private const HANDLER_NAMESPACE   = 'Api\\Handler';
+    private const OPENAPI_FILE        = 'public/openapi.yaml';
 
     private ConfigProviderGenerator $generator;
 
@@ -35,7 +36,7 @@ final class ConfigProviderGeneratorTest extends TestCase
     {
         parent::setUp();
 
-        $this->generator = new ConfigProviderGenerator('Api\\ConfigProvider');
+        $this->generator = new ConfigProviderGenerator(self::OPENAPI_FILE, 'Api\\ConfigProvider');
     }
 
     public function testGenerateReturnsFile(): void
@@ -48,6 +49,7 @@ final class ConfigProviderGeneratorTest extends TestCase
         INVOKE_BODY;
         $expectedConfig = <<<CONFIG_BODY
         return [
+            'openapi-schema' => getcwd() . '/public/openapi.yaml',
             'operation-factories' => [
                 '/paths/~1bar/get' => BarGetRequestFactory::class,
                 '/paths/~1foo/get' => FooGetRequestFactory::class,
@@ -107,7 +109,9 @@ final class ConfigProviderGeneratorTest extends TestCase
 
     public function testGenerateSkipsOperationsWithoutParameters(): void
     {
-        $expectedConfig = "return ['operation-factories' => []];";
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        $expectedConfig = "return ['openapi-schema' => getcwd() . '/public/openapi.yaml', 'operation-factories' => []];";
+        // phpcs:enable
 
         $operations = $this->getOperationCollection([
             new OperationModel(self::OPERATION_NAMESPACE . '\\Foo\\Get\\Operation', '/paths/~1foo/get'),

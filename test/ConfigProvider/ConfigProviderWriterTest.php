@@ -26,7 +26,7 @@ final class ConfigProviderWriterTest extends TestCase
     {
         $operations = $this->getOperationCollection($this->getOperations());
         $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
-        $generator  = new ConfigProviderGenerator('Api\\ConfigProvider');
+        $generator  = new ConfigProviderGenerator('public/openapi.yaml', 'Api\\ConfigProvider');
         $writer     = $this->createMock(WriterInterface::class);
         $written    = null;
         $writer->method('write')

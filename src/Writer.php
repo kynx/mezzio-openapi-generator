@@ -69,7 +69,7 @@ final class Writer implements WriterInterface
         }
 
         try {
-            $file = PhpFile::fromCode(file_get_contents($path));
+            $file = PhpFile::fromCode(@file_get_contents($path));
         } catch (InvalidStateException) {
             return true;
         }

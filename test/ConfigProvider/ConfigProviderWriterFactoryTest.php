@@ -23,7 +23,7 @@ final class ConfigProviderWriterFactoryTest extends TestCase
 
     public function testInvokeReturnsConfiguredInstance(): void
     {
-        $generator = new ConfigProviderGenerator('Api\\ConfigProvider');
+        $generator = new ConfigProviderGenerator('public/openapi.yaml', 'Api\\ConfigProvider');
         $writer    = $this->createMock(WriterInterface::class);
         $container = $this->createStub(ContainerInterface::class);
         $container->method('get')

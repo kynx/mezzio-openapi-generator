@@ -19,6 +19,7 @@ use Nette\PhpGenerator\PhpNamespace;
 use function asort;
 use function current;
 use function ksort;
+use function ltrim;
 
 /**
  * @internal
@@ -30,7 +31,7 @@ use function ksort;
  */
 final class ConfigProviderGenerator
 {
-    public function __construct(private readonly string $className)
+    public function __construct(private readonly string $openApiFile, private readonly string $className)
     {
     }
 
@@ -87,7 +88,9 @@ final class ConfigProviderGenerator
         }
         ksort($factories);
 
+        $openApiFile   = '/' . ltrim($this->openApiFile, './');
         $openApiConfig = [
+            ConfigProvider::SCHEMA_KEY              => new Literal('getcwd() . ?', [$openApiFile]),
             ConfigProvider::OPERATION_FACTORIES_KEY => $factories,
         ];
 

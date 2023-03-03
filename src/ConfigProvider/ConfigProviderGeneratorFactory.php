@@ -20,7 +20,8 @@ final class ConfigProviderGeneratorFactory
     public function __invoke(ContainerInterface $container): ConfigProviderGenerator
     {
         $configuration = $container->get(Configuration::class);
+        $openApiFile   = $configuration->getOpenApiFile();
         $className     = $configuration->getBaseNamespace() . '\\ConfigProvider';
-        return new ConfigProviderGenerator($className);
+        return new ConfigProviderGenerator($openApiFile, $className);
     }
 }
