@@ -7,6 +7,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Route;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestFactory;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiRouteDelegator;
 use Kynx\Mezzio\OpenApi\Middleware\OpenApiOperationMiddleware;
+use Kynx\Mezzio\OpenApi\Middleware\ValidationMiddleware;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
@@ -60,6 +61,7 @@ final class RouteDelegatorGenerator
             ->addUse(OpenApiOperationMiddleware::class)
             ->addUse(OpenApiRequestFactory::class)
             ->addUse(OpenApiRouteDelegator::class)
+            ->addUse(ValidationMiddleware::class)
             ->addUse(ContainerInterface::class);
 
         $class->addAttribute(OpenApiRouteDelegator::class);
@@ -101,6 +103,7 @@ final class RouteDelegatorGenerator
         $namespace->addUse($handlerClass, $alias);
 
         $middleware = [
+            new Literal($namespace->simplifyName(ValidationMiddleware::class) . '::class'),
             new Literal($namespace->simplifyName(OpenApiOperationMiddleware::class) . '::class'),
             new Literal($alias . '::class'),
         ];

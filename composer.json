@@ -66,8 +66,8 @@
     },
     "repositories": [
         {
-            "type": "vcs",
-            "url": "git@github.com:kynx/mezzio-openapi.git"
+            "type": "path",
+            "url": "../mezzio-openapi"
         }
     ]
 }

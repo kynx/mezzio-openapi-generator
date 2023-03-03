@@ -7,6 +7,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiRequestFactory;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiRouteDelegator;
 use Kynx\Mezzio\OpenApi\Middleware\OpenApiOperationMiddleware;
+use Kynx\Mezzio\OpenApi\Middleware\ValidationMiddleware;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
@@ -48,17 +49,19 @@ final class RouteDelegatorGeneratorTest extends TestCase
         $postPointer = "/paths$path/post";
         $postHandler = self::NAMESPACE . "\\Handlers\\Foo\\PostHandler";
 
+        // phpcs:disable Generic.Files.LineLength.TooLong
         $expected = <<<INVOKE_BODY
         \$app = \$callback();
         assert(\$app instanceof Application);
         
-        \$app->get('$path', [OpenApiOperationMiddleware::class, FooGetHandler::class], 'api.foo.get')
+        \$app->get('$path', [ValidationMiddleware::class, OpenApiOperationMiddleware::class, FooGetHandler::class], 'api.foo.get')
             ->setOptions([OpenApiRequestFactory::class => '$getPointer']);
-        \$app->post('$path', [OpenApiOperationMiddleware::class, FooPostHandler::class], 'api.foo.post')
+        \$app->post('$path', [ValidationMiddleware::class, OpenApiOperationMiddleware::class, FooPostHandler::class], 'api.foo.post')
             ->setOptions([OpenApiRequestFactory::class => '$postPointer']);
         
         return \$app;
         INVOKE_BODY;
+        // phpcs:enable
 
         $get        = new RouteModel("/paths$path/get", $path, 'get', [], []);
         $post       = new RouteModel("/paths$path/post", $path, 'post', [], []);
@@ -89,6 +92,7 @@ final class RouteDelegatorGeneratorTest extends TestCase
             'OpenApiRequestFactory'      => OpenApiRequestFactory::class,
             'OpenApiRouteDelegator'      => OpenApiRouteDelegator::class,
             'OpenApiOperationMiddleware' => OpenApiOperationMiddleware::class,
+            'ValidationMiddleware'       => ValidationMiddleware::class,
             'FooGetHandler'              => $getHandler,
             'FooPostHandler'             => $postHandler,
             'Application'                => Application::class,
