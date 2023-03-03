@@ -6,10 +6,14 @@ namespace KynxTest\Mezzio\OpenApiGenerator;
 
 use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Kynx\Mezzio\OpenApiGenerator\WriterException;
+use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\TestCase;
 
+use function copy;
+use function current;
 use function file_exists;
+use function file_get_contents;
 use function glob;
 use function is_dir;
 use function mkdir;
@@ -48,7 +52,7 @@ final class WriterTest extends TestCase
         $directory = $this->dir . '/Bar';
 
         $file = new PhpFile();
-        $file->addNamespace(self::BASE_NAMESPACE . '\\Bar');
+        $file->addClass(self::BASE_NAMESPACE . '\\Bar\\Baz');
 
         self::expectException(WriterException::class);
         self::expectExceptionMessage("Cannot create directory '$directory'");
@@ -77,6 +81,53 @@ final class WriterTest extends TestCase
 
         $this->writer->write($file);
         self::assertFileExists($expected);
+    }
+
+    public function testWriteBrokenExistingOverwrites(): void
+    {
+        $expected = $this->dir . '/Broken.php';
+        copy(__DIR__ . '/Asset/Broken.php', $expected);
+
+        $file = new PhpFile();
+        $file->addClass(self::BASE_NAMESPACE . '\\Broken');
+
+        $this->writer->write($file);
+        self::assertFileExists($expected);
+
+        $written = PhpFile::fromCode(file_get_contents($expected));
+        self::assertSame('Broken', current($written->getClasses())->getName());
+    }
+
+    public function testWriteNoClassOverwrites(): void
+    {
+        $expected = $this->dir . '/NoClass.php';
+        copy(__DIR__ . '/Asset/NoClass.php', $expected);
+
+        $file = new PhpFile();
+        $file->addClass(self::BASE_NAMESPACE . '\\NoClass');
+
+        $this->writer->write($file);
+        self::assertFileExists($expected);
+
+        $written = PhpFile::fromCode(file_get_contents($expected));
+        self::assertSame('NoClass', current($written->getClasses())->getName());
+    }
+
+    public function testWriteNoOverwriteDoesNotWrite(): void
+    {
+        $expected = $this->dir . '/DoNotWrite.php';
+        copy(__DIR__ . '/Asset/DoNotWrite.php', $expected);
+
+        $file = new PhpFile();
+        $file->addClass(self::BASE_NAMESPACE . '\\DoNotWrite');
+
+        $this->writer->write($file);
+        self::assertFileExists($expected);
+
+        $written = PhpFile::fromCode(file_get_contents($expected));
+        $class   = current($written->getClasses());
+        self::assertInstanceOf(ClassType::class, $class);
+        self::assertTrue($class->hasMethod('custom'));
     }
 
     protected function tearDown(): void
