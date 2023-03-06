@@ -89,13 +89,13 @@ final class AbstractGeneratorTest extends TestCase
         // phpcs:enable
 
         return [
-            'nullable_none'     => [$none, $nullable, [$nullable, $none]],
+            'nullable_none'     => [$none, $nullable, [$none, $nullable]],
             'default_none'      => [$none, $default, [$default, $none]],
             'default_nullable'  => [$nullable, $default, [$default, $nullable]],
             'required_none'     => [$none, $required, [$required, $none]],
             'required_default'  => [$default, $required, [$required, $default]],
             'required_nullable' => [$nullable, $required, [$required, $nullable]],
-            'none_another'      => [$another, $none, [$none, $another]],
+            'none_another'      => [$another, $none, [$another, $none]],
         ];
     }
 

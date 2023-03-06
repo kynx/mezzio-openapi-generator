@@ -41,12 +41,7 @@ abstract class AbstractGenerator
     {
         $properties = $model->getProperties();
         usort($properties, function (PropertyInterface $a, PropertyInterface $b): int {
-            $sort = $this->getOrder($a->getMetadata()) <=> $this->getOrder($b->getMetadata());
-            if ($sort === 0) {
-                return $a->getName() <=> $b->getName();
-            }
-
-            return $sort;
+            return $this->getOrder($a->getMetadata()) <=> $this->getOrder($b->getMetadata());
         });
 
         return $properties;
