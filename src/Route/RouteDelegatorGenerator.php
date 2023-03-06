@@ -62,7 +62,8 @@ final class RouteDelegatorGenerator
             ->addUse(OpenApiRequestFactory::class)
             ->addUse(OpenApiRouteDelegator::class)
             ->addUse(ValidationMiddleware::class)
-            ->addUse(ContainerInterface::class);
+            ->addUse(ContainerInterface::class)
+            ->addUseFunction('assert');
 
         $class->addAttribute(OpenApiRouteDelegator::class);
 
@@ -79,7 +80,6 @@ final class RouteDelegatorGenerator
         $invoke->addBody('assert($app instanceof ?);', [
             new Literal($namespace->simplifyName(Application::class)),
         ]);
-        $invoke->addBody('');
 
         foreach ($routes as $route) {
             $this->addRoute($namespace, $invoke, $route, $handlerMap);
@@ -109,17 +109,16 @@ final class RouteDelegatorGenerator
         ];
         $converted  = $this->routeConverter->convert($route);
 
-        $invoke->addBody('$app?(?, ?, ?)', [
+        $openApiOperationClass = $namespace->simplifyName(OpenApiRequestFactory::class);
+        $options = [new Literal("$openApiOperationClass::class => ?", [$pointer])];
+
+        $invoke->addBody('');
+        $invoke->addBody('$app?(?, ?, ?)->setOptions(?);', [
             new Literal('->' . $route->getMethod()),
             $converted,
             $middleware,
             $this->routeNamer->getName($route),
-        ]);
-
-        $openApiOperationClass = $namespace->simplifyName(OpenApiRequestFactory::class);
-        $invoke->addBody('    ->setOptions([? => ?]);', [
-            new Literal("$openApiOperationClass::class"),
-            $pointer,
+            $options,
         ]);
     }
 }

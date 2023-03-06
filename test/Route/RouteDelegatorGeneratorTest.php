@@ -13,6 +13,7 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Mezzio\Application;
+use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -54,10 +55,13 @@ final class RouteDelegatorGeneratorTest extends TestCase
         \$app = \$callback();
         assert(\$app instanceof Application);
         
-        \$app->get('$path', [ValidationMiddleware::class, OpenApiOperationMiddleware::class, FooGetHandler::class], 'api.foo.get')
-            ->setOptions([OpenApiRequestFactory::class => '$getPointer']);
-        \$app->post('$path', [ValidationMiddleware::class, OpenApiOperationMiddleware::class, FooPostHandler::class], 'api.foo.post')
-            ->setOptions([OpenApiRequestFactory::class => '$postPointer']);
+        \$app->get('$path', [ValidationMiddleware::class, OpenApiOperationMiddleware::class, FooGetHandler::class], 'api.foo.get')->setOptions([
+        	OpenApiRequestFactory::class => '$getPointer',
+        ]);
+        
+        \$app->post('$path', [ValidationMiddleware::class, OpenApiOperationMiddleware::class, FooPostHandler::class], 'api.foo.post')->setOptions([
+        	OpenApiRequestFactory::class => '$postPointer',
+        ]);
         
         return \$app;
         INVOKE_BODY;
@@ -100,6 +104,12 @@ final class RouteDelegatorGeneratorTest extends TestCase
         ];
         $actualUses   = $namespace->getUses();
         self::assertSame($expectedUses, $actualUses);
+
+        $expectedUseFunctions = [
+            'assert' => 'assert',
+        ];
+        $actualUseFunctions   = $namespace->getUses(PhpNamespace::NameFunction);
+        self::assertSame($expectedUseFunctions, $actualUseFunctions);
 
         $attributes = $class->getAttributes();
         self::assertCount(1, $attributes);
