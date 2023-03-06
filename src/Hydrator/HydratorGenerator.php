@@ -49,6 +49,8 @@ final class HydratorGenerator
     private const PROPERTY_EXTRACTORS     = 'PROPERTY_EXTRACTORS';
     private const ARRAY_PROPERTIES        = 'ARRAY_PROPERTIES';
     private const ENUMS                   = 'ENUMS';
+    private const DEFAULTS                = 'DEFAULTS';
+
     /**
      * @param array<string, class-string<HydratorInterface>> $overrideHydrators
      */
@@ -89,6 +91,7 @@ final class HydratorGenerator
         $propertyHydrators      = $this->getPropertyHydrators($classModel, $hydratorMap);
         $propertyExtractors     = $this->getPropertyExtractors($classModel, $hydratorMap);
         $enums                  = $this->getEnums($classModel);
+        $defaults               = $this->getDefaults($classModel);
 
         $all = $valueDiscriminators + $propertyDiscriminators + $propertyHydrators + $propertyExtractors + $enums;
         if ($all !== [] || $propertyMap !== [] || $extractMap !== []) {
@@ -106,6 +109,7 @@ final class HydratorGenerator
         $this->addPropertyHydratorConstant($namespace, $class, $propertyHydrators);
         $this->addPropertyExtractorConstant($namespace, $class, $propertyExtractors);
         $this->addEnumConstant($namespace, $class, $enums);
+        $this->addDefaultsConstant($class, $defaults);
 
         $this->addHydrateMethod(
             $classModel,
@@ -114,7 +118,8 @@ final class HydratorGenerator
             $valueDiscriminators,
             $propertyDiscriminators,
             $propertyHydrators,
-            $enums
+            $enums,
+            $defaults
         );
         $this->addExtractMethod($namespace, $classModel, $class, $propertyExtractors, $enums);
 
@@ -257,6 +262,16 @@ final class HydratorGenerator
             ->setPrivate();
     }
 
+    private function addDefaultsConstant(ClassType $class, array $defaults): void
+    {
+        if ($defaults === []) {
+            return;
+        }
+
+        $class->addConstant(self::DEFAULTS, $defaults)
+            ->setPrivate();
+    }
+
     private function addHydrateMethod(
         ClassModel $model,
         ClassType $class,
@@ -264,7 +279,8 @@ final class HydratorGenerator
         array $valueDiscriminators,
         array $propertyDiscriminators,
         array $propertyHydrators,
-        array $enums
+        array $enums,
+        array $defaults
     ): void {
         $method = $class->addMethod('hydrate')
             ->setStatic()
@@ -284,6 +300,9 @@ final class HydratorGenerator
         }
         if ($enums !== []) {
             $method->addBody('$data = HydratorUtil::hydrateEnums($data, self::ARRAY_PROPERTIES, self::ENUMS);');
+        }
+        if ($defaults !== []) {
+            $method->addBody('$data = array_merge(self::DEFAULTS, $data);');
         }
         if ($propertyMap !== []) {
             $method->addBody('$data = HydratorUtil::getMappedProperties($data, self::PROPERTY_MAP);');
@@ -482,6 +501,23 @@ final class HydratorGenerator
         }
 
         return $enums;
+    }
+
+    private function getDefaults(ClassModel $model): array
+    {
+        $defaults = [];
+        foreach ($model->getProperties() as $property) {
+            $name     = $property->getOriginalName();
+            $metadata = $property->getMetadata();
+            if ($metadata->getDefault() !== null) {
+                /** @psalm-suppress MixedAssignment */
+                $defaults[$name] = $metadata->getDefault();
+            } elseif ($metadata->isNullable()) {
+                $defaults[$name] = null;
+            }
+        }
+
+        return $defaults;
     }
 
     private function getPropertyMap(ClassModel $model): array

@@ -329,6 +329,42 @@ final class HydratorGeneratorTest extends TestCase
         self::assertStringContainsString($expected, $body);
     }
 
+    public function testGenerateSetsDefaults(): void
+    {
+        $expected   = [
+            'foo' => 'bar',
+            'bar' => null,
+        ];
+        $properties = [
+            new SimpleProperty(
+                '$foo',
+                'foo',
+                new PropertyMetadata(default: 'bar'),
+                PropertyType::String
+            ),
+            new SimpleProperty(
+                '$bar',
+                'bar',
+                new PropertyMetadata(nullable: true),
+                PropertyType::Integer
+            ),
+        ];
+        $classModel = new ClassModel(self::MODEL_NAMESPACE . '\\Foo', '/component/schemas/Foo', [], ...$properties);
+        $model      = new HydratorModel(self::MODEL_NAMESPACE . '\\FooHydrator', $classModel);
+        $classMap   = [$classModel->getClassName() => $model->getClassName()];
+
+        $file      = $this->generator->generate($model, $classMap);
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
+        $class     = $this->getClass($namespace, 'FooHydrator');
+        $constant  = $this->getConstant($class, 'DEFAULTS');
+        self::assertEquals($expected, $constant->getValue());
+
+        $expected = '$data = array_merge(self::DEFAULTS, $data);';
+        $method   = $this->getHydrateMethod($class);
+        $body     = $method->getBody();
+        self::assertStringContainsString($expected, $body);
+    }
+
     private function getHydrateMethod(ClassType $class): Method
     {
         self::assertCount(2, $class->getMethods());

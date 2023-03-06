@@ -43,11 +43,6 @@ final class AbstractGeneratorTest extends TestCase
          * @psalm-suppress InternalMethod
          */
         $this->generator = new class extends AbstractGenerator {
-            public function getOrderedParameters(AbstractClassLikeModel $model): array
-            {
-                return parent::getOrderedParameters($model);
-            }
-
             public function getClassLikeName(AbstractClassLikeModel|EnumModel $modelClass): string
             {
                 return parent::getClassLikeName($modelClass);
@@ -63,40 +58,6 @@ final class AbstractGeneratorTest extends TestCase
                 return parent::getPropertyUses($properties);
             }
         };
-    }
-
-    /**
-     * @dataProvider orderedParametersProvider
-     */
-    public function testGetOrderedParametersOrdersParameters(
-        PropertyInterface $a,
-        PropertyInterface $b,
-        array $expected
-    ): void {
-        $model  = new ClassModel('\\Foo', '/Foo', [], $a, $b);
-        $actual = $this->generator->getOrderedParameters($model);
-        self::assertSame($expected, $actual);
-    }
-
-    public function orderedParametersProvider(): array
-    {
-        // phpcs:disable Generic.Files.LineLength.TooLong
-        $nullable = new SimpleProperty('$a', 'a', new PropertyMetadata(...['required' => true, 'nullable' => true]), PropertyType::String);
-        $default  = new SimpleProperty('$b', 'b', new PropertyMetadata(...['required' => true, 'default' => 'foo']), PropertyType::String);
-        $required = new SimpleProperty('$c', 'c', new PropertyMetadata(...['required' => true]), PropertyType::String);
-        $none     = new SimpleProperty('$d', 'd', new PropertyMetadata(), PropertyType::String);
-        $another  = new SimpleProperty('$e', 'e', new PropertyMetadata(), PropertyType::String);
-        // phpcs:enable
-
-        return [
-            'nullable_none'     => [$none, $nullable, [$none, $nullable]],
-            'default_none'      => [$none, $default, [$default, $none]],
-            'default_nullable'  => [$nullable, $default, [$default, $nullable]],
-            'required_none'     => [$none, $required, [$required, $none]],
-            'required_default'  => [$default, $required, [$required, $default]],
-            'required_nullable' => [$nullable, $required, [$required, $nullable]],
-            'none_another'      => [$another, $none, [$another, $none]],
-        ];
     }
 
     public function testGetClassLikeNameReturnsName(): void

@@ -118,9 +118,7 @@ final class ClassGeneratorTest extends TestCase
     public function testAddClassSetsParameterDefault(
         bool $isRequired,
         bool $isNullable,
-        bool|null $default,
-        bool $hasDefault,
-        bool|null $expected
+        bool|null $default
     ): void {
         $metadata  = new PropertyMetadata('', '', $isRequired, $isNullable, false, $default);
         $model     = new ClassModel(
@@ -138,21 +136,16 @@ final class ClassGeneratorTest extends TestCase
         $parameter = $parameters['a'];
         self::assertInstanceOf(PromotedParameter::class, $parameter);
 
-        self::assertSame($hasDefault, $parameter->hasDefaultValue());
-        if ($hasDefault) {
-            /** @psalm-suppress MixedAssignment */
-            $actual = $parameter->getDefaultValue();
-            self::assertSame($expected, $actual);
-        }
+        self::assertFalse($parameter->hasDefaultValue());
     }
 
     public function parameterDefaultProvider(): array
     {
         return [
-            'required'     => [true, false, null, false, null],
-            'not_required' => [false, false, null, true, null],
-            'nullable'     => [false, true, null, true, null],
-            'default'      => [false, false, true, true, true],
+            'required'     => [true, false, null],
+            'not_required' => [false, false, null],
+            'nullable'     => [false, true, null],
+            'default'      => [false, false, true],
         ];
     }
 

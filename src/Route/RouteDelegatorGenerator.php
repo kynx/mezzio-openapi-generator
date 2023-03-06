@@ -110,7 +110,7 @@ final class RouteDelegatorGenerator
         $converted  = $this->routeConverter->convert($route);
 
         $openApiOperationClass = $namespace->simplifyName(OpenApiRequestFactory::class);
-        $options = [new Literal("$openApiOperationClass::class => ?", [$pointer])];
+        $options               = [new Literal("$openApiOperationClass::class => ?", [$pointer])];
 
         $invoke->addBody('');
         $invoke->addBody('$app?(?, ?, ?)->setOptions(?);', [

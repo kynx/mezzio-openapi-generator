@@ -41,7 +41,7 @@ final class InterfaceGenerator extends AbstractGenerator
      */
     private function addMethods(InterfaceType $type, InterfaceModel $model): void
     {
-        foreach ($this->getOrderedParameters($model) as $property) {
+        foreach ($model->getProperties() as $property) {
             $method = $type->addMethod(GeneratorUtil::getMethodName($property));
             $method->setPublic()
                 ->setReturnType($this->getType($property));

@@ -36,18 +36,11 @@ final class ClassGenerator extends AbstractGenerator
         }
 
         $constructor = $class->addMethod('__construct');
-        foreach ($this->getOrderedParameters($model) as $property) {
-            $param = $constructor->addPromotedParameter(GeneratorUtil::normalizePropertyName($property))
+        foreach ($model->getProperties() as $property) {
+            $constructor->addPromotedParameter(GeneratorUtil::normalizePropertyName($property))
                 ->setType($this->getType($property))
                 ->setPrivate()
                 ->setReadOnly();
-
-            $metadata = $property->getMetadata();
-            if ($metadata->getDefault() !== null) {
-                $param->setDefaultValue($metadata->getDefault());
-            } elseif ($metadata->isNullable() || ! $metadata->isRequired()) {
-                $param->setDefaultValue(null);
-            }
 
             if ($property->getDocBlockType() !== null) {
                 $constructor->addComment('@param ' . $property->getDocBlockType() . ' ' . $property->getName());
