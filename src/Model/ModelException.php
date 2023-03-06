@@ -31,8 +31,11 @@ final class ModelException extends RuntimeException
         ));
     }
 
-    public static function unrecognizedType(string $type): self
+    public static function unrecognizedType(?string $type): self
     {
+        if ($type === null) {
+            return new self("Schema does not specify a type");
+        }
         return new self("Unrecognized type '$type'");
     }
 
