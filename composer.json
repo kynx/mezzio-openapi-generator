@@ -14,13 +14,15 @@
             "email": "matt@kynx.org"
         }
     ],
-    "bin": [
-        "bin/mezzio-openapi"
-    ],
     "config": {
         "sort-packages": true,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "extra": {
+        "laminas": {
+            "config-provider": "Kynx\\Mezzio\\OpenApiGenerator\\ConfigProvider"
         }
     },
     "require": {

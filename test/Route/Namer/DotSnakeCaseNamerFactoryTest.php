@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Route\Namer;
 
-use Kynx\Mezzio\OpenApiGenerator\Configuration;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamerFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use PHPUnit\Framework\TestCase;
@@ -19,11 +19,11 @@ final class DotSnakeCaseNamerFactoryTest extends TestCase
     {
         $prefix        = 'pet';
         $expected      = "$prefix.foo.get";
-        $configuration = new Configuration(...['projectDir' => __DIR__, 'routePrefix' => $prefix]);
+        $configuration = [ConfigProvider::GEN_KEY => ['route-prefix' => $prefix]];
         $container     = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                [Configuration::class, $configuration],
+                ['config', $configuration],
             ]);
 
         $factory  = new DotSnakeCaseNamerFactory();

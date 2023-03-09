@@ -25,6 +25,7 @@ use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
+use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -358,6 +359,8 @@ final class HydratorGeneratorTest extends TestCase
         $class     = $this->getClass($namespace, 'FooHydrator');
         $constant  = $this->getConstant($class, 'DEFAULTS');
         self::assertEquals($expected, $constant->getValue());
+
+        self::assertSame(['array_merge' => 'array_merge'], $namespace->getUses(PhpNamespace::NameFunction));
 
         $expected = '$data = array_merge(self::DEFAULTS, $data);';
         $method   = $this->getHydrateMethod($class);

@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:disable Generic.Files.LineLength.TooLong
+
 
 declare(strict_types=1);
 
@@ -51,31 +52,46 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriter;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterFactory;
 use Symfony\Component\Console\Command\Command;
 
+use function getcwd;
+
 /**
- * Configuration for the `mezzio-openapi` command
- *
- * **DO NOT** wire into your application! The `mezzio-openapi` command`is designed to run in development only: this
- * configuration will _not_ be needed by generated applications.
- *
- * @internal
- *
- * @see \KynxTest\Mezzio\OpenApiGenerator\ConfigProviderTest
- *
+ * phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  * @psalm-type CliConfigArray array{commands: array<string, class-string<Command>>}
+ * @psalm-type GenConfigArray array{
+ *      project-dir: string,
+ *      openapi-file?: string,
+ *      src-dir?: string,
+ *      test-dir?: string,
+ *      base-namespace?: string,
+ *      model-namespace?: string,
+ *      operation-namespace?: string,
+ *      handler-namespace?: string,
+ *      route-prefix: string,
+ *      type-mappers: list<class-string<\Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapperInterface>>,
+ *      hydrators: array<class-string, class-string<\Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface>>
+ * }
  * @psalm-type DependencyConfigArray array{factories: array<class-string, class-string>}
+ * @psalm-type ConfigArray array{
+ *      openapi-gen: GenConfigArray,
+ *      laminas-cli: CliConfigArray,
+ *      dependencies: DependencyConfigArray
+ * }
+ * phpcs:enable
  */
 final class ConfigProvider
 {
+    public const GEN_KEY = 'openapi-gen';
+
     /**
-     * @return array{openapi-cli: CliConfigArray, dependencies: DependencyConfigArray}
+     * @return array{openapi-gen: GenConfigArray, laminas-cli: CliConfigArray, dependencies: DependencyConfigArray}
      */
     public function __invoke(): array
     {
         return [
-            'openapi-cli'  => $this->getCliConfig(),
             'openapi-gen'  => $this->getGeneratorConfig(),
+            'laminas-cli'  => $this->getCliConfig(),
             'dependencies' => $this->getDependencyConfig(),
         ];
     }
@@ -87,15 +103,20 @@ final class ConfigProvider
     {
         return [
             'commands' => [
-                'generate' => GenerateCommand::class,
+                'mezzio:openapi:generate' => GenerateCommand::class,
             ],
         ];
     }
 
+    /**
+     * @return GenConfigArray
+     */
     private function getGeneratorConfig(): array
     {
         return [
-            'type_mappers' => [
+            'project-dir'  => (string) getcwd(),
+            'route-prefix' => 'api',
+            'type-mappers' => [
                 DateIntervalMapper::class,
                 DateTimeImmutableMapper::class,
                 UriInterfaceMapper::class,
@@ -139,3 +160,4 @@ final class ConfigProvider
         ];
     }
 }
+// phpcs: enable

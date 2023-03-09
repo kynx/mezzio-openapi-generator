@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Mezzio\OpenApiGenerator\Configuration;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
@@ -12,7 +12,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Configuration
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder
  * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
@@ -28,12 +27,16 @@ final class ModelCollectionBuilderFactoryTest extends TestCase
 
     public function testInvokeReturnsInstance(): void
     {
-        $configuration = new Configuration(__DIR__, '', __NAMESPACE__);
+        $configuration = [
+            ConfigProvider::GEN_KEY => [
+                'model-namespace' => __NAMESPACE__,
+            ],
+        ];
         $modelsBuilder = $this->getModelsBuilder();
         $container     = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                [Configuration::class, $configuration],
+                ['config', $configuration],
                 [ModelsBuilder::class, $modelsBuilder],
             ]);
 

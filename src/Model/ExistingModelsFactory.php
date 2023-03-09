@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Mezzio\OpenApiGenerator\Configuration;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -12,6 +12,7 @@ use Psr\Container\ContainerInterface;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\ExistingModelsFactoryTest
  *
+ * @psalm-import-type ConfigArray from ConfigProvider
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator\Model
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator\Model
  */
@@ -19,7 +20,11 @@ final class ExistingModelsFactory
 {
     public function __invoke(ContainerInterface $container): ExistingModels
     {
-        $configuration = $container->get(Configuration::class);
-        return new ExistingModels($configuration->getBaseNamespace(), $configuration->getBaseDir());
+        /** @var ConfigArray $config */
+        $config = $container->get('config');
+        return new ExistingModels(
+            $config[ConfigProvider::GEN_KEY]['base-namespace'] ?? '',
+            $config[ConfigProvider::GEN_KEY]['src-dir'] ?? ''
+        );
     }
 }

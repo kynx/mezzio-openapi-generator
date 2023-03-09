@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 
-use Kynx\Mezzio\OpenApiGenerator\Configuration;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -12,6 +12,7 @@ use Psr\Container\ContainerInterface;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGeneratorFactoryTest
  *
+ * @psalm-import-type ConfigArray from ConfigProvider
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
@@ -19,9 +20,10 @@ final class ConfigProviderGeneratorFactory
 {
     public function __invoke(ContainerInterface $container): ConfigProviderGenerator
     {
-        $configuration = $container->get(Configuration::class);
-        $openApiFile   = $configuration->getOpenApiFile();
-        $className     = $configuration->getBaseNamespace() . '\\ConfigProvider';
+        /** @var ConfigArray $config */
+        $config      = $container->get('config');
+        $openApiFile = $config[ConfigProvider::GEN_KEY]['openapi-file'] ?? '';
+        $className   = ($config[ConfigProvider::GEN_KEY]['base-namespace'] ?? '') . '\\ConfigProvider';
         return new ConfigProviderGenerator($openApiFile, $className);
     }
 }

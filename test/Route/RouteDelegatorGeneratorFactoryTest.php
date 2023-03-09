@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
-use Kynx\Mezzio\OpenApiGenerator\Configuration;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorFactory;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,11 @@ final class RouteDelegatorGeneratorFactoryTest extends TestCase
 
     public function testInvokeReturnsConfiguredInstance(): void
     {
-        $configuration = new Configuration(__DIR__, '', __NAMESPACE__);
+        $configuration = [
+            ConfigProvider::GEN_KEY => [
+                'base-namespace' => __NAMESPACE__,
+            ],
+        ];
         $namer         = $this->createMock(NamerInterface::class);
         $namer->expects(self::exactly(2))
             ->method('getName')
@@ -27,7 +31,7 @@ final class RouteDelegatorGeneratorFactoryTest extends TestCase
         $container = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                [Configuration::class, $configuration],
+                ['config', $configuration],
                 [NamerInterface::class, $namer],
             ]);
 

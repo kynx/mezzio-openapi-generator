@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
-use Kynx\Mezzio\OpenApiGenerator\Configuration;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilderFactory;
 use PHPUnit\Framework\TestCase;
@@ -17,20 +17,15 @@ final class OperationCollectionBuilderFactoryTest extends TestCase
 {
     public function testInvokeReturnsInstance(): void
     {
-        $configuration = new Configuration(
-            __DIR__,
-            'openapi.yml',
-            __NAMESPACE__,
-            'src',
-            __NAMESPACE__,
-            'test',
-            'Model',
-            'Operation',
-        );
+        $configuration = [
+            ConfigProvider::GEN_KEY => [
+                'operation-namespace' => __NAMESPACE__ . '\Operation',
+            ],
+        ];
         $container     = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                [Configuration::class, $configuration],
+                ['config', $configuration],
             ]);
         $factory = new OperationCollectionBuilderFactory();
 

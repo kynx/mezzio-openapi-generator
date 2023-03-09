@@ -7,7 +7,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Mezzio\OpenApiGenerator\Configuration;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
@@ -29,17 +29,17 @@ final class HandlerCollectionBuilderFactoryTest extends TestCase
         $operations = $this->getOperationCollection($this->getOperations());
         $expected   = $this->getHandlerCollection($this->getHandlers($operations));
 
-        $configuration = new Configuration(...[
-            'projectDir'       => __DIR__,
-            'baseNamespace'    => 'Api',
-            'handlerNamespace' => 'Handler',
-        ]);
+        $configuration = [
+            ConfigProvider::GEN_KEY => [
+                'handler-namespace' => 'Api\\Handler',
+            ],
+        ];
         $classLabeler  = new UniqueClassLabeler(new ClassNameNormalizer('Handler'), new NumberSuffix());
         $classNamer    = new NamespacedNamer('Api\\Handler', $classLabeler);
         $container     = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                [Configuration::class, $configuration],
+                ['config', $configuration],
                 [NamespacedNamer::class, $classNamer],
             ]);
 

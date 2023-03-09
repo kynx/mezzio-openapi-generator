@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator;
 
-use Kynx\Mezzio\OpenApiGenerator\Configuration;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -12,6 +11,7 @@ use Psr\Container\ContainerInterface;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\WriterFactoryTest
  *
+ * @psalm-import-type ConfigArray from ConfigProvider
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
@@ -19,7 +19,11 @@ final class WriterFactory
 {
     public function __invoke(ContainerInterface $container): Writer
     {
-        $configuration = $container->get(Configuration::class);
-        return new Writer($configuration->getBaseNamespace(), $configuration->getBaseDir());
+        /** @var ConfigArray $config */
+        $config = $container->get('config');
+        return new Writer(
+            $config[ConfigProvider::GEN_KEY]['base-namespace'] ?? '',
+            $config[ConfigProvider::GEN_KEY]['src-dir'] ?? '',
+        );
     }
 }

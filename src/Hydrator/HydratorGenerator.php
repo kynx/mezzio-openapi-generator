@@ -109,7 +109,7 @@ final class HydratorGenerator
         $this->addPropertyHydratorConstant($namespace, $class, $propertyHydrators);
         $this->addPropertyExtractorConstant($namespace, $class, $propertyExtractors);
         $this->addEnumConstant($namespace, $class, $enums);
-        $this->addDefaultsConstant($class, $defaults);
+        $this->addDefaultsConstant($namespace, $class, $defaults);
 
         $this->addHydrateMethod(
             $classModel,
@@ -262,12 +262,13 @@ final class HydratorGenerator
             ->setPrivate();
     }
 
-    private function addDefaultsConstant(ClassType $class, array $defaults): void
+    private function addDefaultsConstant(PhpNamespace $namespace, ClassType $class, array $defaults): void
     {
         if ($defaults === []) {
             return;
         }
 
+        $namespace->addUseFunction('array_merge');
         $class->addConstant(self::DEFAULTS, $defaults)
             ->setPrivate();
     }

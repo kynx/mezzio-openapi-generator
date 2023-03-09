@@ -15,7 +15,7 @@ final class ConfigProviderTest extends TestCase
     public function testCommandsHaveFactories(): void
     {
         $config    = (new ConfigProvider())();
-        $commands  = $config['openapi-cli']['commands'];
+        $commands  = $config['laminas-cli']['commands'];
         $factories = $config['dependencies']['factories'];
 
         foreach ($commands as $class) {

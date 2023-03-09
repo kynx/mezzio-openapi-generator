@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\ConfigProvider;
 
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGeneratorFactory;
-use Kynx\Mezzio\OpenApiGenerator\Configuration;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
@@ -25,11 +25,16 @@ final class ConfigProviderGeneratorFactoryTest extends TestCase
 
     public function testInvokeReturnsConfiguredInstance(): void
     {
-        $configuration = new Configuration(__DIR__, '', self::NAMESPACE);
+        $configuration = [
+            ConfigProvider::GEN_KEY => [
+                'project-dir'    => __DIR__,
+                'base-namespace' => self::NAMESPACE,
+            ],
+        ];
         $container     = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                [Configuration::class, $configuration],
+                ['config', $configuration],
             ]);
 
         $factory  = new ConfigProviderGeneratorFactory();
