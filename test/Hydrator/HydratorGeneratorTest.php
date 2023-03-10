@@ -284,7 +284,7 @@ final class HydratorGeneratorTest extends TestCase
         $file      = $this->generator->generate($model, []);
         $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $uses      = $namespace->getUses();
-        self::assertArrayHasKey('DateTimeImmutable', $uses);
+        self::assertArrayHasKey('DateTimeImmutableHydrator', $uses);
 
         $class    = $this->getClass($namespace, 'FooHydrator');
         $constant = $this->getConstant($class, 'PROPERTY_HYDRATORS');

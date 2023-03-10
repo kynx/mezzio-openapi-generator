@@ -31,7 +31,7 @@
         "composer-runtime-api": "^2.2",
         "cebe/php-openapi": "^1.7",
         "kynx/code-utils": "^2.0",
-        "kynx/mezzio-openapi": "^0.1",
+        "kynx/mezzio-openapi": "^0.2",
         "laminas/laminas-cli": "^1.7",
         "laminas/laminas-diactoros": "^2.24",
         "laminas/laminas-filter": "^2.30",

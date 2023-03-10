@@ -89,11 +89,10 @@ final class HydratorGenerator
         $valueDiscriminators    = $this->getValueDiscriminators($classModel, $hydratorMap);
         $propertyDiscriminators = $this->getPropertyDiscriminators($classModel, $hydratorMap);
         $propertyHydrators      = $this->getPropertyHydrators($classModel, $hydratorMap);
-        $propertyExtractors     = $this->getPropertyExtractors($classModel, $hydratorMap);
         $enums                  = $this->getEnums($classModel);
         $defaults               = $this->getDefaults($classModel);
 
-        $all = $valueDiscriminators + $propertyDiscriminators + $propertyHydrators + $propertyExtractors + $enums;
+        $all = $valueDiscriminators + $propertyDiscriminators + $propertyHydrators + $enums;
         if ($all !== [] || $propertyMap !== [] || $extractMap !== []) {
             $namespace->addUse(HydratorUtil::class);
         }
@@ -107,7 +106,6 @@ final class HydratorGenerator
         $this->addValueDiscriminatorConstant($namespace, $class, $valueDiscriminators);
         $this->addListDiscriminatorConstant($namespace, $class, $propertyDiscriminators);
         $this->addPropertyHydratorConstant($namespace, $class, $propertyHydrators);
-        $this->addPropertyExtractorConstant($namespace, $class, $propertyExtractors);
         $this->addEnumConstant($namespace, $class, $enums);
         $this->addDefaultsConstant($namespace, $class, $defaults);
 
@@ -121,7 +119,7 @@ final class HydratorGenerator
             $enums,
             $defaults
         );
-        $this->addExtractMethod($namespace, $classModel, $class, $propertyExtractors, $enums);
+        $this->addExtractMethod($namespace, $classModel, $class, $propertyHydrators, $enums);
 
         return $file;
     }
@@ -222,28 +220,6 @@ final class HydratorGenerator
     }
 
     /**
-     * @param array<string, string> $extractors
-     */
-    private function addPropertyExtractorConstant(PhpNamespace $namespace, ClassType $class, array $extractors): void
-    {
-        if ($extractors === []) {
-            return;
-        }
-
-        $literals = [];
-        foreach ($extractors as $name => $fullyQualified) {
-            $namespace->addUse($name);
-            $namespace->addUse($fullyQualified);
-            $className     = $namespace->simplifyName($name) . '::class';
-            $extractorName = $namespace->simplifyName($fullyQualified) . '::class';
-            $literals[]    = new Literal("$className => $extractorName");
-        }
-
-        $class->addConstant(self::PROPERTY_EXTRACTORS, $literals)
-            ->setPrivate();
-    }
-
-    /**
      * @param array<string, string> $enums
      */
     private function addEnumConstant(PhpNamespace $namespace, ClassType $class, array $enums): void
@@ -324,7 +300,7 @@ final class HydratorGenerator
         PhpNamespace $namespace,
         ClassModel $model,
         ClassType $class,
-        array $propertyExtractors,
+        array $propertyHydrators,
         array $enums
     ): void {
         $className = $namespace->simplifyName($model->getClassName());
@@ -347,8 +323,8 @@ final class HydratorGenerator
         if ($enums !== []) {
             $method->addBody('$data = HydratorUtil::extractEnums($data, self::ARRAY_PROPERTIES, self::ENUMS);');
         }
-        if ($propertyExtractors !== []) {
-            $method->addBody('$data = HydratorUtil::extractProperties($data, self::ARRAY_PROPERTIES, self::PROPERTY_EXTRACTORS);');
+        if ($propertyHydrators !== []) {
+            $method->addBody('$data = HydratorUtil::extractProperties($data, self::ARRAY_PROPERTIES, self::PROPERTY_HYDRATORS);');
         }
         // phpcs:enable
 
@@ -430,42 +406,6 @@ final class HydratorGenerator
         }
 
         return $hydrators;
-    }
-
-    /**
-     * @param array<string, string> $extractorMap
-     * @return array<string, string>
-     */
-    private function getPropertyExtractors(ClassModel $model, array $extractorMap): array
-    {
-        $extractors = [];
-        foreach ($this->getClassStringProperties($model) as $property) {
-            $type = $property->getType();
-            assert($type instanceof ClassString);
-
-            if (! $type->isEnum()) {
-                $name              = $type->getClassString();
-                $extractors[$name] = $this->overrideHydrators[$name] ?? $this->getFullQualified($extractorMap[$name]);
-            }
-        }
-        foreach ($model->getProperties() as $property) {
-            if (! $property instanceof UnionProperty) {
-                continue;
-            }
-
-            $classes       = [];
-            $discriminator = $property->getDiscriminator();
-            if ($discriminator instanceof PropertyList) {
-                $classes = array_keys($discriminator->getClassMap());
-            } elseif ($discriminator instanceof PropertyValue) {
-                $classes = array_values($discriminator->getValueMap());
-            }
-            foreach ($classes as $name) {
-                $fullyQualified    = $this->getFullQualified($extractorMap[$name]);
-                $extractors[$name] = $this->overrideHydrators[$name] ?? $fullyQualified;
-            }
-        }
-        return $extractors;
     }
 
     /**
