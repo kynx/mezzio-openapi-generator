@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Mapper;
 
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -19,7 +20,7 @@ final class TypeMapperFactory
         /** @var array $config */
         $config = $container->get('config');
         /** @var array<array-key, class-string<TypeMapperInterface>> $mappers */
-        $mappers = $config['openapi-gen']['type_mappers'] ?? [];
+        $mappers = $config[ConfigProvider::GEN_KEY]['type-mappers'] ?? [];
 
         $instances = [];
         foreach ($mappers as $mapper) {

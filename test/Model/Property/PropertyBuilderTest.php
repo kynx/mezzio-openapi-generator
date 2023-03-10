@@ -43,7 +43,7 @@ final class PropertyBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $typeMapper = new TypeMapper(new DateTimeImmutableMapper());
+        $typeMapper    = new TypeMapper(new DateTimeImmutableMapper());
         $this->builder = new PropertyBuilder($typeMapper);
     }
 
@@ -216,7 +216,12 @@ final class PropertyBuilderTest extends TestCase
 
     public function testGetPropertyMapsTypes(): void
     {
-        $expected = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), new ClassString(DateTimeImmutable::class));
+        $expected = new SimpleProperty(
+            '$foo',
+            'foo',
+            new PropertyMetadata(),
+            new ClassString(DateTimeImmutable::class)
+        );
         $pointer  = '/components/schemas/Foo';
         $schema   = $this->getSchema($pointer, [
             'type'   => 'string',

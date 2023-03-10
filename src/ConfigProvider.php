@@ -90,7 +90,7 @@ final class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'openapi-gen'  => $this->getGeneratorConfig(),
+            self::GEN_KEY  => $this->getGeneratorConfig(),
             'laminas-cli'  => $this->getCliConfig(),
             'dependencies' => $this->getDependencyConfig(),
         ];

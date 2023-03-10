@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriterFactory;
@@ -24,7 +25,7 @@ final class OperationWriterFactoryTest extends TestCase
         $container         = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                ['config', ['openapi-gen' => ['hydrators' => []]]],
+                ['config', [ConfigProvider::GEN_KEY => ['hydrators' => []]]],
                 [HydratorGenerator::class, $hydratorGenerator],
                 [Writer::class, $writer],
             ]);

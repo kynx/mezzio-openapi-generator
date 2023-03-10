@@ -6,6 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Mapper;
 
 use cebe\openapi\spec\Schema;
 use DateTimeImmutable;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateTimeImmutableMapper;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapperFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
@@ -25,8 +26,8 @@ final class TypeMapperFactoryTest extends TestCase
         $container->method('get')
             ->with('config')
             ->willReturn([
-                'openapi-gen' => [
-                    'type_mappers' => [
+                ConfigProvider::GEN_KEY => [
+                    'type-mappers' => [
                         DateTimeImmutableMapper::class,
                     ],
                 ],

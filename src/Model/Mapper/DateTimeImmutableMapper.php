@@ -6,6 +6,8 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Mapper;
 
 use DateTimeImmutable;
 
+use function in_array;
+
 /**
  * @psalm-immutable
  */

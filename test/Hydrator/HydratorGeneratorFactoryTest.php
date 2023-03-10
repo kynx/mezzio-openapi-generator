@@ -6,6 +6,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Hydrator;
 
 use DateTimeImmutable;
 use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGeneratorFactory;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +26,7 @@ final class HydratorGeneratorFactoryTest extends TestCase
         $container = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                ['config', ['openapi-gen' => ['hydrators' => $expected]]],
+                ['config', [ConfigProvider::GEN_KEY => ['hydrators' => $expected]]],
             ]);
 
         $factory  = new HydratorGeneratorFactory();

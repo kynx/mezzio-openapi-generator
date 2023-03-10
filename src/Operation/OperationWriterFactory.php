@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Operation;
 
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestFactoryGenerator;
@@ -28,7 +29,7 @@ final class OperationWriterFactory
         /** @var array $config */
         $config = $container->get('config');
         /** @var array<class-string, class-string<HydratorInterface>> $hydrators */
-        $hydrators = $config['openapi-gen']['hydrators'] ?? [];
+        $hydrators = $config[ConfigProvider::GEN_KEY]['hydrators'] ?? [];
 
         return new OperationWriter(
             new ModelGenerator(),

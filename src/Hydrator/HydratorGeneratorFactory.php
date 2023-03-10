@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Hydrator;
 
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
+use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -20,7 +21,7 @@ final class HydratorGeneratorFactory
         /** @var array $config */
         $config = $container->get('config');
         /** @var array<class-string, class-string<HydratorInterface>> $hydrators */
-        $hydrators = $config['openapi-gen']['hydrators'] ?? [];
+        $hydrators = $config[ConfigProvider::GEN_KEY]['hydrators'] ?? [];
 
         return new HydratorGenerator($hydrators);
     }
