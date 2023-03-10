@@ -424,8 +424,8 @@ final class HydratorGenerator
 
             if (! $type->isEnum()) {
                 $classString      = $type->getClassString();
-                $fullyQualified   = $this->getFullQualified($hydratorMap[$classString]);
-                $hydrators[$name] = $this->overrideHydrators[$classString] ?? $fullyQualified;
+                $hydrators[$name] = $this->overrideHydrators[$classString]
+                    ?? $this->getFullQualified($hydratorMap[$classString]);
             }
         }
 
@@ -445,8 +445,7 @@ final class HydratorGenerator
 
             if (! $type->isEnum()) {
                 $name              = $type->getClassString();
-                $fullyQualified    = $this->getFullQualified($extractorMap[$name]);
-                $extractors[$name] = $this->overrideHydrators[$name] ?? $fullyQualified;
+                $extractors[$name] = $this->overrideHydrators[$name] ?? $this->getFullQualified($extractorMap[$name]);
             }
         }
         foreach ($model->getProperties() as $property) {

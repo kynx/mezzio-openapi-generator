@@ -270,6 +270,27 @@ final class HydratorGeneratorTest extends TestCase
         self::assertStringContainsString($expected, $body);
     }
 
+    public function testGenerateOverridesPropertyHydrator(): void
+    {
+        $expected   = [
+            'bar' => new Literal('DateTimeImmutableHydrator::class'),
+        ];
+        $properties = [
+            new SimpleProperty('$bar', 'bar', new PropertyMetadata(), new ClassString('DateTimeImmutable')),
+        ];
+        $classModel = new ClassModel(self::MODEL_NAMESPACE . '\\Foo', '/component/schemas/Foo', [], ...$properties);
+        $model      = new HydratorModel(self::MODEL_NAMESPACE . '\\FooHydrator', $classModel);
+
+        $file      = $this->generator->generate($model, []);
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
+        $uses      = $namespace->getUses();
+        self::assertArrayHasKey('DateTimeImmutable', $uses);
+
+        $class    = $this->getClass($namespace, 'FooHydrator');
+        $constant = $this->getConstant($class, 'PROPERTY_HYDRATORS');
+        self::assertEquals($expected, $constant->getValue());
+    }
+
     public function testGeneratePopulatesArrayProperties(): void
     {
         $expected   = ['bar'];

@@ -7,6 +7,9 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
+use DateTimeImmutable;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateTimeImmutableMapper;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapper;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
@@ -40,7 +43,8 @@ final class PropertyBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $this->builder = new PropertyBuilder();
+        $typeMapper = new TypeMapper(new DateTimeImmutableMapper());
+        $this->builder = new PropertyBuilder($typeMapper);
     }
 
     /**
@@ -204,6 +208,19 @@ final class PropertyBuilderTest extends TestCase
             'items' => [
                 'type' => 'string',
             ],
+        ]);
+
+        $actual = $this->builder->getProperty($schema, $expected->getName(), $expected->getOriginalName(), false, []);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testGetPropertyMapsTypes(): void
+    {
+        $expected = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), new ClassString(DateTimeImmutable::class));
+        $pointer  = '/components/schemas/Foo';
+        $schema   = $this->getSchema($pointer, [
+            'type'   => 'string',
+            'format' => 'date-time',
         ]);
 
         $actual = $this->builder->getProperty($schema, $expected->getName(), $expected->getOriginalName(), false, []);

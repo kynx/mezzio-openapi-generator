@@ -84,7 +84,7 @@ final class PropertyBuilder
             return new ArrayProperty($name, $originalName, $metadata, true, $type);
         }
 
-        $type = PropertyType::fromSchema($schema);
+        $type = $this->getPropertyTypeOrClassName($schema, $classNames);
         return new SimpleProperty($name, $originalName, $metadata, $type);
     }
 

@@ -13,7 +13,7 @@ final class DateTimeImmutableMapper implements TypeMapperInterface
 {
     public function canMap(string $type, ?string $format): bool
     {
-        return $type === 'string' && $format === 'date';
+        return $type === 'string' && in_array($format, ['date', 'date-time'], true);
     }
 
     public function getClassString(string $type, ?string $format): string

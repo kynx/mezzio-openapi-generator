@@ -26,10 +26,11 @@ final class DateTimeImmutableMapperTest extends TestCase
     public function canMapProvider(): array
     {
         return [
-            'int_null'        => ['int', null, false],
-            'int_ddate'       => ['int', 'date', false],
-            'string_duration' => ['string', 'duration', false],
-            'string_date'     => ['string', 'date', true],
+            'int_null'         => ['int', null, false],
+            'int_ddate'        => ['int', 'date', false],
+            'string_duration'  => ['string', 'duration', false],
+            'string_date'      => ['string', 'date', true],
+            'string_date-time' => ['string', 'date-time', true],
         ];
     }
 
