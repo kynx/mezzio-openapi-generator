@@ -351,24 +351,17 @@ final class HydratorGeneratorTest extends TestCase
         self::assertStringContainsString($expected, $body);
     }
 
-    public function testGenerateSetsDefaults(): void
+    /**
+     * @dataProvider defaultProvider
+     */
+    public function testGenerateSetsDefaults(array $metadata, array $expected): void
     {
-        $expected   = [
-            'foo' => 'bar',
-            'bar' => null,
-        ];
         $properties = [
             new SimpleProperty(
                 '$foo',
                 'foo',
-                new PropertyMetadata(default: 'bar'),
+                new PropertyMetadata(...$metadata),
                 PropertyType::String
-            ),
-            new SimpleProperty(
-                '$bar',
-                'bar',
-                new PropertyMetadata(nullable: true),
-                PropertyType::Integer
             ),
         ];
         $classModel = new ClassModel(self::MODEL_NAMESPACE . '\\Foo', '/component/schemas/Foo', [], ...$properties);
@@ -387,6 +380,14 @@ final class HydratorGeneratorTest extends TestCase
         $method   = $this->getHydrateMethod($class);
         $body     = $method->getBody();
         self::assertStringContainsString($expected, $body);
+    }
+
+    public static function defaultProvider(): array
+    {
+        return [
+            'default'           => [['default' => 'baz'], ['foo' => 'baz']],
+            'not_required'      => [['required' => false], ['foo' => null]],
+        ];
     }
 
     private function getHydrateMethod(ClassType $class): Method
