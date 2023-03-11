@@ -7,22 +7,16 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
-use Kynx\Code\Normalizer\ConstantNameNormalizer;
-use Kynx\Code\Normalizer\UniqueConstantLabeler;
-use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\VariableNameNormalizer;
-use Kynx\Code\Normalizer\WordCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -45,21 +39,15 @@ use function implode;
  */
 final class ModelsBuilderTest extends TestCase
 {
+    use ModelTrait;
+    use OperationTrait;
+
     private ModelsBuilder $builder;
 
     protected function setUp(): void
     {
         parent::setUp();
-
-        $propertiesBuilder = new PropertiesBuilder(
-            new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix())
-        );
-        $caseLabeler       = new UniqueConstantLabeler(
-            new ConstantNameNormalizer('Case', WordCase::Pascal),
-            new NumberSuffix()
-        );
-
-        $this->builder = new ModelsBuilder($propertiesBuilder, $caseLabeler);
+        $this->builder = $this->getModelsBuilder($this->getPropertiesBuilder());
     }
 
     public function testGetModelsReturnsEnum(): void

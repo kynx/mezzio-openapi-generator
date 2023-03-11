@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
-use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -21,15 +19,14 @@ use Psr\Container\ContainerInterface;
  */
 final class ModelsBuilderFactoryTest extends TestCase
 {
+    use OperationTrait;
+
     public function testInvokeReturnsInstance(): void
     {
-        $propertiesBuilder = new PropertiesBuilder(
-            new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix())
-        );
-        $container         = $this->createStub(ContainerInterface::class);
+        $container = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                [PropertiesBuilder::class, $propertiesBuilder],
+                [PropertiesBuilder::class, $this->getPropertiesBuilder()],
             ]);
 
         $factory = new ModelsBuilderFactory();

@@ -25,7 +25,7 @@ use function in_array;
 final class PropertyBuilder
 {
     public function __construct(
-        private readonly TypeMapper $typeMapper = new TypeMapper(),
+        private readonly TypeMapper $typeMapper,
         private readonly DiscriminatorBuilder $discriminatorBuilder = new DiscriminatorBuilder()
     ) {
     }

@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator;
 
 use DateTimeImmutable;
+use Kynx\Code\Normalizer\UniqueVariableLabeler;
 use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGenerator;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGeneratorFactory;
@@ -38,12 +39,19 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilderFactory;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\UniquePropertyLabelerFactory;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriterFactory;
+use Kynx\Mezzio\OpenApiGenerator\Operation\ParameterBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Operation\ParameterBuilderFactory;
+use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyBuilderFactory;
+use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamerFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
@@ -150,11 +158,15 @@ final class ConfigProvider
                 OperationBuilder::class           => OperationBuilderFactory::class,
                 OperationCollectionBuilder::class => OperationCollectionBuilderFactory::class,
                 OperationWriter::class            => OperationWriterFactory::class,
+                ParameterBuilder::class           => ParameterBuilderFactory::class,
                 PropertiesBuilder::class          => PropertiesBuilderFactory::class,
                 PropertyBuilder::class            => PropertyBuilderFactory::class,
+                RequestBodyBuilder::class         => RequestBodyBuilderFactory::class,
+                ResponseBuilder::class            => ResponseBuilderFactory::class,
                 RouteDelegatorGenerator::class    => RouteDelegatorGeneratorFactory::class,
                 RouteDelegatorWriter::class       => RouteDelegatorWriterFactory::class,
                 TypeMapper::class                 => TypeMapperFactory::class,
+                UniqueVariableLabeler::class      => UniquePropertyLabelerFactory::class,
                 Writer::class                     => WriterFactory::class,
             ],
         ];

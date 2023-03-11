@@ -19,23 +19,24 @@ use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
 
 trait ModelTrait
 {
-    protected function getModelsBuilder(): ModelsBuilder
+    protected function getModelsBuilder(PropertiesBuilder $propertiesBuilder): ModelsBuilder
     {
-        $propertyBuilder = new PropertiesBuilder($this->getPropertyLabeler());
-        $caseLabeler     = new UniqueConstantLabeler(
+        $caseLabeler = new UniqueConstantLabeler(
             new ConstantNameNormalizer('Case', WordCase::Pascal),
             new NumberSuffix()
         );
 
-        return new ModelsBuilder($propertyBuilder, $caseLabeler);
+        return new ModelsBuilder($propertiesBuilder, $caseLabeler);
     }
 
-    protected function getModelCollectionBuilder(string $namespace): ModelCollectionBuilder
-    {
+    protected function getModelCollectionBuilder(
+        PropertiesBuilder $propertiesBuilder,
+        string $namespace
+    ): ModelCollectionBuilder {
         $classLabeler = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
         $classNamer   = new NamespacedNamer($namespace, $classLabeler);
 
-        return new ModelCollectionBuilder($classNamer, $this->getModelsBuilder());
+        return new ModelCollectionBuilder($classNamer, $this->getModelsBuilder($propertiesBuilder));
     }
 
     protected function getPropertyLabeler(): UniqueVariableLabeler

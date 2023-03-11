@@ -24,7 +24,7 @@ final class PropertiesBuilder
 {
     public function __construct(
         private readonly UniqueVariableLabeler $propertyLabeler,
-        private readonly PropertyBuilder $propertyBuilder = new PropertyBuilder()
+        private readonly PropertyBuilder $propertyBuilder
     ) {
     }
 

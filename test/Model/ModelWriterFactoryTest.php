@@ -8,6 +8,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriterFactory;
 use Kynx\Mezzio\OpenApiGenerator\Writer;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -34,10 +35,11 @@ use Psr\Container\ContainerInterface;
 final class ModelWriterFactoryTest extends TestCase
 {
     use ModelTrait;
+    use OperationTrait;
 
     public function testInvokeReturnsInstance(): void
     {
-        $collectionBuilder = $this->getModelCollectionBuilder(__NAMESPACE__);
+        $collectionBuilder = $this->getModelCollectionBuilder($this->getPropertiesBuilder(), __NAMESPACE__);
         $writer            = new Writer(__NAMESPACE__, __DIR__);
         $container         = $this->createStub(ContainerInterface::class);
         $container->method('get')

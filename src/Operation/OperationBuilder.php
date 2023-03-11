@@ -27,8 +27,8 @@ final class OperationBuilder
 {
     public function __construct(
         private readonly ParameterBuilder $parameterBuilder,
-        private readonly RequestBodyBuilder $requestBodyBuilder = new RequestBodyBuilder(),
-        private readonly ResponseBuilder $responseBuilder = new ResponseBuilder()
+        private readonly RequestBodyBuilder $requestBodyBuilder,
+        private readonly ResponseBuilder $responseBuilder
     ) {
     }
 

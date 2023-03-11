@@ -20,6 +20,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -30,6 +31,7 @@ use function implode;
 final class ModelCollectionBuilderEnd2EndTest extends TestCase
 {
     use ModelTrait;
+    use OperationTrait;
 
     private OpenApiLocator $locator;
     private ModelCollectionBuilder $builder;
@@ -39,7 +41,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         parent::setUp();
 
         $this->locator = new OpenApiLocator(new PathsLocator(new PathItemLocator()));
-        $this->builder = $this->getModelCollectionBuilder('');
+        $this->builder = $this->getModelCollectionBuilder($this->getPropertiesBuilder(), '');
     }
 
     public function testGetModelCollectionNoSchemasReturnsEmptyCollection(): void

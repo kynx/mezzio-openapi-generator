@@ -16,6 +16,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -43,6 +44,7 @@ use function implode;
 final class ModelCollectionBuilderTest extends TestCase
 {
     use ModelTrait;
+    use OperationTrait;
 
     private ModelCollectionBuilder $builder;
 
@@ -50,7 +52,7 @@ final class ModelCollectionBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $modelsBuilder = $this->getModelsBuilder();
+        $modelsBuilder = $this->getModelsBuilder($this->getPropertiesBuilder());
         $classLabeler  = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
         $classNamer    = new NamespacedNamer('', $classLabeler);
 

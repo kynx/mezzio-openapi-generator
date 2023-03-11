@@ -7,8 +7,6 @@ namespace Kynx\Mezzio\OpenApiGenerator\Operation;
 use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
 use Psr\Container\ContainerInterface;
@@ -32,9 +30,6 @@ final class OperationCollectionBuilderFactory
         $classLabeler = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
         $classNamer   = new NamespacedNamer($namespace, $classLabeler);
 
-        $propertyLabeler  = new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
-        $operationBuilder = new OperationBuilder(new ParameterBuilder($propertyLabeler));
-
-        return new OperationCollectionBuilder($classNamer, $operationBuilder);
+        return new OperationCollectionBuilder($classNamer, $container->get(OperationBuilder::class));
     }
 }

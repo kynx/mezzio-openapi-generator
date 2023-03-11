@@ -70,7 +70,7 @@ final class GenerateServiceTest extends TestCase
         $this->service = new GenerateService(
             new OpenApiLocator(new PathsLocator(new ModelPathItemLocator())),
             new OpenApiLocator(new PathsLocator(new OperationPathItemLocator())),
-            $this->getModelCollectionBuilder(self::NAMESPACE),
+            $this->getModelCollectionBuilder($this->getPropertiesBuilder(), self::NAMESPACE),
             $this->getOperationCollectionBuilder(self::NAMESPACE),
             new RouteCollectionBuilder(),
             $this->getHandlerCollectionBuilder(self::NAMESPACE),

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 
-use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -22,7 +20,7 @@ final class PropertiesBuilderFactory
     public function __invoke(ContainerInterface $container): PropertiesBuilder
     {
         return new PropertiesBuilder(
-            new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix()),
+            $container->get(UniqueVariableLabeler::class),
             $container->get(PropertyBuilder::class)
         );
     }

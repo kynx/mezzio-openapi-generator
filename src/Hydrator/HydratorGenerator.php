@@ -26,7 +26,6 @@ use Nette\PhpGenerator\PhpNamespace;
 use TypeError;
 
 use function array_filter;
-use function array_keys;
 use function array_map;
 use function array_values;
 use function assert;

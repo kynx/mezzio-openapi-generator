@@ -24,7 +24,7 @@ final class RequestBodyBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $this->builder = new RequestBodyBuilder();
+        $this->builder = $this->getRequestBodyBuilder();
     }
 
     public function testGetRequestBodyReturnsEmpty(): void

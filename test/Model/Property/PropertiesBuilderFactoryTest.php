@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 
+use Kynx\Code\Normalizer\UniqueVariableLabeler;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -17,12 +19,15 @@ use Psr\Container\ContainerInterface;
  */
 final class PropertiesBuilderFactoryTest extends TestCase
 {
+    use OperationTrait;
+
     public function testInvokeReturnsInstance(): void
     {
         $container = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                [PropertyBuilder::class, new PropertyBuilder()],
+                [UniqueVariableLabeler::class, $this->getUniquePropertyLabeler()],
+                [PropertyBuilder::class, $this->getPropertyBuilder()],
             ]);
 
         $factory = new PropertiesBuilderFactory();

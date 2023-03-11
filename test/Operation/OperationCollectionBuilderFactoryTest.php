@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilderFactory;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,8 @@ use Psr\Container\ContainerInterface;
  */
 final class OperationCollectionBuilderFactoryTest extends TestCase
 {
+    use OperationTrait;
+
     public function testInvokeReturnsInstance(): void
     {
         $configuration = [
@@ -26,6 +29,7 @@ final class OperationCollectionBuilderFactoryTest extends TestCase
         $container->method('get')
             ->willReturnMap([
                 ['config', $configuration],
+                [OperationBuilder::class, $this->getOperationBuilder()],
             ]);
         $factory = new OperationCollectionBuilderFactory();
 

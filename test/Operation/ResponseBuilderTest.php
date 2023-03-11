@@ -31,7 +31,7 @@ final class ResponseBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $this->builder = new ResponseBuilder();
+        $this->builder = $this->getResponseBuilder();
     }
 
     public function testGetResponseModelsReturnsModels(): void

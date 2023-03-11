@@ -40,9 +40,10 @@ final class GenerateServiceFactoryTest extends TestCase
     public function testInvokeReturnsInstance(): void
     {
         $container = $this->createStub(ContainerInterface::class);
+        // phpcs:disable Generic.Files.LineLength.TooLong
         $container->method('get')
             ->willReturnMap([
-                [ModelCollectionBuilder::class, $this->getModelCollectionBuilder(__NAMESPACE__)],
+                [ModelCollectionBuilder::class, $this->getModelCollectionBuilder($this->getPropertiesBuilder(), __NAMESPACE__)],
                 [OperationCollectionBuilder::class, $this->getOperationCollectionBuilder(__NAMESPACE__)],
                 [RouteCollectionBuilder::class, new RouteCollectionBuilder()],
                 [HandlerCollectionBuilder::class, $this->getHandlerCollectionBuilder(__NAMESPACE__)],
@@ -53,6 +54,7 @@ final class GenerateServiceFactoryTest extends TestCase
                 [HandlerWriter::class, $this->createStub(HandlerWriterInterface::class)],
                 [ConfigProviderWriter::class, $this->createStub(ConfigProviderWriterInterface::class)],
             ]);
+        // phpcs:enable
 
         $factory = new GenerateServiceFactory();
         $actual  = $factory($container);

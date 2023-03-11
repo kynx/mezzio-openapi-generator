@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
-use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
-use Kynx\Mezzio\OpenApiGenerator\Operation\ParameterBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,8 +21,7 @@ final class OperationBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $propertyLabeler = new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
-        $this->builder   = new OperationBuilder(new ParameterBuilder($propertyLabeler));
+        $this->builder = $this->getOperationBuilder();
     }
 
     public function testGetModelsReturnsEmptyModel(): void

@@ -7,14 +7,12 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
-use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -30,14 +28,15 @@ use function implode;
  */
 final class PropertiesBuilderTest extends TestCase
 {
+    use OperationTrait;
+
     private PropertiesBuilder $builder;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $labeler       = new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
-        $this->builder = new PropertiesBuilder($labeler);
+        $this->builder = $this->getPropertiesBuilder();
     }
 
     public function testGetPropertiesAllOfSetsRequired(): void

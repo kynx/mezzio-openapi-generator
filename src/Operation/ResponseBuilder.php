@@ -22,7 +22,7 @@ use function assert;
  */
 final class ResponseBuilder
 {
-    public function __construct(private readonly PropertyBuilder $propertyBuilder = new PropertyBuilder())
+    public function __construct(private readonly PropertyBuilder $propertyBuilder)
     {
     }
 

@@ -8,6 +8,7 @@ use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
+use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -24,6 +25,7 @@ use Psr\Container\ContainerInterface;
 final class ModelCollectionBuilderFactoryTest extends TestCase
 {
     use ModelTrait;
+    use OperationTrait;
 
     public function testInvokeReturnsInstance(): void
     {
@@ -32,7 +34,7 @@ final class ModelCollectionBuilderFactoryTest extends TestCase
                 'model-namespace' => __NAMESPACE__,
             ],
         ];
-        $modelsBuilder = $this->getModelsBuilder();
+        $modelsBuilder = $this->getModelsBuilder($this->getPropertiesBuilder());
         $container     = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([

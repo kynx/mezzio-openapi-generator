@@ -13,6 +13,10 @@ use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Code\Normalizer\UniqueVariableLabeler;
 use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateTimeImmutableMapper;
+use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapper;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
@@ -24,7 +28,9 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ParameterBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
+use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
+use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseModel;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
@@ -63,17 +69,56 @@ trait OperationTrait
         return $operation;
     }
 
+    protected function getPropertiesBuilder(): PropertiesBuilder
+    {
+        return new PropertiesBuilder($this->getUniquePropertyLabeler(), $this->getPropertyBuilder());
+    }
+
     protected function getOperationCollectionBuilder(string $namespace): OperationCollectionBuilder
     {
         $classLabeler = new UniqueClassLabeler(new ClassNameNormalizer('Operation'), new NumberSuffix());
         $classNamer   = new NamespacedNamer($namespace, $classLabeler);
 
-        $propertyLabeler = new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
+        return new OperationCollectionBuilder($classNamer, $this->getOperationBuilder());
+    }
 
-        $parameterBuilder = new ParameterBuilder($propertyLabeler);
-        $operationBuilder = new OperationBuilder($parameterBuilder);
+    protected function getOperationBuilder(): OperationBuilder
+    {
+        return new OperationBuilder(
+            $this->getParameterBuilder(),
+            $this->getRequestBodyBuilder(),
+            $this->getResponseBuilder()
+        );
+    }
 
-        return new OperationCollectionBuilder($classNamer, $operationBuilder);
+    protected function getParameterBuilder(): ParameterBuilder
+    {
+        return new ParameterBuilder($this->getUniquePropertyLabeler(), $this->getPropertyBuilder());
+    }
+
+    protected function getPropertyBuilder(): PropertyBuilder
+    {
+        return new PropertyBuilder($this->getTypeMapper());
+    }
+
+    protected function getRequestBodyBuilder(): RequestBodyBuilder
+    {
+        return new RequestBodyBuilder($this->getPropertyBuilder());
+    }
+
+    protected function getResponseBuilder(): ResponseBuilder
+    {
+        return new ResponseBuilder($this->getPropertyBuilder());
+    }
+
+    protected function getUniquePropertyLabeler(): UniqueVariableLabeler
+    {
+        return new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
+    }
+
+    protected function getTypeMapper(): TypeMapper
+    {
+        return new TypeMapper(new DateTimeImmutableMapper());
     }
 
     protected function getPathParams(

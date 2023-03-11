@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
 use cebe\openapi\spec\Schema;
-use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
@@ -31,8 +28,7 @@ final class ParameterBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $propertyLabeler = new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
-        $this->builder   = new ParameterBuilder($propertyLabeler);
+        $this->builder = $this->getParameterBuilder();
     }
 
     public function testGetParametersFiltersIn(): void
