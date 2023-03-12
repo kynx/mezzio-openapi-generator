@@ -102,7 +102,7 @@ final class ParameterBuilderTest extends TestCase
         $param = $this->builder->getParameterModel($operation, '/paths/foo/get', '\\Foo', 'query', []);
         self::assertInstanceOf(PathOrQueryParams::class, $param);
 
-        self::assertSame('{?€*}{&euro*}', $param->getTemplate());
+        self::assertSame('{?€*,euro*}', $param->getTemplate());
         $actual = [];
         foreach ($param->getModel()->getProperties() as $property) {
             $actual[$property->getOriginalName()] = $property->getName();

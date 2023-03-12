@@ -385,8 +385,8 @@ final class HydratorGeneratorTest extends TestCase
     public static function defaultProvider(): array
     {
         return [
-            'default'           => [['default' => 'baz'], ['foo' => 'baz']],
-            'not_required'      => [['required' => false], ['foo' => null]],
+            'default'      => [['default' => 'baz'], ['foo' => 'baz']],
+            'not_required' => [['required' => false], ['foo' => null]],
         ];
     }
 

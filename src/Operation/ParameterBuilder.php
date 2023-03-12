@@ -149,8 +149,7 @@ final class ParameterBuilder
      */
     private function getQueryTemplate(array $params): string
     {
-        $parts  = [];
-        $prefix = '?';
+        $parts = [];
 
         foreach ($params as $param) {
             if (! isset($param->schema)) {
@@ -159,15 +158,17 @@ final class ParameterBuilder
 
             $explode = $this->getExplode($param);
             $parts[] = match ($param->style) {
-                'form'           => '{' . $prefix . $param->name . $explode . '}',
-                'spaceDelimited' => '{' . $prefix . $param->name . ($explode ?: '_') . '}',
-                'pipeDelimited'  => '{' . $prefix . $param->name . ($explode ?: '|') . '}',
-                'deepObject'     => '{' . $prefix . $param->name . '%}',
+                'form'           => $param->name . $explode,
+                'spaceDelimited' => $param->name . ($explode ?: '_'),
+                'pipeDelimited'  => $param->name . ($explode ?: '|'),
+                'deepObject'     => $param->name . '%',
             };
-            $prefix = '&';
         }
 
-        return implode('', $parts);
+        if ($parts === []) {
+            return '';
+        }
+        return '{?' . implode(',', $parts) . '}';
     }
 
     private function getExplode(Parameter $param): string
