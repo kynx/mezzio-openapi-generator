@@ -16,6 +16,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams;
@@ -34,7 +35,7 @@ use function array_keys;
 use function array_map;
 use function assert;
 use function current;
-use function str_contains;
+use function preg_match;
 use function ucfirst;
 
 /**
@@ -190,11 +191,8 @@ final class RequestFactoryGenerator
 
         $method->addBody("$var = OperationUtil::$utilMethod(\$this->uriTemplate, $template, \$request);");
         foreach ($model->getProperties() as $property) {
-            if (! ($property instanceof SimpleProperty && $property->getType() instanceof ClassString)) {
-                continue;
-            }
-            $name = $property->getOriginalName();
-            if (str_contains($template, "{$name}")) {
+            if ($this->isUnexplodedObject($property, $template)) {
+                $name = $property->getOriginalName();
                 $method->addBody("{$var}['$name'] = OperationUtil::listToAssociativeArray({$var}['$name']);");
             }
         }
@@ -202,6 +200,37 @@ final class RequestFactoryGenerator
         $method->addBody("return $hydratorClass::hydrate($var);");
 
         return "\$this->$getMethod(\$request)";
+    }
+
+    /**
+     * Returns true if parameter is in unexploded object notation - for example `R,100,G,200,B,150`
+     *
+     * We do not currently handle `allOf` / `anyOf` / `oneOf` objects in unexploded parameters. These would be difficult
+     * to handle. Use the exploded style instead, which is the default for query and cookie parameters.
+     *
+     * There is also an edge case if a user has an unexploded object parameter and overrides the hydrator. Hydrator
+     * overrides are primarily intended for converting specific string formats to objects - like `date-time`. These will
+     * not be a problem. But there is nothing to stop them overriding a complex object, which won't be converted here.
+     * If they really want such a thing they will have to design their hydrator to detect and convert the list.
+     *
+     * Unexploded parameter notation is an abomination - users should be encouraged to avoid it.
+     *
+     * @see https://spec.openapis.org/oas/v3.1.0#style-examples
+     */
+    private function isUnexplodedObject(PropertyInterface $property, string $template): bool
+    {
+        if (! $property instanceof SimpleProperty) {
+            return false;
+        }
+        if (! $property->getType() instanceof ClassString) {
+            return false;
+        }
+        if (isset($this->overrideHydrators[$property->getType()->getClassString()])) {
+            return false;
+        }
+
+        $name = $property->getOriginalName();
+        return (bool) preg_match('/{[?&]?' . $name . '}/', $template);
     }
 
     /**

@@ -194,11 +194,15 @@ final class RequestFactoryGeneratorTest extends TestCase
     public function doesNotConvertListToArrayProvider(): array
     {
         $metadata = new PropertyMetadata();
+        // phpcs:disable Generic.Files.LineLength.TooLong
         return [
             'array_property' => [new ArrayProperty('foo', 'foo', $metadata, true, PropertyType::String), '{foo}'],
             'string_type'    => [new SimpleProperty('foo', 'foo', $metadata, PropertyType::String), '{foo}'],
             'no_template'    => [new SimpleProperty('foo', 'foo', $metadata, new ClassString('\\Foo')), ''],
+            'class_explode'  => [new SimpleProperty('foo', 'foo', $metadata, new ClassString('\\Foo')), '{foo*}'],
+            'class_override' => [new SimpleProperty('foo', 'foo', $metadata, new ClassString(DateTimeImmutable::class)), '{foo}'],
         ];
+        // phpcs:enable
     }
 
     public function testGenerateConvertsListToArray(): void
