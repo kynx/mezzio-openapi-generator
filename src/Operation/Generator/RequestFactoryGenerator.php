@@ -17,6 +17,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams;
@@ -35,6 +36,7 @@ use function array_keys;
 use function array_map;
 use function assert;
 use function current;
+use function in_array;
 use function preg_match;
 use function ucfirst;
 
@@ -191,9 +193,15 @@ final class RequestFactoryGenerator
 
         $method->addBody("$var = OperationUtil::$utilMethod(\$this->uriTemplate, $template, \$request);");
         foreach ($model->getProperties() as $property) {
+            $name = $property->getOriginalName();
+            $type = $property->getPhpType();
+
             if ($this->isUnexplodedObject($property, $template)) {
-                $name = $property->getOriginalName();
                 $method->addBody("{$var}['$name'] = OperationUtil::listToAssociativeArray({$var}['$name']);");
+            } elseif ($this->isCastableScalar($property)) {
+                $method->addBody("{$var}['$name'] = OperationUtil::castToScalar({$var}['$name'], '$type');");
+            } elseif ($this->isCastableArray($property)) {
+                $method->addBody("{$var}['$name'] = OperationUtil::castToScalarArray({$var}['$name'], '$type');");
             }
         }
 
@@ -231,6 +239,34 @@ final class RequestFactoryGenerator
 
         $name = $property->getOriginalName();
         return (bool) preg_match('/{[?&]?' . $name . '}/', $template);
+    }
+
+    private function isCastableArray(PropertyInterface $property): bool
+    {
+        if (! $property instanceof ArrayProperty) {
+            return false;
+        }
+
+        return $this->isCastable($property);
+    }
+
+    private function isCastableScalar(PropertyInterface $property): bool
+    {
+        if (! $property instanceof SimpleProperty) {
+            return false;
+        }
+
+        return $this->isCastable($property);
+    }
+
+    private function isCastable(PropertyInterface $property): bool
+    {
+        $type = $property->getType();
+        if ($type instanceof ClassString) {
+            return false;
+        }
+
+        return in_array($type, [PropertyType::Integer, PropertyType::Boolean, PropertyType::Number]);
     }
 
     /**
