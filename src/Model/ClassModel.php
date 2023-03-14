@@ -16,15 +16,21 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
  */
 final class ClassModel extends AbstractClassLikeModel
 {
+    /**
+     * @param array<int, string> $implements
+     */
     public function __construct(
         string $className,
         string $jsonPointer,
-        private array $implements,
+        private readonly array $implements,
         PropertyInterface ...$properties
     ) {
         parent::__construct($className, $jsonPointer, ...$properties);
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getImplements(): array
     {
         return $this->implements;

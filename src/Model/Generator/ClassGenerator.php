@@ -26,7 +26,8 @@ final class ClassGenerator extends AbstractGenerator
     public function addClass(PhpNamespace $namespace, ClassModel $model): ClassType
     {
         $class = $namespace->addClass($this->getClassLikeName($model));
-        $class->setFinal();
+        $class->setFinal()
+            ->setImplements($model->getImplements());
 
         $aliases = $this->getPropertyUses($model->getProperties());
         foreach ($aliases as $use => $alias) {

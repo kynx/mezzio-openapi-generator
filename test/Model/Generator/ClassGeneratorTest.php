@@ -48,6 +48,14 @@ final class ClassGeneratorTest extends TestCase
         self::assertTrue($added->isFinal());
     }
 
+    public function testAddClassAddsImplements(): void
+    {
+        $expected = ['A\\AInterface'];
+        $model    = new ClassModel('A\\A', '/A', $expected);
+        $added    = $this->generator->addClass(new PhpNamespace('A'), $model);
+        self::assertSame($expected, $added->getImplements());
+    }
+
     public function testAddClassAddsUses(): void
     {
         $expected   = [
