@@ -10,4 +10,5 @@
 * [ ] Add assertions for `$body` type to operation factory `getRequestBody()` based on expectations of hydrator
 * [ ] Add `ArrayHydratorInterface` and move array hydration logic to that
 * [ ] Defaults not applied to query parameters
-* [ ]
+* [ ] Create factories for all handlers, not just those with serializer dependencies
+* [ ] Array responses should accept iterables (change all `array` types to `iterable`?)

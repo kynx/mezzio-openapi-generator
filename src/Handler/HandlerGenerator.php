@@ -88,7 +88,7 @@ final class HandlerGenerator
             ->setType($responseFactory);
 
         if (! $operation->responsesRequireSerialization()) {
-            $parameter->setDefaultValue(new Literal('new ' . $responseFactory . '()'));
+            $parameter->setDefaultValue(new Literal('new ' . $namespace->simplifyName($responseFactory) . '()'));
         }
     }
 }

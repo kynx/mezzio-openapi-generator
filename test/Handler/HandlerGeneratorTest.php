@@ -10,6 +10,7 @@ use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use Nette\PhpGenerator\Literal;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -41,10 +42,11 @@ final class HandlerGeneratorTest extends TestCase
         $operation = new OperationModel('\\Foo\\Operation', $pointer);
         $handler   = new HandlerModel($pointer, $className, $operation);
 
-        $file      = $this->generator->generate($handler);
-        $namespace = $this->getNamespace($file, __NAMESPACE__);
-        $class     = $this->getClass($namespace, 'GetHandler');
-        $method    = $this->getMethod($class, 'handle');
+        $file        = $this->generator->generate($handler);
+        $namespace   = $this->getNamespace($file, __NAMESPACE__);
+        $class       = $this->getClass($namespace, 'GetHandler');
+        $constructor = $this->getMethod($class, '__construct');
+        $method      = $this->getMethod($class, 'handle');
 
         $expectedUses = [
             'ResponseFactory'         => $operation->getResponseFactoryClassName(),
@@ -64,6 +66,16 @@ final class HandlerGeneratorTest extends TestCase
         $attribute = $attributes[0];
         self::assertSame(OpenApiHandler::class, $attribute->getName());
         self::assertSame([$pointer], $attribute->getArguments());
+
+        self::assertTrue($constructor->isPublic());
+        $parameters = $constructor->getParameters();
+        self::assertCount(1, $parameters);
+        self::assertArrayHasKey('responseFactory', $parameters);
+        $responseFactory = $parameters['responseFactory'];
+        $expectedType = $operation->getResponseFactoryClassName();
+        self::assertSame($expectedType, $responseFactory->getType());
+        $expectedDefault = new Literal('new ' . $namespace->simplifyName($expectedType) . '()');
+        self::assertEquals($expectedDefault, $responseFactory->getDefaultValue());
 
         self::assertTrue($method->isPublic());
         self::assertSame(ResponseInterface::class, $method->getReturnType());
