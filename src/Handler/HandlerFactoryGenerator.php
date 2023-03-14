@@ -28,7 +28,6 @@ final class HandlerFactoryGenerator
         $namespace = current($file->getNamespaces());
         $namespace->addUse(ContainerInterface::class)
             ->addUse(OpenApiHandlerFactory::class)
-            ->addUse(SerializerInterface::class)
             ->addUse($operation->getResponseFactoryClassName());
 
         $method = $class->addMethod('__invoke')
@@ -39,10 +38,19 @@ final class HandlerFactoryGenerator
         $className       = $namespace->simplifyName($handler->getClassName());
         $responseFactory = $namespace->simplifyName($operation->getResponseFactoryClassName());
 
-        $method->addBody(<<<HANDLER_FACTORY
-        return new $className(new $responseFactory(\$container->get(SerializerInterface::class)));
-        HANDLER_FACTORY
-        );
+        if ($operation->responsesRequireSerialization()) {
+            $namespace->addUse(SerializerInterface::class);
+            $method->addBody(<<<HANDLER_FACTORY
+            return new $className(new $responseFactory(\$container->get(SerializerInterface::class)));
+            HANDLER_FACTORY
+            );
+        } else {
+            $method->addBody(<<<HANDLER_FACTORY
+            return new $className(new $responseFactory());
+            HANDLER_FACTORY
+            );
+        }
+
 
         return $file;
     }

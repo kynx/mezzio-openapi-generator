@@ -37,10 +37,10 @@ final class HandlerWriterTest extends TestCase
 
     public function testWriteWritesClass(): void
     {
-        $written = null;
+        $written = [];
         $this->writer->method('write')
             ->willReturnCallback(function (PhpFile $file) use (&$written) {
-                $written = $file;
+                $written[] = $file;
             });
 
         $className  = __NAMESPACE__ . '\\GetHandler';
@@ -49,10 +49,20 @@ final class HandlerWriterTest extends TestCase
         $collection->add(new HandlerModel('/paths/~1foo/get', $className, $operation));
 
         $this->handlerWriter->write($collection);
-        self::assertInstanceOf(PhpFile::class, $written);
-        $namespace = $this->getNamespace($written, __NAMESPACE__);
+        self::assertCount(2, $written);
+
+        $handler = $written[0];
+        self::assertInstanceOf(PhpFile::class, $handler);
+        $namespace = $this->getNamespace($handler, __NAMESPACE__);
         $classes   = $namespace->getClasses();
         self::assertCount(1, $classes);
         self::assertArrayHasKey('GetHandler', $classes);
+
+        $factory = $written[1];
+        self::assertInstanceOf(PhpFile::class, $factory);
+        $namespace = $this->getNamespace($factory, __NAMESPACE__);
+        $classes   = $namespace->getClasses();
+        self::assertCount(1, $classes);
+        self::assertArrayHasKey('GetHandlerFactory', $classes);
     }
 }

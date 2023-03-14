@@ -21,7 +21,7 @@ final class HandlerWriterFactoryTest extends TestCase
     public function testInvokeReturnsConfiguredInstance(): void
     {
         $writer = $this->createMock(WriterInterface::class);
-        $writer->expects(self::once())
+        $writer->expects(self::exactly(2))
             ->method('write');
         $container = $this->createStub(ContainerInterface::class);
         $container->method('get')

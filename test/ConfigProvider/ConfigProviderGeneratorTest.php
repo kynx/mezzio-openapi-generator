@@ -60,7 +60,10 @@ final class ConfigProviderGeneratorTest extends TestCase
         $expectedDependencies = <<<DEPENDENCIES_BODY
         return [
             'delegators' => [Application::class => [RouteDelegator::class]],
-            'factories' => [FooGetHandler::class => InvokableFactory::class, BarGetHandler::class => InvokableFactory::class],
+            'factories' => [
+                BarGetHandler::class => BarGetHandlerFactory::class,
+                FooGetHandler::class => FooGetHandlerFactory::class,
+            ],
         ];
         DEPENDENCIES_BODY;
         // phpcs:enable
@@ -79,7 +82,9 @@ final class ConfigProviderGeneratorTest extends TestCase
 
         $expectedUses = [
             'BarGetHandler'         => self::HANDLER_NAMESPACE . '\\Bar\\GetHandler',
+            'BarGetHandlerFactory'  => self::HANDLER_NAMESPACE . '\\Bar\\GetHandlerFactory',
             'FooGetHandler'         => self::HANDLER_NAMESPACE . '\\Foo\\GetHandler',
+            'FooGetHandlerFactory'  => self::HANDLER_NAMESPACE . '\\Foo\\GetHandlerFactory',
             'BarGetRequestFactory'  => self::OPERATION_NAMESPACE . '\\Bar\\Get\\RequestFactory',
             'FooGetRequestFactory'  => self::OPERATION_NAMESPACE . '\\Foo\\Get\\RequestFactory',
             'OpenApiConfigProvider' => OpenApiConfigProvider::class,

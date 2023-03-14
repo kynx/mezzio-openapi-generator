@@ -111,12 +111,8 @@ final class ConfigProviderGenerator
             $className = $handler->getClassName();
             $alias     = GeneratorUtil::getAlias($namespace->simplifyName($className));
             $namespace->addUse($className, $alias);
-            if ($handler->getOperation()->responsesRequireSerialization()) {
-                $factory = GeneratorUtil::getAlias($namespace->simplifyName($handler->getFactoryClassName()));
-                $namespace->addUse($handler->getFactoryClassName(), $factory);
-            } else {
-                $factory = $namespace->simplifyName(InvokableFactory::class);
-            }
+            $factory = GeneratorUtil::getAlias($namespace->simplifyName($handler->getFactoryClassName()));
+            $namespace->addUse($handler->getFactoryClassName(), $factory);
             $classNames[$alias] = $factory;
         }
         asort($classNames);

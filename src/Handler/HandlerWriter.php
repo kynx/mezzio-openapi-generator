@@ -29,10 +29,8 @@ final class HandlerWriter implements HandlerWriterInterface
             $file = $this->generator->generate($handlerModel);
             $this->writer->write($file);
 
-            if ($handlerModel->getOperation()->responsesRequireSerialization()) {
-                $file = $this->factoryGenerator->generate($handlerModel);
-                $this->writer->write($file);
-            }
+            $file = $this->factoryGenerator->generate($handlerModel);
+            $this->writer->write($file);
         }
     }
 }
