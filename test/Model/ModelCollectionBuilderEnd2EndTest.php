@@ -56,8 +56,8 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
     {
         $unresolved = $this->getUnresolved('simple.yaml');
 
-        $nullable         = new PropertyMetadata(...['nullable' => true]);
-        $required         = new PropertyMetadata(...['required' => true]);
+        $nullable         = new PropertyMetadata(nullable: true);
+        $required         = new PropertyMetadata(required: true);
         $firstPointer     = '/components/schemas/First';
         $firstProperties  = [
             new SimpleProperty('$id', 'id', new PropertyMetadata(), PropertyType::Integer),
@@ -140,7 +140,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
     {
         $unresolved = $this->getUnresolved('all-of.yaml');
 
-        $required        = new PropertyMetadata(...['required' => true]);
+        $required        = new PropertyMetadata(required: true);
         $petTypeProperty = new SimpleProperty('$petType', 'petType', $required, PropertyType::String);
 
         $petPointer    = '/components/schemas/Pet';
@@ -219,7 +219,7 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
             PropertyType::Null,
             PropertyType::String,
         ];
-        $nullable       = new PropertyMetadata(...['nullable' => true]);
+        $nullable       = new PropertyMetadata(nullable: true);
         $union          = new UnionProperty('$foo', 'foo', $nullable, null, ...$types);
         $models         = [
             new ClassModel('\\Schema\\Untyped', $untypedPointer, [], $union),

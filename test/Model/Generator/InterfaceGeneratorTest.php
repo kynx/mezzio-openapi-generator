@@ -60,7 +60,7 @@ final class InterfaceGeneratorTest extends TestCase
 
     public function testAddInterfaceAddsMethods(): void
     {
-        $metadata  = new PropertyMetadata('', '', true);
+        $metadata  = new PropertyMetadata(required: true);
         $model     = new InterfaceModel(
             '\\A\\B',
             '/A/B',

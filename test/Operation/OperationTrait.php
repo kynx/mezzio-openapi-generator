@@ -186,7 +186,7 @@ trait OperationTrait
         return new SimpleProperty(
             '$' . $name,
             $originalName,
-            new PropertyMetadata(...['required' => true]),
+            new PropertyMetadata(required: true),
             PropertyType::String
         );
     }

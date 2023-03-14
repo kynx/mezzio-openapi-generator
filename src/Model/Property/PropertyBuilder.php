@@ -106,6 +106,8 @@ final class PropertyBuilder
             $schema->description ?? '',
             $required,
             $schema->nullable ?? false,
+            $schema->readOnly ?? false,
+            $schema->writeOnly ?? false,
             $schema->deprecated ?? false,
             $schema->default ?? null,
             $examples

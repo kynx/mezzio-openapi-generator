@@ -387,6 +387,7 @@ final class HydratorGeneratorTest extends TestCase
         return [
             'default'      => [['default' => 'baz'], ['foo' => 'baz']],
             'not_required' => [['required' => false], ['foo' => null]],
+            'read_only'    => [['required' => true, 'readOnly' => true], ['foo' => null]],
         ];
     }
 

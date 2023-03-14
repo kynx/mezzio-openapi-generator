@@ -120,7 +120,7 @@ final class ClassGeneratorTest extends TestCase
         bool $isNullable,
         bool|null $default
     ): void {
-        $metadata  = new PropertyMetadata('', '', $isRequired, $isNullable, false, $default);
+        $metadata  = new PropertyMetadata(required: $isRequired, nullable: $isNullable, default: $default);
         $model     = new ClassModel(
             '\\A\\B',
             '/A/B',

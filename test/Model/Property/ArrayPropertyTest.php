@@ -65,7 +65,7 @@ final class ArrayPropertyTest extends TestCase
         bool $nullable,
         string $expected
     ): void {
-        $metadata = new PropertyMetadata(...['required' => $required, 'nullable' => $nullable]);
+        $metadata = new PropertyMetadata(required: $required, nullable: $nullable);
         $property = new ArrayProperty('$foo', 'foo', $metadata, $isList, $type);
 
         $actual = $property->getDocBlockType();

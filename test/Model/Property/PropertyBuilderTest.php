@@ -67,14 +67,16 @@ final class PropertyBuilderTest extends TestCase
     public function metadataProvider(): array
     {
         return [
-            'title'          => ['title', 'Foo', new PropertyMetadata(...['title' => 'Foo'])],
-            'description'    => ['description', 'Foo', new PropertyMetadata(...['description' => 'Foo'])],
-            'nullable'       => ['nullable', true, new PropertyMetadata(...['nullable' => true])],
-            'deprecated'     => ['deprecated', true, new PropertyMetadata(...['deprecated' => true])],
-            'default'        => ['default', 'foo', new PropertyMetadata(...['default' => 'foo'])],
-            'example_string' => ['example', 'foo', new PropertyMetadata(...['examples' => ['foo']])],
-            'example_array'  => ['example', ['foo'], new PropertyMetadata(...['examples' => ['foo']])],
-            'examples'       => ['example', ['foo'], new PropertyMetadata(...['examples' => ['foo']])],
+            'title'          => ['title', 'Foo', new PropertyMetadata(title: 'Foo')],
+            'description'    => ['description', 'Foo', new PropertyMetadata(description: 'Foo')],
+            'nullable'       => ['nullable', true, new PropertyMetadata(nullable: true)],
+            'deprecated'     => ['deprecated', true, new PropertyMetadata(deprecated: true)],
+            'default'        => ['default', 'foo', new PropertyMetadata(default: 'foo')],
+            'example_string' => ['example', 'foo', new PropertyMetadata(examples: ['foo'])],
+            'example_array'  => ['example', ['foo'], new PropertyMetadata(examples: ['foo'])],
+            'examples'       => ['example', ['foo'], new PropertyMetadata(examples: ['foo'])],
+            'readOnly'       => ['readOnly', true, new PropertyMetadata(readOnly: true)],
+            'writeOnly'      => ['writeOnly', true, new PropertyMetadata(writeOnly: true)],
         ];
     }
 

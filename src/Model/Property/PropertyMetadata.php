@@ -20,6 +20,8 @@ final class PropertyMetadata
         private readonly string $description = '',
         private readonly bool $required = false,
         private readonly bool $nullable = false,
+        private readonly bool $readOnly = false,
+        private readonly bool $writeOnly = false,
         private readonly bool $deprecated = false,
         private readonly mixed $default = null,
         private readonly array $examples = []
@@ -44,6 +46,16 @@ final class PropertyMetadata
     public function isNullable(): bool
     {
         return $this->nullable;
+    }
+
+    public function isReadOnly(): bool
+    {
+        return $this->readOnly;
+    }
+
+    public function isWriteOnly(): bool
+    {
+        return $this->writeOnly;
     }
 
     public function isDeprecated(): bool

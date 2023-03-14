@@ -451,7 +451,7 @@ final class HydratorGenerator
             if ($metadata->getDefault() !== null) {
                 /** @psalm-suppress MixedAssignment */
                 $defaults[$name] = $metadata->getDefault();
-            } elseif (! $metadata->isRequired()) {
+            } elseif (! $metadata->isRequired() || $metadata->isReadOnly()) {
                 $defaults[$name] = null;
             }
         }
