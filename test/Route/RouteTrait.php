@@ -52,8 +52,8 @@ trait RouteTrait
     protected function getRoutes(): array
     {
         return [
-            new RouteModel('/paths/~1foo/get', '/foo', 'get', [], []),
-            new RouteModel('/paths/~1bar/get', '/bar', 'get', [], []),
+            new RouteModel('/paths/~1foo/get', '/foo', 'get', [], [], []),
+            new RouteModel('/paths/~1bar/get', '/bar', 'get', [], [], []),
         ];
     }
 }

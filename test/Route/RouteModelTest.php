@@ -24,13 +24,17 @@ final class RouteModelTest extends TestCase
         $queryParams = [
             new ParameterModel('age', false, 'integer', 'form', true),
         ];
+        $middleware = [
+            self::class,
+        ];
 
-        $route = new RouteModel($jsonPointer, $path, $method, $pathParams, $queryParams);
+        $route = new RouteModel($jsonPointer, $path, $method, $pathParams, $queryParams, $middleware);
 
         self::assertSame($jsonPointer, $route->getJsonPointer());
         self::assertSame($path, $route->getPath());
         self::assertSame($method, $route->getMethod());
         self::assertSame($pathParams, $route->getPathParams());
         self::assertSame($queryParams, $route->getQueryParams());
+        self::assertSame($middleware, $route->getMiddleware());
     }
 }

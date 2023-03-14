@@ -47,8 +47,8 @@ final class HandlerCollectionBuilderFactoryTest extends TestCase
         $instance = $factory($container);
 
         $routeCollection = new RouteCollection();
-        $routeCollection->add(new RouteModel('/paths/~1foo/get', '/foo', 'get', [], []));
-        $routeCollection->add(new RouteModel('/paths/~1bar/get', '/bar', 'get', [], []));
+        $routeCollection->add(new RouteModel('/paths/~1foo/get', '/foo', 'get', [], [], []));
+        $routeCollection->add(new RouteModel('/paths/~1bar/get', '/bar', 'get', [], [], []));
 
         $actual = $instance->getHandlerCollection($routeCollection, $operations);
         self::assertEquals($expected, $actual);

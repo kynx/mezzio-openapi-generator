@@ -32,8 +32,8 @@ final class HandlerCollectionBuilderTest extends TestCase
     public function testGetHandlerCollectionReturnsCollection(): void
     {
         $routes     = [
-            new RouteModel('/paths/~1foo/get', '/foo', 'get', [], []),
-            new RouteModel('/paths/~1bar/post', '/bar', 'post', [], []),
+            new RouteModel('/paths/~1foo/get', '/foo', 'get', [], [], []),
+            new RouteModel('/paths/~1bar/post', '/bar', 'post', [], [], []),
         ];
         $operations = [
             new OperationModel(
@@ -72,7 +72,7 @@ final class HandlerCollectionBuilderTest extends TestCase
         $expected   = $this->getHandlerCollection($this->getHandlers($operations));
 
         $routeCollection = new RouteCollection();
-        $routeCollection->add(new RouteModel($pointer, '/foo/{petId}', 'get', [], []));
+        $routeCollection->add(new RouteModel($pointer, '/foo/{petId}', 'get', [], [], []));
 
         $actual = $this->builder->getHandlerCollection($routeCollection, $operations);
         self::assertEquals($expected, $actual);

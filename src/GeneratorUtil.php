@@ -62,7 +62,11 @@ final class GeneratorUtil
 
     public static function getAlias(string $shortName): string
     {
-        return implode('', array_slice(explode('\\', $shortName), 1));
+        $parts = explode('\\', $shortName);
+        if (count($parts) < 2) {
+            return $shortName;
+        }
+        return implode('', array_slice($parts, 1));
     }
 
     public static function normalizePropertyName(PropertyInterface $property): string

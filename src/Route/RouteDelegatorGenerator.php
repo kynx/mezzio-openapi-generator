@@ -99,14 +99,20 @@ final class RouteDelegatorGenerator
         $pointer = $route->getJsonPointer();
         assert(isset($handlerMap[$pointer]));
         $handlerClass = $handlerMap[$pointer];
-        $alias        = GeneratorUtil::getAlias($namespace->simplifyName($handlerClass));
-        $namespace->addUse($handlerClass, $alias);
+        $handlerAlias = GeneratorUtil::getAlias($namespace->simplifyName($handlerClass));
+        $namespace->addUse($handlerClass, $handlerAlias);
 
         $middleware = [
             new Literal($namespace->simplifyName(ValidationMiddleware::class) . '::class'),
             new Literal($namespace->simplifyName(OpenApiOperationMiddleware::class) . '::class'),
-            new Literal($alias . '::class'),
         ];
+        foreach ($route->getMiddleware() as $extensionMiddleware) {
+            $alias = GeneratorUtil::getAlias($namespace->simplifyName($extensionMiddleware));
+            $namespace->addUse($extensionMiddleware, $alias);
+            $middleware[] = new Literal($alias . '::class');
+        }
+        $middleware[] = new Literal($handlerAlias . '::class');
+
         $converted  = $this->routeConverter->convert($route);
 
         $openApiOperationClass = $namespace->simplifyName(OpenApiRequestFactory::class);

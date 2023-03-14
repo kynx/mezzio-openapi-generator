@@ -54,6 +54,8 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamerFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriter;
@@ -163,6 +165,7 @@ final class ConfigProvider
                 PropertyBuilder::class            => PropertyBuilderFactory::class,
                 RequestBodyBuilder::class         => RequestBodyBuilderFactory::class,
                 ResponseBuilder::class            => ResponseBuilderFactory::class,
+                RouteCollectionBuilder::class     => RouteCollectionBuilderFactory::class,
                 RouteDelegatorGenerator::class    => RouteDelegatorGeneratorFactory::class,
                 RouteDelegatorWriter::class       => RouteDelegatorWriterFactory::class,
                 TypeMapper::class                 => TypeMapperFactory::class,

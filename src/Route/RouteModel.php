@@ -18,13 +18,15 @@ final class RouteModel
     /**
      * @param list<ParameterModel> $pathParams
      * @param list<ParameterModel> $queryParams
+     * @param list<class-string> $middleware
      */
     public function __construct(
         private readonly string $jsonPointer,
         private readonly string $path,
         private readonly string $method,
         private readonly array $pathParams,
-        private readonly array $queryParams
+        private readonly array $queryParams,
+        private readonly array $middleware
     ) {
     }
 
@@ -57,5 +59,13 @@ final class RouteModel
     public function getQueryParams(): array
     {
         return $this->queryParams;
+    }
+
+    /**
+     * @return list<class-string>
+     */
+    public function getMiddleware(): array
+    {
+        return $this->middleware;
     }
 }

@@ -81,6 +81,21 @@ final class GeneratorUtilTest extends TestCase
         ];
     }
 
+    public function testGetAliasConcatenatesNamespace(): void
+    {
+        $expected  = 'FooBar';
+        $shortName = 'Api\\Foo\\Bar';
+        $actual    = GeneratorUtil::getAlias($shortName);
+        self::assertSame($expected, $actual);
+    }
+
+    public function testGetAliasReturnsShortName(): void
+    {
+        $expected = 'Foo';
+        $actual   = GeneratorUtil::getAlias($expected);
+        self::assertSame($expected, $actual);
+    }
+
     public function testFormAsListReturnsFormatted(): void
     {
         $expected = "'first', 'second', 'third'";

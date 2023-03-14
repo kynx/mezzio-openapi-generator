@@ -10,7 +10,10 @@ use cebe\openapi\spec\Parameter;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 
+use Psr\Http\Server\MiddlewareInterface;
+
 use function array_filter;
+use function is_string;
 use function strtolower;
 
 /**
@@ -23,6 +26,13 @@ use function strtolower;
  */
 final class RouteCollectionBuilder
 {
+    /**
+     * @param array<string, class-string> $middleware
+     */
+    public function __construct(private readonly array $middleware)
+    {
+    }
+
     public function getRouteCollection(OpenApi $openApi): RouteCollection
     {
         $collection = new RouteCollection();
@@ -34,8 +44,9 @@ final class RouteCollectionBuilder
                 $method      = strtolower((string) $method);
                 $pathParams  = $this->getParams($operation, 'path');
                 $queryParams = $this->getParams($operation, 'query');
+                $middleware  = $this->getMiddleware($operation);
 
-                $collection->add(new RouteModel($pointer, $path, $method, $pathParams, $queryParams));
+                $collection->add(new RouteModel($pointer, $path, $method, $pathParams, $queryParams, $middleware));
             }
         }
 
@@ -71,5 +82,25 @@ final class RouteCollectionBuilder
         }
 
         return $params;
+    }
+
+    /**
+     * @return list<class-string>
+     */
+    private function getMiddleware(Operation $operation): array
+    {
+        $extensions      = $operation->getExtensions();
+        $middlewareNames = (array) ($extensions['x-psr15-middleware'] ?? null);
+        if ($middlewareNames === []) {
+            return [];
+        }
+
+        $middleware = [];
+        foreach ($middlewareNames as $name) {
+            if (isset($this->middleware[$name])) {
+                $middleware[] = $this->middleware[$name];
+            }
+        }
+        return $middleware;
     }
 }

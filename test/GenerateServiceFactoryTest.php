@@ -45,7 +45,7 @@ final class GenerateServiceFactoryTest extends TestCase
             ->willReturnMap([
                 [ModelCollectionBuilder::class, $this->getModelCollectionBuilder($this->getPropertiesBuilder(), __NAMESPACE__)],
                 [OperationCollectionBuilder::class, $this->getOperationCollectionBuilder(__NAMESPACE__)],
-                [RouteCollectionBuilder::class, new RouteCollectionBuilder()],
+                [RouteCollectionBuilder::class, new RouteCollectionBuilder([])],
                 [HandlerCollectionBuilder::class, $this->getHandlerCollectionBuilder(__NAMESPACE__)],
                 [ModelWriter::class, $this->createStub(ModelWriterInterface::class)],
                 [HydratorWriter::class, $this->createStub(HydratorWriterInterface::class)],

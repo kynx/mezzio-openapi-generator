@@ -35,8 +35,8 @@ final class FastRouteConverterTest extends TestCase
         string $bPath,
         string $bMethod,
     ): void {
-        $a = new RouteModel('/paths/foo', $aPath, $aMethod, [], []);
-        $b = new RouteModel('/paths/foo', $bPath, $bMethod, [], []);
+        $a = new RouteModel('/paths/foo', $aPath, $aMethod, [], [], []);
+        $b = new RouteModel('/paths/foo', $bPath, $bMethod, [], [], []);
 
         $expected   = [$a, $b];
         $collection = new RouteCollection();
@@ -68,7 +68,7 @@ final class FastRouteConverterTest extends TestCase
      */
     public function testConvertReturnsConverted(string $path, array $parameters, string $expected): void
     {
-        $route  = new RouteModel('/foo/bar', $path, 'get', $parameters, []);
+        $route  = new RouteModel('/foo/bar', $path, 'get', $parameters, [], []);
         $actual = $this->routeConverter->convert($route);
         self::assertSame($expected, $actual);
     }

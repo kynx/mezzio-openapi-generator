@@ -29,7 +29,7 @@ final class GenerateServiceFactory
             new OpenApiLocator(new PathsLocator(new OperationPathItemLocator())),
             $container->get(ModelCollectionBuilder::class),
             $container->get(OperationCollectionBuilder::class),
-            new RouteCollectionBuilder(),
+            $container->get(RouteCollectionBuilder::class),
             $container->get(HandlerCollectionBuilder::class),
             $container->get(ModelWriter::class),
             $container->get(HydratorWriter::class),

@@ -67,8 +67,8 @@ final class RouteDelegatorGeneratorTest extends TestCase
         INVOKE_BODY;
         // phpcs:enable
 
-        $get        = new RouteModel("/paths$path/get", $path, 'get', [], []);
-        $post       = new RouteModel("/paths$path/post", $path, 'post', [], []);
+        $get        = new RouteModel("/paths$path/get", $path, 'get', [], [], []);
+        $post       = new RouteModel("/paths$path/post", $path, 'post', [], [], []);
         $collection = new RouteCollection();
         $collection->add($get);
         $collection->add($post);
@@ -131,5 +131,50 @@ final class RouteDelegatorGeneratorTest extends TestCase
         self::assertSame(Application::class, $method->getReturnType());
 
         self::assertSame($expected, trim($method->getBody()));
+    }
+
+    public function testGenerateAddsExtensionMiddleware(): void
+    {
+        $path       = '/pets';
+        $pointer    = '/paths/~pets/get';
+        $middleware = self::NAMESPACE . '\\Middleware\\PetGuard';
+        $handler    = self::NAMESPACE . "\\Handlers\\Pet\\GetHandler";
+
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        $expected = <<<INVOKE_BODY
+        \$app = \$callback();
+        assert(\$app instanceof Application);
+        
+        \$app->get('$path', [
+        \tValidationMiddleware::class,
+        \tOpenApiOperationMiddleware::class,
+        \tPetGuard::class,
+        \tPetGetHandler::class,
+        ], 'api.pets.get')->setOptions([OpenApiRequestFactory::class => '$pointer']);
+        
+        return \$app;
+        INVOKE_BODY;
+        // phpcs:enable
+
+        $model = new RouteModel($pointer, $path, 'get', [], [], [$middleware]);
+        $collection = new RouteCollection();
+        $collection->add($model);
+
+        $map = [
+            $pointer  => $handler,
+        ];
+
+        $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE);
+        $file      = $generator->generate($collection, $map);
+
+        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $class     = $this->getClass($namespace, 'RouteDelegator');
+        $method    = $this->getMethod($class, '__invoke');
+
+        $uses = $namespace->getUses();
+        self::assertArrayHasKey('PetGuard', $uses);
+
+        $actual = trim($method->getBody());
+        self::assertSame($expected, $actual);
     }
 }

@@ -72,7 +72,7 @@ final class GenerateServiceTest extends TestCase
             new OpenApiLocator(new PathsLocator(new OperationPathItemLocator())),
             $this->getModelCollectionBuilder($this->getPropertiesBuilder(), self::NAMESPACE),
             $this->getOperationCollectionBuilder(self::NAMESPACE),
-            new RouteCollectionBuilder(),
+            new RouteCollectionBuilder([]),
             $this->getHandlerCollectionBuilder(self::NAMESPACE),
             $this->modelWriter,
             $this->hydratorWriter,
