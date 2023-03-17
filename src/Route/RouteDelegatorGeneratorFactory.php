@@ -22,7 +22,7 @@ final class RouteDelegatorGeneratorFactory
     {
         /** @var ConfigArray $config */
         $config    = $container->get('config');
-        $className = ($config[ConfigProvider::GEN_KEY]['base-namespace'] ?? '') . '\\RouteDelegator';
+        $className = ($config[ConfigProvider::GEN_KEY]['api-namespace'] ?? '') . '\\RouteDelegator';
 
         return new RouteDelegatorGenerator(
             new FastRouteConverter(),

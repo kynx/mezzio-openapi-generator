@@ -22,7 +22,7 @@ final class OperationCollectionBuilderFactoryTest extends TestCase
     {
         $configuration = [
             ConfigProvider::GEN_KEY => [
-                'operation-namespace' => __NAMESPACE__ . '\Operation',
+                'api-namespace' => __NAMESPACE__,
             ],
         ];
         $container     = $this->createStub(ContainerInterface::class);

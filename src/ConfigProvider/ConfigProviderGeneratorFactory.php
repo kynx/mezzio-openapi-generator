@@ -23,7 +23,7 @@ final class ConfigProviderGeneratorFactory
         /** @var ConfigArray $config */
         $config      = $container->get('config');
         $openApiFile = $config[ConfigProvider::GEN_KEY]['openapi-file'] ?? '';
-        $className   = ($config[ConfigProvider::GEN_KEY]['base-namespace'] ?? '') . '\\ConfigProvider';
+        $className   = ($config[ConfigProvider::GEN_KEY]['api-namespace'] ?? '') . '\\ConfigProvider';
         return new ConfigProviderGenerator($openApiFile, $className);
     }
 }

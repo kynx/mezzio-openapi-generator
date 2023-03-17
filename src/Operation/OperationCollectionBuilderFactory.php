@@ -26,7 +26,7 @@ final class OperationCollectionBuilderFactory
     {
         /** @var ConfigArray $config */
         $config       = $container->get('config');
-        $namespace    = $config[ConfigProvider::GEN_KEY]['operation-namespace'] ?? '';
+        $namespace    = ($config[ConfigProvider::GEN_KEY]['api-namespace'] ?? '') . '\\Operation';
         $classLabeler = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
         $classNamer   = new NamespacedNamer($namespace, $classLabeler);
 

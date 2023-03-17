@@ -31,7 +31,7 @@ final class ModelCollectionBuilderFactoryTest extends TestCase
     {
         $configuration = [
             ConfigProvider::GEN_KEY => [
-                'model-namespace' => __NAMESPACE__,
+                'api-namespace' => __NAMESPACE__,
             ],
         ];
         $modelsBuilder = $this->getModelsBuilder($this->getPropertiesBuilder());

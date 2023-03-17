@@ -26,7 +26,7 @@ final class ModelCollectionBuilderFactory
     {
         /** @var ConfigArray $config */
         $config       = $container->get('config');
-        $namespace    = $config[ConfigProvider::GEN_KEY]['model-namespace'] ?? '';
+        $namespace    = $config[ConfigProvider::GEN_KEY]['api-namespace'] ?? '';
         $classLabeler = new UniqueClassLabeler(new ClassNameNormalizer('Model'), new NumberSuffix());
         $classNamer   = new NamespacedNamer($namespace, $classLabeler);
         return new ModelCollectionBuilder(

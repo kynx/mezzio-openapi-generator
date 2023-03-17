@@ -39,8 +39,8 @@ final class RouteDelegatorGeneratorFactoryTest extends TestCase
         $instance = $factory($container);
 
         $handlerMap = [
-            '/paths/~1foo/get' => 'Foo\\GetHandler',
-            '/paths/~1bar/get' => 'Bar\\GetHandler',
+            '/paths/~1foo/get' => __NAMESPACE__ . '\\Foo\\GetHandler',
+            '/paths/~1bar/get' => __NAMESPACE__ . '\\Bar\\GetHandler',
         ];
         $instance->generate($this->getRouteCollection($this->getRoutes()), $handlerMap);
     }
