@@ -9,8 +9,9 @@ use Kynx\Mezzio\OpenApi\Attribute\OpenApiModel;
 #[OpenApiModel('/components/schemas/ClassSimple')]
 final class ClassSimple
 {
-    public function __construct(private readonly string|null $foo)
-    {
+    public function __construct(
+        private readonly string|null $foo,
+    ) {
     }
 
 

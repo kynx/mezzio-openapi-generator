@@ -19,6 +19,7 @@ final class UniquePropertyLabelerFactory
 {
     public function __invoke(ContainerInterface $container): UniqueVariableLabeler
     {
+        // @fixme Why aren't we using UniquePropertyLabeler?!
         return new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
     }
 }
