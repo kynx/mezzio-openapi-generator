@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Operation\Generator;
 
+use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
+use Kynx\Mezzio\OpenApi\Hydrator\HydratorUtil;
 use Kynx\Mezzio\OpenApi\Operation\AbstractResponseFactory;
 use Kynx\Mezzio\OpenApi\Serializer\SerializerInterface;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseModel;
 use Laminas\Diactoros\Response;
@@ -24,6 +30,7 @@ use function array_filter;
 use function array_map;
 use function array_merge;
 use function array_pop;
+use function array_reduce;
 use function array_unique;
 use function count;
 use function current;
@@ -61,9 +68,10 @@ final class ResponseFactoryGenerator
         $namespace->addUse(AbstractResponseFactory::class);
 
         $this->addConstructor($namespace, $class, $operation);
+        $this->addExtractorProperty($namespace, $class, $operation, $extractorMap);
 
         foreach ($operation->getResponseStatuses() as $status) {
-            $this->addGetResponseMethod($namespace, $class, $status, $operation, $extractorMap);
+            $this->addGetResponseMethod($namespace, $class, $status, $operation);
         }
 
         return $file;
@@ -106,12 +114,50 @@ final class ResponseFactoryGenerator
     /**
      * @param array<string, string> $extractorMap
      */
+    public function addExtractorProperty(
+        PhpNamespace $namespace,
+        ClassType $class,
+        OperationModel $operation,
+        array $extractorMap
+    ): void {
+        $classes = [];
+        foreach ($operation->getResponseStatuses() as $status) {
+            $classes = array_merge($classes, $this->getResponseUses($operation->getResponsesOfStatus($status)));
+        }
+        $classes = array_unique($classes);
+        ksort($classes);
+
+        $extractors = [];
+        foreach ($classes as $className) {
+            $extractor = $this->overrideExtractors[$className] ?? $extractorMap[$className];
+            $namespace->addUse($className);
+            $namespace->addUse($extractor);
+
+            $extractors[] = new Literal(sprintf(
+                "%s::class => %s::class",
+                $namespace->simplifyName($className),
+                $namespace->simplifyName($extractor)
+            ));
+        }
+
+        if ($extractors === []) {
+            return;
+        }
+
+        $namespace->addUse(HydratorInterface::class);
+        $class->addProperty('extractors', $extractors)
+            ->setType('array')
+            ->setPrivate()
+            ->setComment('@var array<class-string, class-string<HydratorInterface>>');
+    }
+
+    /**
+     */
     private function addGetResponseMethod(
         PhpNamespace $namespace,
         ClassType $class,
         string $status,
-        OperationModel $operation,
-        array $extractorMap
+        OperationModel $operation
     ): void {
         $responses = $operation->getResponsesOfStatus($status);
         $mimeTypes = $this->getMimeTypes($responses);
@@ -127,23 +173,21 @@ final class ResponseFactoryGenerator
             ->setReturnType($returnType);
 
         if (count($mimeTypes) > 1) {
-            $this->addNegotiatedResponse($namespace, $method, $status, $operation, $extractorMap);
+            $this->addNegotiatedResponse($namespace, $method, $status, $operation);
         } elseif (count($mimeTypes) === 1) {
-            $this->addSingleMimeTypeResponse($namespace, $method, $status, $operation, $extractorMap);
+            $this->addSingleMimeTypeResponse($namespace, $method, $status, $operation);
         } else {
             $this->addEmptyResponse($namespace, $method, $status, $operation);
         }
     }
 
     /**
-     * @param array<string, string> $extractorMap
      */
     private function addNegotiatedResponse(
         PhpNamespace $namespace,
         Method $method,
         string $status,
-        OperationModel $operation,
-        array $extractorMap
+        OperationModel $operation
     ): void {
         $responses    = $operation->getResponsesOfStatus($status);
         $mimeTypes    = $this->getMimeTypes($responses);
@@ -169,24 +213,22 @@ final class ResponseFactoryGenerator
                 ->setType('array');
             $method->addBody('$headers["Content-Type"] = "$mimeType; charset=utf-8";');
         } else {
-            $method->addBody('$headers = ["ContentType" => "$mimeType; charset=utf-8"];');
+            $method->addBody('$headers = ["Content-Type" => "$mimeType; charset=utf-8"];');
         }
 
-        $this->addExtractor($namespace, $method, $responses, $extractorMap);
+        $extractor = $this->getExtractor($namespace, $responses);
 
-        $method->addBody('$body = $this->serializer->serialize($mimeType, $extractor, $model);');
+        $method->addBody('$body = $this->serializer->serialize($mimeType, ?, $model);', [$extractor]);
         $method->addBody('return $this->getResponse($body, ?, ?, $headers);', [$status, $reasonPhrase]);
     }
 
     /**
-     * @param array<string, string> $extractorMap
      */
     private function addSingleMimeTypeResponse(
         PhpNamespace $namespace,
         Method $method,
         string $status,
-        OperationModel $operation,
-        array $extractorMap
+        OperationModel $operation
     ): void {
         $responses    = $operation->getResponsesOfStatus($status);
         $mimeType     = current($this->getMimeTypes($responses));
@@ -205,9 +247,9 @@ final class ResponseFactoryGenerator
             $method->addBody('$headers = ["Content-Type" => ?];', ["$mimeType; charset=utf-8"]);
         }
 
-        $this->addExtractor($namespace, $method, $responses, $extractorMap);
+        $extractor = $this->getExtractor($namespace, $responses);
 
-        $method->addBody('$body = $this->serializer->serialize(?, $extractor, $model);', [$mimeType]);
+        $method->addBody('$body = $this->serializer->serialize(?, ?, $model);', [$mimeType, $extractor]);
         $method->addBody('return $this->getResponse($body, ?, ?, $headers);', [$status, $reasonPhrase]);
     }
 
@@ -241,32 +283,21 @@ final class ResponseFactoryGenerator
      * @param array<int, ResponseModel> $responses
      * @param array<string, string> $extractorMap
      */
-    private function addExtractor(PhpNamespace $namespace, Method $method, array $responses, array $extractorMap): void
+    private function getExtractor(PhpNamespace $namespace, array $responses): Literal
     {
         $uses = $this->getResponseUses($responses);
 
-        $extractors = [];
-        foreach ($uses as $class) {
-            $extractor = $this->overrideExtractors[$class] ?? $extractorMap[$class] ?? null;
-            if ($extractor !== null) {
-                $namespace->addUse($extractor);
-                $extractors[$namespace->simplifyName($class)] = $namespace->simplifyName($extractor);
-            }
+        if ($this->isObjectArrayResponse($responses)) {
+            $namespace->addUse(HydratorUtil::class);
+            return new Literal('HydratorUtil::extractObjectArray($model, $this->extractors)');
+        } elseif ($this->hasObjectArrayResponse($responses)) {
+            $namespace->addUse(HydratorUtil::class);
+            return new Literal('HydratorUtil::extractMixedArray($model, $this->extractors)');
+        } elseif (count($uses) > 0) {
+            return new Literal('$this->extractors[$model::class]::extract($model)');
         }
 
-        if (count($extractors) > 1) {
-            $literals = [];
-            foreach ($extractors as $class => $extractor) {
-                $literals[] = new Literal("$class::class => $extractor::class");
-            }
-            $method->addBody('$extractor = match (get_class($model)) {'
-                . GeneratorUtil::formatAsList($this->dumper, $literals)
-                . '};');
-        } elseif (count($extractors) === 1) {
-            $method->addBody('$extractor = ?;', [new Literal(array_pop($extractors) . '::class')]);
-        } else {
-            $method->addBody('$extractor = null;');
-        }
+        return new Literal('$model');
     }
 
     /**
@@ -295,6 +326,71 @@ final class ResponseFactoryGenerator
         }
 
         return array_unique($uses);
+    }
+
+
+    /**
+     * Returns `true` if all responses are `array<array-key, ClassString>`
+     *
+     * @param array<int, ResponseModel> $responses
+     */
+    private function isObjectArrayResponse(array $responses): bool
+    {
+        if (! count($responses)) {
+            return false;
+        }
+
+        foreach ($responses as $response) {
+            $property = $response->getType();
+            if ($property === null) {
+                continue;
+            }
+            if (! $property instanceof ArrayProperty) {
+                return false;
+            }
+            $objectTypes = array_filter(
+                $property->getTypes(),
+                fn (ClassString|PropertyType $type): bool => $type instanceof ClassString
+            );
+            if (count($objectTypes) !== count($property->getTypes())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param array<int, ResponseModel> $responses
+     */
+    private function hasObjectArrayResponse(array $responses): bool
+    {
+        if (! count($responses)) {
+            return false;
+        }
+
+        $hasArray = $hasObject = false;
+        foreach ($responses as $response) {
+            $property = $response->getType();
+            if ($property === null) {
+                continue;
+            }
+            if (in_array(PropertyType::Array, $property->getTypes())) {
+                $hasArray = true;
+            }
+            if ($property instanceof ArrayProperty) {
+                $hasArray = true;
+            }
+            $objectTypes = array_filter(
+                $property->getTypes(),
+                fn (ClassString|PropertyType $type): bool => $type instanceof ClassString
+            );
+            if ($objectTypes !== []) {
+                $hasObject = true;
+            }
+        }
+
+        return $hasArray && $hasObject;
     }
 
     /**
