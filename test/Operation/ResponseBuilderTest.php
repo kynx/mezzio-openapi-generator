@@ -44,7 +44,7 @@ final class ResponseBuilderTest extends TestCase
                 new SimpleProperty(
                     '',
                     '',
-                    new PropertyMetadata(),
+                    new PropertyMetadata(required: true),
                     new ClassString('Api\Models\Foo')
                 )
             ),

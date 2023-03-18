@@ -52,7 +52,7 @@ final class ResponseBuilder
                         $mediaType->schema,
                         '',
                         '',
-                        false,
+                        true,
                         $classNames
                     );
                 } else {

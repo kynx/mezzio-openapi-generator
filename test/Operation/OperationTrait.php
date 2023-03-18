@@ -176,7 +176,7 @@ trait OperationTrait
 
     protected function getResponse(): ResponseModel
     {
-        $property = new SimpleProperty('', '', new PropertyMetadata(), PropertyType::String);
+        $property = new SimpleProperty('', '', new PropertyMetadata(required: true), PropertyType::String);
         return new ResponseModel('default', 'Hello world', 'text/plain', $property);
     }
 
