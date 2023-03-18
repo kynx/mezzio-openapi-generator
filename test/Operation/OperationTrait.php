@@ -169,7 +169,7 @@ trait OperationTrait
         return [
             new RequestBodyModel(
                 'text/plain',
-                new SimpleProperty('', '', new PropertyMetadata(), PropertyType::String)
+                new SimpleProperty('', '', new PropertyMetadata(required: true), PropertyType::String)
             ),
         ];
     }

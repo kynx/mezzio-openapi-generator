@@ -42,7 +42,7 @@ final class RequestBodyBuilderTest extends TestCase
                 new SimpleProperty(
                     '',
                     '',
-                    new PropertyMetadata(),
+                    new PropertyMetadata(required: true),
                     PropertyType::String
                 )
             ),
@@ -51,7 +51,7 @@ final class RequestBodyBuilderTest extends TestCase
                 new SimpleProperty(
                     '',
                     '',
-                    new PropertyMetadata(),
+                    new PropertyMetadata(required: true),
                     PropertyType::String
                 )
             ),

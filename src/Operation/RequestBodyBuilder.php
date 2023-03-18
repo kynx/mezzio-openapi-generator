@@ -45,7 +45,7 @@ final class RequestBodyBuilder
                 $mediaType->schema,
                 '',
                 '',
-                false,
+                true,
                 $classNames
             );
             $requestBodies[] = new RequestBodyModel($mimeType, $property);
