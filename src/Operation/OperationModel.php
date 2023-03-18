@@ -219,4 +219,19 @@ final class OperationModel
 
         return [];
     }
+
+    /**
+     * @param array<int, ResponseModel> $responses
+     */
+    public function getResponsesDocBlock(array $responses): string
+    {
+        $types = [];
+        $forUnion = count($responses) > 1;
+        foreach ($responses as $response) {
+            $types[] = $response->getType()->getDocBlockType($forUnion);
+        }
+
+        $allTypes = explode('|', implode('|', array_filter($types)));
+        return implode('|', array_unique($allTypes));
+    }
 }

@@ -117,7 +117,7 @@ final class ResponseFactoryGeneratorTest extends TestCase
         // phpcs:disable Generic.Files.LineLength.TooLong
         $expected = <<<SINGLE_MIME_TYPE
         \$headers = ["Content-Type" => 'application/json; charset=utf-8'];
-        \$body = \$this->serializer->serialize('application/json', \$this->extractors[\$model::class]::extract(\$model), \$model);
+        \$body = \$this->serializer->serialize('application/json', \$this->extractors[\$model::class]::extract(\$model));
         return \$this->getResponse(\$body, 409, 'Duplicates detected', \$headers);
         SINGLE_MIME_TYPE;
         // phpcs:enable
@@ -183,7 +183,7 @@ final class ResponseFactoryGeneratorTest extends TestCase
         // phpcs:disable Generic.Files.LineLength.TooLong
         $expected = <<<SINGLE_MIME_TYPE
         \$headers = ["Content-Type" => 'application/json; charset=utf-8'];
-        \$body = \$this->serializer->serialize('application/json', HydratorUtil::extractObjectArray(\$model, \$this->extractors), \$model);
+        \$body = \$this->serializer->serialize('application/json', HydratorUtil::extractObjectArray(\$model, \$this->extractors));
         return \$this->getResponse(\$body, 200, 'OK', \$headers);
         SINGLE_MIME_TYPE;
         // phpcs:enable
@@ -218,7 +218,7 @@ final class ResponseFactoryGeneratorTest extends TestCase
         // phpcs:disable Generic.Files.LineLength.TooLong
         $expected = <<<SINGLE_MIME_TYPE
         \$headers = ["Content-Type" => 'application/json; charset=utf-8'];
-        \$body = \$this->serializer->serialize('application/json', HydratorUtil::extractMixedArray(\$model, \$this->extractors), \$model);
+        \$body = \$this->serializer->serialize('application/json', HydratorUtil::extractMixedArray(\$model, \$this->extractors));
         return \$this->getResponse(\$body, 200, 'OK', \$headers);
         SINGLE_MIME_TYPE;
         // phpcs:enable
@@ -252,7 +252,7 @@ final class ResponseFactoryGeneratorTest extends TestCase
         \$accept = \$request->getHeaderLine("Accept");
         \$mimeType = \$this->getMimeType(\$this->negotiator, \$this->serializer, \$accept, ['application/json', 'text/plain']);
         \$headers = ["Content-Type" => "\$mimeType; charset=utf-8"];
-        \$body = \$this->serializer->serialize(\$mimeType, HydratorUtil::extractMixedArray(\$model, \$this->extractors), \$model);
+        \$body = \$this->serializer->serialize(\$mimeType, HydratorUtil::extractMixedArray(\$model, \$this->extractors));
         return \$this->getResponse(\$body, 200, 'OK', \$headers);
         SINGLE_MIME_TYPE;
         // phpcs:enable

@@ -218,7 +218,7 @@ final class ResponseFactoryGenerator
 
         $extractor = $this->getExtractor($namespace, $responses);
 
-        $method->addBody('$body = $this->serializer->serialize($mimeType, ?, $model);', [$extractor]);
+        $method->addBody('$body = $this->serializer->serialize($mimeType, ?);', [$extractor]);
         $method->addBody('return $this->getResponse($body, ?, ?, $headers);', [$status, $reasonPhrase]);
     }
 
@@ -235,9 +235,13 @@ final class ResponseFactoryGenerator
         $headers      = $operation->getResponseHeaders($status);
         $reasonPhrase = $this->getReasonPhrase($responses);
         $status       = is_numeric($status) ? (int) $status : 200;
+        $docBlock     = $operation->getResponsesDocBlock($responses);
 
         $method->addParameter('model')
             ->setType($this->getResponseTypes($responses));
+        if ($docBlock !== '') {
+            $method->setComment("@param $docBlock \$model");
+        }
 
         if ($headers !== []) {
             $method->addParameter('headers')
@@ -249,7 +253,7 @@ final class ResponseFactoryGenerator
 
         $extractor = $this->getExtractor($namespace, $responses);
 
-        $method->addBody('$body = $this->serializer->serialize(?, ?, $model);', [$mimeType, $extractor]);
+        $method->addBody('$body = $this->serializer->serialize(?, ?);', [$mimeType, $extractor]);
         $method->addBody('return $this->getResponse($body, ?, ?, $headers);', [$status, $reasonPhrase]);
     }
 
