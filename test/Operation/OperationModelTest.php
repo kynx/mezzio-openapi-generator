@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
@@ -151,12 +152,37 @@ final class OperationModelTest extends TestCase
             ),
         ];
         $operationModel = new OperationModel(
-            'Foo\\Operation',
-            '/paths/foo/get',
-            ...['requestBodies' => $requestBodies]
+            className:'Foo\\Operation',
+            jsonPointer:'/paths/foo/get',
+            requestBodies: $requestBodies
         );
 
         $actual = $operationModel->getRequestBodyType();
+        self::assertSame($expected, $actual);
+    }
+
+    public function testGetRequestBodyDocBlockTypeReturnsType(): void
+    {
+        $first          = "Foo\Bar";
+        $second         = "Foo\Baz";
+        $expected       = "array<int, Bar>|Baz";
+        $requestBodies  = [
+            new RequestBodyModel(
+                'application/json',
+                new ArrayProperty('', '', new PropertyMetadata(required: true), true, new ClassString($first))
+            ),
+            new RequestBodyModel(
+                'application/xml',
+                new SimpleProperty('', '', new PropertyMetadata(), new ClassString($second))
+            ),
+        ];
+        $operationModel = new OperationModel(
+            className:'Foo\\Operation',
+            jsonPointer:'/paths/foo/get',
+            requestBodies: $requestBodies
+        );
+
+        $actual = $operationModel->getRequestBodyDocBlockType();
         self::assertSame($expected, $actual);
     }
 

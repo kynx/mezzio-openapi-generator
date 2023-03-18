@@ -139,6 +139,18 @@ final class OperationModel
         return implode('|', array_unique($allTypes));
     }
 
+    public function getRequestBodyDocBlockType(): string
+    {
+        $types    = [];
+        $forUnion = count($this->requestBodies) > 1;
+        foreach ($this->getRequestBodies() as $requestBody) {
+            $types[] = $requestBody->getType()->getDocBlockType($forUnion);
+        }
+
+        $allTypes = explode('|', implode('|', array_filter($types)));
+        return implode('|', array_unique($allTypes));
+    }
+
     public function responsesRequireNegotiation(): bool
     {
         foreach ($this->getResponseStatuses() as $status) {

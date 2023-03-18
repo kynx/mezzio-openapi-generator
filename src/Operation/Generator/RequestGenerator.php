@@ -55,20 +55,28 @@ final class RequestGenerator
         return $file;
     }
 
-    private function addConstructorParam(Method $constructor, string $name, string $type): void
-    {
+    private function addConstructorParam(
+        Method $constructor,
+        string $name,
+        string $type,
+        string|null $docBlock = null
+    ): void {
         $constructor->addPromotedParameter($name)
             ->setPrivate()
             ->setReadOnly()
             ->setType($type);
+        if ($docBlock !== null) {
+            $constructor->addComment("@param $docBlock \$$name");
+        }
     }
 
-    private function addGetter(ClassType $class, string $name, string $returnType): void
+    private function addGetter(ClassType $class, string $name, string $returnType, string|null $docBlock = null): void
     {
         $methodName = 'get' . ucfirst($name);
         $class->addMethod($methodName)
             ->setPublic()
             ->setReturnType($returnType)
+            ->setComment($docBlock !== null ? '@return ' . $docBlock : '')
             ->setBody("return \$this->$name;");
     }
 
@@ -85,10 +93,11 @@ final class RequestGenerator
         foreach ($operation->getRequestBodyUses() as $use) {
             $namespace->addUse($use);
         }
-        $type = $operation->getRequestBodyType();
+        $type     = $operation->getRequestBodyType();
+        $docBlock = $operation->getRequestBodyDocBlockType();
 
-        $this->addConstructorParam($constructor, 'requestBody', $type);
-        $this->addGetter($class, 'requestBody', $type);
+        $this->addConstructorParam($constructor, 'requestBody', $type, $docBlock);
+        $this->addGetter($class, 'requestBody', $type, $docBlock);
     }
 
     /**
