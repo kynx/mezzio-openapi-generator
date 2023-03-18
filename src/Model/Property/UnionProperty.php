@@ -58,9 +58,16 @@ final class UnionProperty extends AbstractProperty
         return array_filter($uses);
     }
 
-    public function getDocBlockType(): string|null
+    public function getDocBlockType(bool $forUnion = false): string|null
     {
-        return null;
+        if (! $forUnion) {
+            return null;
+        }
+        $types = [];
+        foreach ($this->types as $type) {
+            $types[] = $this->getShortType($type);
+        }
+        return implode('|', $types);
     }
 
     /**

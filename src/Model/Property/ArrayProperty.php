@@ -45,7 +45,7 @@ final class ArrayProperty extends AbstractProperty
         return $use === null ? [] : [$use];
     }
 
-    public function getDocBlockType(): string|null
+    public function getDocBlockType(bool $forUnion = false): string|null
     {
         $null     = '';
         $metadata = $this->getMetadata();
@@ -55,7 +55,7 @@ final class ArrayProperty extends AbstractProperty
 
         $type = $this->getShortType($this->type);
         if ($this->isList) {
-            return "list<$type>$null";
+            return "array<int, $type>$null";
         }
         return "array<string, $type>$null";
     }

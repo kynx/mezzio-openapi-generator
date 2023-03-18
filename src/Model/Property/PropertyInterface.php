@@ -26,7 +26,7 @@ interface PropertyInterface
 
     public function getPhpType(): string;
 
-    public function getDocBlockType(): string|null;
+    public function getDocBlockType(bool $forUnion = false): string|null;
 
     /**
      * @return list<ClassString|PropertyType>

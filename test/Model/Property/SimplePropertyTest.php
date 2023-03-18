@@ -70,4 +70,21 @@ final class SimplePropertyTest extends TestCase
         $actual = $property->getDocBlockType();
         self::assertNull($actual);
     }
+
+    public function testGetDocBlockTypeForUnionReturnsPhpType(): void
+    {
+        $property = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::String);
+
+        $actual = $property->getDocBlockType(true);
+        self::assertSame('string', $actual);
+    }
+
+    public function testGetDocBlockTypeForUnionReturnsClassType(): void
+    {
+        $type     = new ClassString('Foo\\Bar');
+        $property = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), $type);
+
+        $actual = $property->getDocBlockType(true);
+        self::assertSame('Bar', $actual);
+    }
 }

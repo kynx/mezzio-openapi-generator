@@ -46,8 +46,8 @@ final class AbstractPropertyTest extends TestCase
                 return '';
             }
 
-            /** @psalm-mutation-free  */
-            public function getDocBlockType(): string|null
+            /** @psalm-mutation-free */
+            public function getDocBlockType(bool $forUnion = false): string|null
             {
                 return null;
             }

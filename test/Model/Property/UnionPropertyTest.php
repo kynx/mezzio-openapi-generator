@@ -78,4 +78,15 @@ final class UnionPropertyTest extends TestCase
         $actual = $property->getDocBlockType();
         self::assertNull($actual);
     }
+
+    public function testGetDocBockTypeForUnionReturnsType(): void
+    {
+        $epxected      = 'Bar|Baz';
+        $members       = [new ClassString('\\Foo\\Bar'), new ClassString('\\Foo\\Baz')];
+        $discriminator = new PropertyValue('foo', []);
+        $property      = new UnionProperty('$foo', 'foo', new PropertyMetadata(), $discriminator, ...$members);
+
+        $actual = $property->getDocBlockType(true);
+        self::assertSame($epxected, $actual);
+    }
 }
