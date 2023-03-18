@@ -165,7 +165,7 @@ final class OperationModelTest extends TestCase
     {
         $first          = "Foo\Bar";
         $second         = "Foo\Baz";
-        $expected       = "array<int, Bar>|Baz";
+        $expected       = "list<Bar>|Baz";
         $requestBodies  = [
             new RequestBodyModel(
                 'application/json',

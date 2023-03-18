@@ -79,8 +79,8 @@ final class ArrayPropertyTest extends TestCase
             'array_string_required' => [PropertyType::String, false, true, false, 'array<string, string>'],
             'array_string_nullable' => [PropertyType::String, false, true, true, 'array<string, string>|null'],
             'array_class'           => [new ClassString('\\A'), false, true, false, 'array<string, A>'],
-            'list_string'           => [PropertyType::String, true, true, false, 'array<int, string>'],
-            'list_class'            => [new ClassString('\\A\\B'), true, true, false, 'array<int, B>'],
+            'list_string'           => [PropertyType::String, true, true, false, 'list<string>'],
+            'list_class'            => [new ClassString('\\A\\B'), true, true, false, 'list<B>'],
         ];
     }
 }

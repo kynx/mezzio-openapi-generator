@@ -55,7 +55,7 @@ final class ArrayProperty extends AbstractProperty
 
         $type = $this->getShortType($this->type);
         if ($this->isList) {
-            return "array<int, $type>$null";
+            return "list<$type>$null";
         }
         return "array<string, $type>$null";
     }

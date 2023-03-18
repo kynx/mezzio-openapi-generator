@@ -285,4 +285,23 @@ final class ResponseFactoryGeneratorTest extends TestCase
         $actual = trim($method->getBody());
         self::assertSame($expected, $actual);
     }
+
+    public function testGenerateAddsResponseDocblock(): void
+    {
+        $expected  = '@param list<Bar> $model';
+        $type      = new ArrayProperty('', '', new PropertyMetadata(required: true), true, new ClassString('Foo\\Bar'));
+        $response  = new ResponseModel('200', 'OK', 'application/json', $type);
+        $className = self::NAMESPACE . '\\Operation';
+        $pointer   = '/paths/foo/get';
+        $operation = new OperationModel(className: $className, jsonPointer: $pointer, responses: [$response]);
+
+        $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
+
+        $namespace   = $this->getNamespace($file, self::NAMESPACE);
+        $class       = $this->getClass($namespace, 'ResponseFactory');
+        $method      = $this->getMethod($class, 'get200Response');
+
+        $actual = $method->getComment();
+        self::assertSame($expected, $actual);
+    }
 }
