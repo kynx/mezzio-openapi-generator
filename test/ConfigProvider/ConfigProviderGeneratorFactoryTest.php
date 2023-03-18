@@ -27,8 +27,8 @@ final class ConfigProviderGeneratorFactoryTest extends TestCase
     {
         $configuration = [
             ConfigProvider::GEN_KEY => [
-                'project-dir'    => __DIR__,
-                'base-namespace' => self::NAMESPACE,
+                'project-dir'   => __DIR__,
+                'api-namespace' => self::NAMESPACE,
             ],
         ];
         $container     = $this->createStub(ContainerInterface::class);
