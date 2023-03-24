@@ -62,21 +62,30 @@ final class RouteCollectionBuilderTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function getPathsSpec(): array
+    public function testGetRouteCollectionPrependsServerPath(): void
     {
-        $responses = [
-            'default' => [
-                'description' => 'Pets',
-                'content'     => [
-                    'application/json' => [
-                        'schema' => [
-                            'type' => 'string',
-                        ],
-                    ],
-                ],
+        $expected = [
+            new RouteModel('/paths/~1my~1pets/get', '/v1/my/pets', 'get', [], [], []),
+        ];
+        $collection = new RouteCollection();
+        foreach ($expected as $route) {
+            $collection->add($route);
+        }
+
+        $servers = [
+            'servers' => [
+                ['url' => 'https://example.com/v1'],
             ],
         ];
 
+        $openApi = $this->getOpenApi($this->getPrependBasePathSpec(), $servers);
+        $builder = new RouteCollectionBuilder([]);
+        $actual = iterator_to_array($builder->getRouteCollection($openApi));
+        self::assertEquals($expected, $actual);
+    }
+
+    private function getPathsSpec(): array
+    {
         return [
             '/my/pets/{id}' => [
                 'get' => [
@@ -98,7 +107,7 @@ final class RouteCollectionBuilderTest extends TestCase
                             ],
                         ],
                     ],
-                    'responses'  => $responses,
+                    'responses'  => $this->getStringResponse(),
                 ],
             ],
             '/another-pet'  => [
@@ -118,15 +127,40 @@ final class RouteCollectionBuilderTest extends TestCase
                             ],
                         ],
                     ],
-                    'responses'  => $responses,
+                    'responses'  => $this->getStringResponse(),
                 ],
             ],
         ];
     }
 
-    public function getMiddlewareExtensionSpec(): array
+    private function getMiddlewareExtensionSpec(): array
     {
-        $responses = [
+        return [
+            '/my/pets' => [
+                'get' => [
+                    'type'       => 'object',
+                    'x-psr15-middleware' => 'pet-guard',
+                    'responses'          => $this->getStringResponse(),
+                ],
+            ],
+        ];
+    }
+
+    private function getPrependBasePathSpec(): array
+    {
+        return [
+            '/my/pets' => [
+                'get' => [
+                    'type'       => 'object',
+                    'responses'  => $this->getStringResponse(),
+                ],
+            ],
+        ];
+    }
+
+    private function getStringResponse(): array
+    {
+        return [
             'default' => [
                 'description' => 'Pets',
                 'content'     => [
@@ -138,21 +172,11 @@ final class RouteCollectionBuilderTest extends TestCase
                 ],
             ],
         ];
-
-        return [
-            '/my/pets' => [
-                'get' => [
-                    'type'       => 'object',
-                    'x-psr15-middleware' => 'pet-guard',
-                    'responses'          => $responses,
-                ],
-            ],
-        ];
     }
 
-    public function getOpenApi(array $pathSpec): OpenApi
+    private function getOpenApi(array $pathSpec, array $openApiSpec = []): OpenApi
     {
-        $openApi = new OpenApi([
+        $openApi = new OpenApi(array_merge([
             'openapi' => '3.0.3',
             'info'    => [
                 'title'       => 'Title',
@@ -160,7 +184,7 @@ final class RouteCollectionBuilderTest extends TestCase
                 'version'     => '1.0.0',
             ],
             'paths'   => $pathSpec,
-        ]);
+        ], $openApiSpec));
 
         $openApi->setDocumentContext($openApi, new JsonPointer(''));
         self::assertTrue($openApi->validate(), implode("\n", $openApi->getErrors()));
