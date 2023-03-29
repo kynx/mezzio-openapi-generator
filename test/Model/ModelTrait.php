@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
+use Kynx\Code\Normalizer\ClassConstantNameNormalizer;
 use Kynx\Code\Normalizer\ClassNameNormalizer;
-use Kynx\Code\Normalizer\ConstantNameNormalizer;
+use Kynx\Code\Normalizer\UniqueClassConstantLabeler;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
-use Kynx\Code\Normalizer\UniqueConstantLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Code\Normalizer\UniqueVariableLabeler;
 use Kynx\Code\Normalizer\VariableNameNormalizer;
@@ -21,8 +21,8 @@ trait ModelTrait
 {
     protected function getModelsBuilder(PropertiesBuilder $propertiesBuilder): ModelsBuilder
     {
-        $caseLabeler = new UniqueConstantLabeler(
-            new ConstantNameNormalizer('Case', WordCase::Pascal),
+        $caseLabeler = new UniqueClassConstantLabeler(
+            new ClassConstantNameNormalizer('Case', WordCase::Pascal),
             new NumberSuffix()
         );
 

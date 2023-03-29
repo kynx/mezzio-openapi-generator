@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
 use cebe\openapi\spec\Schema;
+use Kynx\Code\Normalizer\UniqueClassConstantLabeler;
 use Kynx\Code\Normalizer\UniqueConstantLabeler;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
@@ -24,7 +25,7 @@ final class ModelsBuilder
 {
     public function __construct(
         private readonly PropertiesBuilder $propertiesBuilder,
-        private readonly UniqueConstantLabeler $caseLabeler
+        private readonly UniqueClassConstantLabeler $caseLabeler
     ) {
     }
 

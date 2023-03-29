@@ -59,12 +59,12 @@ final class ModelsBuilderTest extends TestCase
                 '/components/schemas/Foo',
                 new EnumCase('Cat', 'cat'),
                 new EnumCase('Dog', 'dog'),
-                new EnumCase('BoolCase', 'bool')
+                new EnumCase('ClassCase', 'class')
             ),
         ];
         $namedSchema = $this->getNamedSpecification('Foo', [
             'type' => 'string',
-            'enum' => ['cat', 'dog', 'bool'],
+            'enum' => ['cat', 'dog', 'class'],
         ]);
         $classNames  = [$pointer => '\\Foo'];
 
