@@ -197,11 +197,11 @@ final class RequestFactoryGenerator
             $type = $property->getPhpType();
 
             if ($this->isUnexplodedObject($property, $template)) {
-                $method->addBody("{$var}['$name'] = OperationUtil::listToAssociativeArray({$var}['$name']);");
+                $method->addBody("{$var} = OperationUtil::listToAssociativeArray({$var}, '$name');");
             } elseif ($this->isCastableScalar($property)) {
-                $method->addBody("{$var}['$name'] = OperationUtil::castToScalar({$var}['$name'], '$type');");
+                $method->addBody("{$var} = OperationUtil::castToScalar({$var}, '$name', '$type');");
             } elseif ($this->isCastableArray($property)) {
-                $method->addBody("{$var}['$name'] = OperationUtil::castToScalarArray({$var}['$name'], '$type');");
+                $method->addBody("{$var} = OperationUtil::castToScalarArray({$var}, '$name', '$type');");
             }
         }
 

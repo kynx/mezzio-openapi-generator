@@ -207,7 +207,7 @@ final class RequestFactoryGeneratorTest extends TestCase
 
     public function testGenerateConvertsListToArray(): void
     {
-        $expected = "\$path['foo'] = OperationUtil::listToAssociativeArray(\$path['foo']);";
+        $expected = "\$path = OperationUtil::listToAssociativeArray(\$path, 'foo');";
 
         $property  = new SimpleProperty('foo', 'foo', new PropertyMetadata(), new ClassString('\\Foo'));
         $model     = new ClassModel(self::NAMESPACE . '\\PathParams', '/foo', [], $property);
