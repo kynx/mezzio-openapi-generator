@@ -1,0 +1,29 @@
+openapi: 3.0.3
+info:
+  title: Test OpenAPI
+  description: Test OpenAPI
+  version: 1.0.0
+servers:
+  - url: 'https://localhost'
+paths:
+  /first:
+    get:
+      responses:
+        '200':
+          description: "First response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/First'
+components:
+  schemas:
+    ArrayOfFirst:
+      type: array
+      items:
+        $ref: "#/components/schemas/First"
+    First:
+      type: object
+      properties:
+        children:
+          $ref: "#/components/schemas/ArrayOfFirst"
+

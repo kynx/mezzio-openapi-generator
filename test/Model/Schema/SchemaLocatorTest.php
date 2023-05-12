@@ -64,7 +64,7 @@ final class SchemaLocatorTest extends TestCase
 
     public function testGetNamedSchemasReturnsArrayItemSchema(): void
     {
-        $itemSchema = [
+        $item = [
             'type'       => 'object',
             'properties' => [
                 'id' => [
@@ -74,9 +74,16 @@ final class SchemaLocatorTest extends TestCase
         ];
         $schema     = new Schema([
             'type'  => 'array',
-            'items' => $itemSchema,
+            'items' => $item,
         ]);
-        $expected   = ['' => new NamedSpecification('FooItem', new Schema($itemSchema))];
+        $itemSchema = new Schema($item);
+
+        $pointer = '/components/schemas/Foo';
+        $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
+        $itemPointer = $pointer . '/items';
+        $itemSchema->setDocumentContext(new OpenApi([]), new JsonPointer($itemPointer));
+
+        $expected   = [$pointer . '/items' => new NamedSpecification('schema FooItem', $itemSchema)];
 
         self::assertTrue($schema->validate());
         $actual = $this->locator->getNamedSpecifications('Foo', $schema);
@@ -85,7 +92,7 @@ final class SchemaLocatorTest extends TestCase
 
     public function testGetNamedSchemasReturnsAdditionalPropertiesSchema(): void
     {
-        $itemSchema = [
+        $item = [
             'type'       => 'object',
             'properties' => [
                 'id' => [
@@ -95,9 +102,16 @@ final class SchemaLocatorTest extends TestCase
         ];
         $schema     = new Schema([
             'type'                 => 'object',
-            'additionalProperties' => $itemSchema,
+            'additionalProperties' => $item,
         ]);
-        $expected   = ['' => new NamedSpecification('FooItem', new Schema($itemSchema))];
+        $itemSchema = new Schema($item);
+
+        $pointer = '/components/schemas/Foo';
+        $schema->setDocumentContext(new OpenApi([]), new JsonPointer($pointer));
+        $itemPointer = $pointer . '/additionalProperties';
+        $itemSchema->setDocumentContext(new OpenApi([]), new JsonPointer($itemPointer));
+
+        $expected   = [$itemPointer => new NamedSpecification('schema FooItem', $itemSchema)];
 
         self::assertTrue($schema->validate());
         $actual = $this->locator->getNamedSpecifications('Foo', $schema);

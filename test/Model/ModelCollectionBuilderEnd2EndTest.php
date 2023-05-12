@@ -11,6 +11,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
@@ -244,6 +245,27 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
         ];
         $models           = [
             new ClassModel('\\Schema\\Scalar', $scalarPointer, [], ...$scalarProperties),
+        ];
+        $expected         = new ModelCollection();
+        foreach ($models as $model) {
+            $expected->add($model);
+        }
+
+        $actual = $this->builder->getModelCollection($unresolved);
+
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testGetModelCollectionHandlesSelfReference(): void
+    {
+        $unresolved = $this->getUnresolved('self-reference.yaml');
+
+        $pointer = '/components/schemas/First';
+        $properties  = [
+            new ArrayProperty('$children', 'children', new PropertyMetadata(), true, new ClassString('\Schema\First')),
+        ];
+        $models           = [
+            new ClassModel('\\Schema\\First', $pointer, [], ...$properties),
         ];
         $expected         = new ModelCollection();
         foreach ($models as $model) {
