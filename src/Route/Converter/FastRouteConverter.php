@@ -94,22 +94,18 @@ final class FastRouteConverter implements ConverterInterface
     {
         if ($parameter->getExplode()) {
             return match ($parameter->getType()) {
-                'array'   => '.+',
-                'boolean' => '(true|false|,)',
+                'boolean' => 'true|false|,',
                 'integer' => '[\d,]+',
-                'number'  => '[\d.,]+',
-                'object'  => '.+',
-                default   => '.+'
+                'number'  => '[\d\.,]+',
+                default   => '[^/]+',
             };
         }
 
         return match ($parameter->getType()) {
-            'array'   => '.+',
-            'boolean' => '(true|false)',
+            'boolean' => 'true|false',
             'integer' => '\d+',
-            'number'  => '[\d.]+',
-            'object'  => '.+',
-            default   => '.+'
+            'number'  => '[\d\.]+',
+            default   => '[^/]+',
         };
     }
 
