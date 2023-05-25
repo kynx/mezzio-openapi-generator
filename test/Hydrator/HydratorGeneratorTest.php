@@ -29,6 +29,7 @@ use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
+use function strpos;
 use function trim;
 
 /**
@@ -348,6 +349,33 @@ final class HydratorGeneratorTest extends TestCase
         $expected = '$data = HydratorUtil::hydrateEnums($data, self::ARRAY_PROPERTIES, self::ENUMS);';
         $method   = $this->getHydrateMethod($class);
         $body     = $method->getBody();
+        self::assertStringContainsString($expected, $body);
+    }
+
+    public function testHydrateSetsEnumDefaults(): void
+    {
+        $properties = [
+            new SimpleProperty(
+                '$bar',
+                'bar',
+                new PropertyMetadata(default: 'baz'),
+                new ClassString(self::MODEL_NAMESPACE . '\\Bar', true)
+            ),
+        ];
+        $classModel = new ClassModel(self::MODEL_NAMESPACE . '\\Foo', '/component/schemas/Foo', [], ...$properties);
+        $model      = new HydratorModel(self::MODEL_NAMESPACE . '\\FooHydrator', $classModel);
+        $classMap   = [$classModel->getClassName() => $model->getClassName()];
+
+        $file      = $this->generator->generate($model, $classMap);
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
+        $class     = $this->getClass($namespace, 'FooHydrator');
+
+        $method   = $this->getHydrateMethod($class);
+        $body     = $method->getBody();
+
+        $expected = "\$data = array_merge(self::DEFAULTS, \$data);\n"
+            . "\$data = HydratorUtil::hydrateEnums(\$data, self::ARRAY_PROPERTIES, self::ENUMS);";
+
         self::assertStringContainsString($expected, $body);
     }
 

@@ -274,11 +274,11 @@ final class HydratorGenerator
         if ($propertyHydrators !== []) {
             $method->addBody('$data = HydratorUtil::hydrateProperties($data, self::ARRAY_PROPERTIES, self::PROPERTY_HYDRATORS);');
         }
-        if ($enums !== []) {
-            $method->addBody('$data = HydratorUtil::hydrateEnums($data, self::ARRAY_PROPERTIES, self::ENUMS);');
-        }
         if ($defaults !== []) {
             $method->addBody('$data = array_merge(self::DEFAULTS, $data);');
+        }
+        if ($enums !== []) {
+            $method->addBody('$data = HydratorUtil::hydrateEnums($data, self::ARRAY_PROPERTIES, self::ENUMS);');
         }
         if ($propertyMap !== []) {
             $method->addBody('$data = HydratorUtil::getMappedProperties($data, self::PROPERTY_MAP);');
