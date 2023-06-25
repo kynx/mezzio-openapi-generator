@@ -175,26 +175,6 @@ final class RequestFactoryGeneratorTest extends TestCase
         }
     }
 
-    public function testGenerateHydratesEnums(): void
-    {
-        $expected = '$path = HydratorUtil::hydrateEnums($path, [], [\'foo\' => Foo::class]);';
-
-        $metadata  = new PropertyMetadata();
-        $property  = new SimpleProperty('foo', 'foo', $metadata, new ClassString('\\Foo', true));
-        $model     = new ClassModel(self::NAMESPACE . '\\PathParams', '/foo', [], $property);
-        $param     = new PathOrQueryParams('{foo}', $model);
-        $hydrators = [self::NAMESPACE . '\\PathParams' => self::NAMESPACE . '\\PathParmsHydrator'];
-        $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param);
-
-        $file      = $this->generator->generate($operation, $hydrators);
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
-        $class     = $this->getClass($namespace, 'RequestFactory');
-        $method    = $this->getMethod($class, 'getPathParams');
-        $body      = $method->getBody();
-
-        self::assertStringContainsString($expected, $body);
-    }
-
     /**
      * @dataProvider doesNotConvertListToArrayProvider
      */

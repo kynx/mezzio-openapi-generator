@@ -12,7 +12,6 @@ use Kynx\Mezzio\OpenApi\Operation\OperationUtil;
 use Kynx\Mezzio\OpenApi\Operation\RequestFactoryInterface;
 use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\DiscriminatorUtil;
-use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
@@ -33,10 +32,8 @@ use Nette\PhpGenerator\PhpNamespace;
 use Psr\Http\Message\ServerRequestInterface;
 use Rize\UriTemplate;
 
-use function array_filter;
 use function array_keys;
 use function array_map;
-use function array_values;
 use function assert;
 use function current;
 use function in_array;
@@ -188,9 +185,6 @@ final class RequestFactoryGenerator
         $utilMethod = 'get' . ucfirst($type) . 'Variables';
         $getMethod  = 'get' . ucfirst($type) . 'Params';
 
-        $enums           = $this->getEnums($model, $namespace);
-        $arrayProperties = $this->getArrayProperties($model);
-
         $method = $class->addMethod($getMethod)
             ->setPrivate()
             ->setReturnType($className);
@@ -208,10 +202,6 @@ final class RequestFactoryGenerator
                 $method->addBody("{$var} = OperationUtil::castToScalar({$var}, '$name', '$type');");
             } elseif ($this->isCastableArray($property)) {
                 $method->addBody("{$var} = OperationUtil::castToScalarArray({$var}, '$name', '$type');");
-            }
-
-            if ($enums !== []) {
-                $method->addBody("{$var} = HydratorUtil::hydrateEnums({$var}, ?, ?);", [$arrayProperties, $enums]);
             }
         }
 
@@ -466,54 +456,5 @@ final class RequestFactoryGenerator
     {
         $template = $params instanceof PathOrQueryParams ? $params->getTemplate() : $params->getTemplates();
         return $this->dumper->dump($template);
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function getArrayProperties(ClassModel $model): array
-    {
-        $filtered = array_filter(
-            $model->getProperties(),
-            fn (PropertyInterface $property): bool => $property instanceof ArrayProperty
-        );
-
-        return array_values(array_map(
-            fn (PropertyInterface $property): string => $property->getOriginalName(),
-            $filtered
-        ));
-    }
-
-    private function getEnums(ClassModel $model, PhpNamespace $namespace): array
-    {
-        $enums = [];
-        foreach ($model->getProperties() as $property) {
-            if (! $this->isEnum($property)) {
-                continue;
-            }
-
-            $name = $property->getOriginalName();
-            $enum = $property->getType()->getClassString();
-            $namespace->addUse($enum);
-            $enums[$name] = new Literal(GeneratorUtil::getClassName($enum) . '::class');
-        }
-
-        return $enums;
-    }
-
-    /**
-     * @psalm-assert-if-true SimpleProperty $property
-     * @psalm-assert-if-true ClassString $property->getType()
-     */
-    private function isEnum(PropertyInterface $property): bool
-    {
-        if (! $property instanceof SimpleProperty) {
-            return false;
-        }
-        if (! $property->getType() instanceof ClassString) {
-            return false;
-        }
-
-        return $property->getType()->isEnum();
     }
 }
