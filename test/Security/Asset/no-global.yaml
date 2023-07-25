@@ -1,0 +1,56 @@
+openapi: "3.0.2"
+info:
+  title: API Title
+  version: "1.0"
+servers:
+  - url: https://api.server.test/v1
+paths:
+  /none:
+    get:
+      responses:
+        '200':
+          description: OK
+  /empty:
+    get:
+      responses:
+        '200':
+          description: OK
+      security: []
+  /basic:
+    get:
+      responses:
+        '200':
+          description: OK
+      security:
+        - basic: []
+  /multiple:
+    get:
+      responses:
+        '200':
+          description: OK
+      security:
+        - api_key: []
+        - basic: []
+  /missing-scheme:
+    get:
+      responses:
+        '200':
+          description: OK
+      security:
+        - oauth: []
+  /unsupported:
+    get:
+      responses:
+        '200':
+          description: OK
+      security:
+        - tls: []
+components:
+  securitySchemes:
+    api_key:
+      type: "apiKey"
+      name: "x-api-key"
+      in: "header"
+    basic:
+      type: "http"
+      scheme: "bearer"

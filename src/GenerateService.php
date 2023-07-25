@@ -21,6 +21,7 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator;
+use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
 
 final class GenerateService implements GenerateServiceInterface
 {
@@ -53,9 +54,9 @@ final class GenerateService implements GenerateServiceInterface
         return $this->operationCollectionBuilder->getOperationCollection($namedSpecifications, $classMap);
     }
 
-    public function getRoutes(OpenApi $openApi): RouteCollection
+    public function getRoutes(OpenApi $openApi, SecurityModelResolver $securityModelResolver): RouteCollection
     {
-        return $this->routeCollectionBuilder->getRouteCollection($openApi);
+        return $this->routeCollectionBuilder->getRouteCollection($openApi, $securityModelResolver);
     }
 
     public function getHandlers(RouteCollection $routes, OperationCollection $operations): HandlerCollection

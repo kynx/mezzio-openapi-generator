@@ -10,6 +10,7 @@ use Kynx\Mezzio\OpenApiGenerator\Route\ParameterModel;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
+use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -27,10 +28,10 @@ final class RouteCollectionBuilderTest extends TestCase
                 new ParameterModel('id', false, 'string', 'simple', false),
             ], [
                 new ParameterModel('age', false, 'integer', 'form', true),
-            ], []),
+            ], null, []),
             new RouteModel('/paths/~1another-pet/post', '/another-pet', 'post', [], [
                 new ParameterModel('complicated', true, null, null, false),
-            ], []),
+            ], null, []),
         ];
         $collection = new RouteCollection();
         foreach ($expected as $route) {
@@ -39,7 +40,7 @@ final class RouteCollectionBuilderTest extends TestCase
 
         $openApi = $this->getOpenApi($this->getPathsSpec());
         $builder = new RouteCollectionBuilder([]);
-        $actual  = iterator_to_array($builder->getRouteCollection($openApi));
+        $actual  = iterator_to_array($builder->getRouteCollection($openApi, new SecurityModelResolver($openApi)));
         self::assertEquals($expected, $actual);
     }
 
@@ -47,7 +48,7 @@ final class RouteCollectionBuilderTest extends TestCase
     {
         $middlware = 'Api\Pet\Middleware\Guard';
         $expected = [
-            new RouteModel('/paths/~1my~1pets/get', '/my/pets', 'get', [], [], [
+            new RouteModel('/paths/~1my~1pets/get', '/my/pets', 'get', [], [], null, [
                 $middlware,
             ]),
         ];
@@ -58,14 +59,14 @@ final class RouteCollectionBuilderTest extends TestCase
 
         $openApi = $this->getOpenApi($this->getMiddlewareExtensionSpec());
         $builder = new RouteCollectionBuilder(['pet-guard' => $middlware]);
-        $actual  = iterator_to_array($builder->getRouteCollection($openApi));
+        $actual  = iterator_to_array($builder->getRouteCollection($openApi, new SecurityModelResolver($openApi)));
         self::assertEquals($expected, $actual);
     }
 
     public function testGetRouteCollectionPrependsServerPath(): void
     {
         $expected = [
-            new RouteModel('/paths/~1my~1pets/get', '/v1/my/pets', 'get', [], [], []),
+            new RouteModel('/paths/~1my~1pets/get', '/v1/my/pets', 'get', [], [], null, []),
         ];
         $collection = new RouteCollection();
         foreach ($expected as $route) {
@@ -80,7 +81,7 @@ final class RouteCollectionBuilderTest extends TestCase
 
         $openApi = $this->getOpenApi($this->getPrependBasePathSpec(), $servers);
         $builder = new RouteCollectionBuilder([]);
-        $actual = iterator_to_array($builder->getRouteCollection($openApi));
+        $actual = iterator_to_array($builder->getRouteCollection($openApi, new SecurityModelResolver($openApi)));
         self::assertEquals($expected, $actual);
     }
 

@@ -29,7 +29,7 @@ final class DotSnakeCaseNamerFactoryTest extends TestCase
         $factory  = new DotSnakeCaseNamerFactory();
         $instance = $factory($container);
 
-        $route  = new RouteModel('/paths/~1foo/get', '/foo', 'get', [], [], []);
+        $route  = new RouteModel('/paths/~1foo/get', '/foo', 'get', [], [], null, []);
         $actual = $instance->getName($route);
         self::assertSame($expected, $actual);
     }

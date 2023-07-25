@@ -9,6 +9,7 @@ use cebe\openapi\spec\OpenApi;
 use finfo;
 use Kynx\Mezzio\OpenApiGenerator\GenerateServiceInterface;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
+use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -75,7 +76,7 @@ final class GenerateCommand extends Command
         $operations = $this->generateService->getOperations($openApi, $models);
         $this->generateService->createOperations($operations, $hydrators);
 
-        $routes   = $this->generateService->getRoutes($openApi);
+        $routes   = $this->generateService->getRoutes($openApi, new SecurityModelResolver($openApi));
         $handlers = $this->generateService->getHandlers($routes, $operations);
         $this->generateService->createRouteDelegator($routes, $handlers);
         $this->generateService->createHandlers($handlers);

@@ -11,8 +11,10 @@ use Kynx\Mezzio\OpenApi\Middleware\ValidationMiddleware;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
+use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelInterface;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Mezzio\Application;
+use Mezzio\Authentication\AuthenticationMiddleware;
 use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -67,8 +69,8 @@ final class RouteDelegatorGeneratorTest extends TestCase
         INVOKE_BODY;
         // phpcs:enable
 
-        $get        = new RouteModel("/paths$path/get", $path, 'get', [], [], []);
-        $post       = new RouteModel("/paths$path/post", $path, 'post', [], [], []);
+        $get        = new RouteModel("/paths$path/get", $path, 'get', [], [], null, []);
+        $post       = new RouteModel("/paths$path/post", $path, 'post', [], [], null, []);
         $collection = new RouteCollection();
         $collection->add($get);
         $collection->add($post);
@@ -133,6 +135,51 @@ final class RouteDelegatorGeneratorTest extends TestCase
         self::assertSame($expected, trim($method->getBody()));
     }
 
+    public function testGenerateAddsAuthenticationMiddleware(): void
+    {
+        $path       = '/pets';
+        $pointer    = '/paths/~pets/get';
+        $handler    = self::NAMESPACE . "\\Handlers\\Pet\\GetHandler";
+
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        $expected = <<<INVOKE_BODY
+        \$app = \$callback();
+        assert(\$app instanceof Application);
+        
+        \$app->get('$path', [
+        \tAuthenticationMiddleware::class,
+        \tValidationMiddleware::class,
+        \tOpenApiOperationMiddleware::class,
+        \tPetGetHandler::class,
+        ], 'api.pets.get')->setOptions([OpenApiRequestFactory::class => '$pointer']);
+        
+        return \$app;
+        INVOKE_BODY;
+        // phpcs:enable
+
+        $security   = $this->createStub(SecurityModelInterface::class);
+        $model = new RouteModel($pointer, $path, 'get', [], [], $security, []);
+        $collection = new RouteCollection();
+        $collection->add($model);
+
+        $map = [
+            $pointer  => $handler,
+        ];
+
+        $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE);
+        $file      = $generator->generate($collection, $map);
+
+        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $class     = $this->getClass($namespace, 'RouteDelegator');
+        $method    = $this->getMethod($class, '__invoke');
+
+        $uses = $namespace->getUses();
+        self::assertArrayHasKey('AuthenticationMiddleware', $uses);
+
+        $actual = trim($method->getBody());
+        self::assertSame($expected, $actual);
+    }
+
     public function testGenerateAddsExtensionMiddleware(): void
     {
         $path       = '/pets';
@@ -156,7 +203,7 @@ final class RouteDelegatorGeneratorTest extends TestCase
         INVOKE_BODY;
         // phpcs:enable
 
-        $model = new RouteModel($pointer, $path, 'get', [], [], [$middleware]);
+        $model = new RouteModel($pointer, $path, 'get', [], [], null, [$middleware]);
         $collection = new RouteCollection();
         $collection->add($model);
 

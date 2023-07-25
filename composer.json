@@ -26,15 +26,17 @@
         }
     },
     "require": {
-        "php": "~8.1 || ~8.2",
+        "php": "~8.2",
         "ext-fileinfo": "*",
         "composer-runtime-api": "^2.2",
         "cebe/php-openapi": "^1.7",
         "kynx/code-utils": "^2.0",
+        "kynx/mezzio-authentication-apikey": "^0.1.1",
         "kynx/mezzio-openapi": "^0.4",
         "laminas/laminas-cli": "^1.7",
         "laminas/laminas-diactoros": "^2.24",
         "laminas/laminas-filter": "^2.30",
+        "mezzio/mezzio-authentication-basic": "^1.7",
         "nette/php-generator": "^v4.0"
     },
     "require-dev": {

@@ -12,6 +12,7 @@ use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
 use Mezzio\Application;
+use Mezzio\Authentication\AuthenticationMiddleware;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpFile;
@@ -102,10 +103,15 @@ final class RouteDelegatorGenerator
         $handlerAlias = GeneratorUtil::getAlias($namespace->simplifyName($handlerClass));
         $namespace->addUse($handlerClass, $handlerAlias);
 
-        $middleware = [
-            new Literal($namespace->simplifyName(ValidationMiddleware::class) . '::class'),
-            new Literal($namespace->simplifyName(OpenApiOperationMiddleware::class) . '::class'),
-        ];
+        $middleware = [];
+        if ($route->getSecurityModel() !== null) {
+            $namespace->addUse(AuthenticationMiddleware::class);
+            $middleware[] = new Literal($namespace->simplifyName(AuthenticationMiddleware::class) . '::class');
+        }
+
+        $middleware[] = new Literal($namespace->simplifyName(ValidationMiddleware::class) . '::class');
+        $middleware[] = new Literal($namespace->simplifyName(OpenApiOperationMiddleware::class) . '::class');
+
         foreach ($route->getMiddleware() as $extensionMiddleware) {
             $alias = GeneratorUtil::getAlias($namespace->simplifyName($extensionMiddleware));
             $namespace->addUse($extensionMiddleware, $alias);

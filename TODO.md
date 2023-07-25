@@ -23,3 +23,4 @@
 * [ ] Revisit response serialization. It gets really messy working out what to hydrate when
       there are multiple mime types / arrays / etc
 * [ ] Inject `Dumper` and see if we can get it respecting line-lengths properly
+* [ ] UnionProperty needs refactor to handle members that are arrays, enums etc

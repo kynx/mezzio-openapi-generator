@@ -11,6 +11,8 @@ use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 
 use cebe\openapi\spec\Server;
+use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
+use Kynx\Mezzio\OpenApiGenerator\Security\UnsupportedSecurityRequirement;
 use Psr\Http\Server\MiddlewareInterface;
 
 use function array_filter;
@@ -35,7 +37,7 @@ final class RouteCollectionBuilder
     {
     }
 
-    public function getRouteCollection(OpenApi $openApi): RouteCollection
+    public function getRouteCollection(OpenApi $openApi, SecurityModelResolver $securityModelResolver): RouteCollection
     {
         $collection = new RouteCollection();
 
@@ -58,7 +60,15 @@ final class RouteCollectionBuilder
                 $queryParams = $this->getParams($operation, 'query');
                 $middleware  = $this->getMiddleware($operation);
 
-                $collection->add(new RouteModel($pointer, $basePath . $path, $method, $pathParams, $queryParams, $middleware));
+                $collection->add(new RouteModel(
+                    $pointer,
+                    $basePath . $path,
+                    $method,
+                    $pathParams,
+                    $queryParams,
+                    $securityModelResolver->resolve($operation->security),
+                    $middleware
+                ));
             }
         }
 

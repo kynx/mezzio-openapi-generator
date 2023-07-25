@@ -10,6 +10,7 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
+use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
 
 interface GenerateServiceInterface
 {
@@ -17,7 +18,7 @@ interface GenerateServiceInterface
 
     public function getOperations(OpenApi $openApi, ModelCollection $modelCollection): OperationCollection;
 
-    public function getRoutes(OpenApi $openApi): RouteCollection;
+    public function getRoutes(OpenApi $openApi, SecurityModelResolver $securityModelResolver): RouteCollection;
 
     public function getHandlers(RouteCollection $routes, OperationCollection $operations): HandlerCollection;
 

@@ -9,6 +9,7 @@ use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamer;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
+use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelInterface;
 
 /**
  * @psalm-require-extends \PHPUnit\Framework\TestCase
@@ -51,9 +52,10 @@ trait RouteTrait
      */
     protected function getRoutes(): array
     {
+        $securityModel = $this->createStub(SecurityModelInterface::class);
         return [
-            new RouteModel('/paths/~1foo/get', '/foo', 'get', [], [], []),
-            new RouteModel('/paths/~1bar/get', '/bar', 'get', [], [], []),
+            new RouteModel('/paths/~1foo/get', '/foo', 'get', [], [], null, []),
+            new RouteModel('/paths/~1bar/get', '/bar', 'get', [], [], $securityModel, []),
         ];
     }
 }

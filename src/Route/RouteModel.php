@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator\Route;
 
+use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelInterface;
+
 /**
  * @internal
  *
@@ -26,6 +28,7 @@ final class RouteModel
         private readonly string $method,
         private readonly array $pathParams,
         private readonly array $queryParams,
+        private readonly ?SecurityModelInterface $securityModel,
         private readonly array $middleware
     ) {
     }
@@ -59,6 +62,11 @@ final class RouteModel
     public function getQueryParams(): array
     {
         return $this->queryParams;
+    }
+
+    public function getSecurityModel(): ?SecurityModelInterface
+    {
+        return $this->securityModel;
     }
 
     /**

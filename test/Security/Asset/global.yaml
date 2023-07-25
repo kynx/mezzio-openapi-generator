@@ -1,0 +1,36 @@
+openapi: "3.0.2"
+info:
+  title: API Title
+  version: "1.0"
+servers:
+  - url: https://api.server.test/v1
+security:
+  - api_key: []
+paths:
+  /test:
+    get:
+      responses:
+        '200':
+          description: OK
+  /none:
+    get:
+      responses:
+        '200':
+          description: OK
+      security: []
+  /override:
+    get:
+      responses:
+        '200':
+          description: OK
+      security:
+        - basic: ["admin"]
+components:
+  securitySchemes:
+    api_key:
+      type: "apiKey"
+      name: "x-api-key"
+      in: "header"
+    basic:
+      type: "http"
+      scheme: "bearer"
