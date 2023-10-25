@@ -39,7 +39,7 @@ final class SimplePropertyTest extends TestCase
     /**
      * @return array<string, array{0: PropertyType|ClassString, 1: string}>
      */
-    public function getPhpTypeProvider(): array
+    public static function getPhpTypeProvider(): array
     {
         return [
             'class'    => [new ClassString('\\A\\B'), '\\A\\B'],
@@ -61,7 +61,7 @@ final class SimplePropertyTest extends TestCase
     /**
      * @return array<string, array{0: PropertyType|ClassString, 1: array}>
      */
-    public function getUsesProvider(): array
+    public static function getUsesProvider(): array
     {
         return [
             'class'    => [new ClassString('\\A\\B'), ['\\A\\B']],
