@@ -72,7 +72,7 @@ final class HandlerGeneratorTest extends TestCase
         self::assertCount(1, $parameters);
         self::assertArrayHasKey('responseFactory', $parameters);
         $responseFactory = $parameters['responseFactory'];
-        $expectedType = $operation->getResponseFactoryClassName();
+        $expectedType    = $operation->getResponseFactoryClassName();
         self::assertSame($expectedType, $responseFactory->getType());
         $expectedDefault = new Literal('new ' . $namespace->simplifyName($expectedType) . '()');
         self::assertEquals($expectedDefault, $responseFactory->getDefaultValue());

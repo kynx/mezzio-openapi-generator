@@ -123,9 +123,6 @@ final class RequestFactoryGenerator
         return $file;
     }
 
-    /**
-     * @param list<RequestBodyModel> $requestBodies
-     */
     private function addConstructor(PhpNamespace $namespace, ClassType $class, OperationModel $operation): void
     {
         $requestBodies = $operation->getRequestBodies();
@@ -264,6 +261,9 @@ final class RequestFactoryGenerator
 
     private function isCastable(PropertyInterface $property): bool
     {
+        if (! ($property instanceof SimpleProperty || $property instanceof ArrayProperty)) {
+            return false;
+        }
         $type = $property->getType();
         if ($type instanceof ClassString) {
             return false;
@@ -273,7 +273,6 @@ final class RequestFactoryGenerator
     }
 
     /**
-     * @param list<RequestBodyModel> $requestBodies
      * @param array<string, string> $hydratorMap
      */
     private function addRequestBodyParser(

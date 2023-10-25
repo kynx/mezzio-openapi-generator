@@ -31,7 +31,10 @@ final class GeneratorUtilTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function namespaceProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function namespaceProvider(): array
     {
         return [
             'leading_slash'   => ['\\Api\\Model\\Foo', 'Api\\Model'],
@@ -50,7 +53,10 @@ final class GeneratorUtilTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function classNameProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function classNameProvider(): array
     {
         return [
             'leading_slash'   => ['\\Api\\Model\\Foo', 'Foo'],
@@ -69,7 +75,10 @@ final class GeneratorUtilTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function getMethodNameProvider(): array
+    /**
+     * @return array<string, array{0: PropertyInterface, 1: string}>
+     */
+    public static function getMethodNameProvider(): array
     {
         $a = new ClassString('\\A');
         return [

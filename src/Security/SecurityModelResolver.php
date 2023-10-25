@@ -8,8 +8,10 @@ use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\SecurityRequirement;
 use cebe\openapi\spec\SecurityScheme;
 
-use function array_filter;
 use function array_key_first;
+use function array_map;
+use function assert;
+use function count;
 use function current;
 use function get_object_vars;
 
@@ -23,7 +25,8 @@ final class SecurityModelResolver
     {
         $models = [];
         foreach ($openApi->components?->securitySchemes ?? [] as $name => $securityScheme) {
-            $models[$name] = $this->createSecurityModel($securityScheme);
+            assert($securityScheme instanceof SecurityScheme);
+            $models[(string) $name] = $this->createSecurityModel($securityScheme);
         }
         $this->securityModels = $models;
 
@@ -48,22 +51,27 @@ final class SecurityModelResolver
         }
 
         if (count($security) > 1) {
-            throw UnsupportedSecurityRequirement::multipleSecurityRequirements();
+            throw UnsupportedSecurityRequirementException::multipleSecurityRequirements();
         }
 
+        // phpcs:disable Generic.Files.LineLength.TooLong
         $requirements = array_map(
-            static fn (SecurityRequirement $requirement): array => get_object_vars($requirement->getSerializableData()),
+            static fn (SecurityRequirement $requirement): array => get_object_vars((object) $requirement->getSerializableData()),
             $security
         );
+        // phpcs:enable
 
-        $requirement = current($requirements);
-        return $this->getSecurityModel(array_key_first($requirement))->withScopes(current($requirement));
+        /** @var array $requirement */
+        $requirement = current($requirements) ?: [];
+        $name        = (string) array_key_first($requirement);
+        /** @psalm-suppress MixedArgument */
+        return $this->getSecurityModel($name)->withScopes(current($requirement) ?: []);
     }
 
     private function getSecurityModel(string $name): SecurityModelInterface
     {
         if (! isset($this->securityModels[$name])) {
-            throw UnsupportedSecurityRequirement::nonExistentSecurityScheme($name);
+            throw UnsupportedSecurityRequirementException::nonExistentSecurityScheme($name);
         }
 
         return $this->securityModels[$name];
@@ -74,7 +82,7 @@ final class SecurityModelResolver
         return match ($securityScheme->type) {
             "apiKey" => new ApiKeySecurityModel($securityScheme->name),
             "http"   => new BasicSecurityModel($securityScheme->scheme),
-            default  => throw UnsupportedSecurityRequirement::unsupportedRequirement($securityScheme->type)
+            default  => throw UnsupportedSecurityRequirementException::unsupportedRequirement($securityScheme->type)
         };
     }
 }

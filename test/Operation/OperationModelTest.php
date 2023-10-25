@@ -88,15 +88,25 @@ final class OperationModelTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function hasParameterProvider(): array
+    /**
+     * @return array<string, array{
+     *     0: ?PathOrQueryParams,
+     *     1: ?PathOrQueryParams,
+     *     2: ?CookieOrHeaderParams,
+     *     3: ?CookieOrHeaderParams,
+     *     4: list<RequestBodyModel>,
+     *     5: bool
+     * }>
+     */
+    public static function hasParameterProvider(): array
     {
         return [
             'none'   => [null, null, null, null, [], false],
-            'path'   => [$this->getPathParams(), null, null, null, [], true],
-            'query'  => [null, $this->getQueryParams(), null, null, [], true],
-            'header' => [null, null, $this->getHeaderParams(), null, [], true],
-            'cookie' => [null, null, null, $this->getCookieParams(), [], true],
-            'body'   => [null, null, null, null, $this->getRequestBodies(), true],
+            'path'   => [self::getPathParams(), null, null, null, [], true],
+            'query'  => [null, self::getQueryParams(), null, null, [], true],
+            'header' => [null, null, self::getHeaderParams(), null, [], true],
+            'cookie' => [null, null, null, self::getCookieParams(), [], true],
+            'body'   => [null, null, null, null, self::getRequestBodies(), true],
         ];
     }
 

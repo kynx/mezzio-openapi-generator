@@ -22,11 +22,6 @@ final class ApiKeySecurityModel implements SecurityModelInterface
         return $this->scopes;
     }
 
-    public function getHeaderName(): string
-    {
-        return $this->headerName;
-    }
-
     public function withScopes(array $scopes): static
     {
         return new self($this->headerName, $scopes);

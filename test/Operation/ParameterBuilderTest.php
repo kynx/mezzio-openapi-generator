@@ -200,7 +200,10 @@ final class ParameterBuilderTest extends TestCase
         }
     }
 
-    public function paramTemplateProvider(): array
+    /**
+     * @return array<string, array{0: bool, 1: string, 2: string, 3: bool, 4: array|string}>
+     */
+    public static function paramTemplateProvider(): array
     {
         return [
             'cookie'              => [false, 'cookie', 'form', false, ['foo' => '{foo}']],

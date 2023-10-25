@@ -18,25 +18,27 @@ final class RouteCollectionBuilderFactoryTest extends TestCase
 {
     public function testInvokeReturnsConfiguredInstance(): void
     {
-        $expected = [
+        $expected  = [
             'some-guard' => MiddlewareInterface::class,
         ];
         $container = $this->createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                ['config', [
-                    ConfigProvider::GEN_KEY => [
-                        'extension-middleware' => $expected,
+                [
+                    'config',
+                    [
+                        ConfigProvider::GEN_KEY => [
+                            'extension-middleware' => $expected,
+                        ],
                     ],
-                ]],
+                ],
             ]);
 
-        $factory = new RouteCollectionBuilderFactory();
+        $factory  = new RouteCollectionBuilderFactory();
         $instance = $factory($container);
 
         $reflection = new ReflectionProperty($instance, 'middleware');
-        $reflection->setAccessible(true);
-        $actual = $reflection->getValue($instance);
+        $actual     = $reflection->getValue($instance);
         self::assertSame($expected, $actual);
     }
 }

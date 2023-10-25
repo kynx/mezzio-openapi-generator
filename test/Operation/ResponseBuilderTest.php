@@ -163,7 +163,7 @@ final class ResponseBuilderTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    protected function getOperation(string $method, array $spec): Operation
+    protected static function getOperation(string $method, array $spec): Operation
     {
         $operation = new Operation(['responses' => $spec]);
         $operation->setDocumentContext(new OpenApi([]), new JsonPointer('/paths/foo/' . $method));

@@ -12,17 +12,17 @@ final class BasicSecurityModel implements SecurityModelInterface
     {
     }
 
-    public function getAuthenticationAdapter() : string
+    public function getAuthenticationAdapter(): string
     {
         return BasicAccess::class;
     }
 
-    public function getScopes() : array
+    public function getScopes(): array
     {
         return $this->scopes;
     }
 
-    public function withScopes(array $scopes) : static
+    public function withScopes(array $scopes): static
     {
         return new self($this->scheme, $scopes);
     }

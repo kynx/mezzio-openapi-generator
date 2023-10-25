@@ -14,6 +14,7 @@ use function count;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerCollectionTest
  *
+ * @implements Iterator<int, HandlerModel>
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */

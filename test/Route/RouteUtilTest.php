@@ -21,7 +21,10 @@ final class RouteUtilTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function pathProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function pathProvider(): array
     {
         return [
             'none'                => ['/a/b', '/a/b'],

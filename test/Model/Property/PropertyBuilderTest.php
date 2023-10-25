@@ -64,7 +64,10 @@ final class PropertyBuilderTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function metadataProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: string|array|bool, 2: PropertyMetadata}>
+     */
+    public static function metadataProvider(): array
     {
         return [
             'title'          => ['title', 'Foo', new PropertyMetadata(title: 'Foo')],

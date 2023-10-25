@@ -8,7 +8,6 @@ use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 
 use function array_combine;
 use function array_merge;
@@ -21,7 +20,6 @@ use function implode;
 use function in_array;
 use function ksort;
 use function uksort;
-use function usort;
 
 /**
  * @internal
@@ -34,30 +32,6 @@ use function usort;
  */
 abstract class AbstractGenerator
 {
-    /**
-     * @return list<PropertyInterface> $property
-     */
-    protected function getOrderedParameters(AbstractClassLikeModel $model): array
-    {
-        $properties = $model->getProperties();
-        usort($properties, function (PropertyInterface $a, PropertyInterface $b): int {
-            return $this->getOrder($a->getMetadata()) <=> $this->getOrder($b->getMetadata());
-        });
-
-        return $properties;
-    }
-
-    private function getOrder(PropertyMetadata $metadata): int
-    {
-        if ($metadata->getDefault() !== null) {
-            return 1;
-        }
-        if ($metadata->isNullable()) {
-            return 2;
-        }
-        return $metadata->isRequired() ? 0 : 2;
-    }
-
     protected function getClassLikeName(AbstractClassLikeModel|EnumModel $modelClass): string
     {
         return GeneratorUtil::getClassName($modelClass->getClassName());

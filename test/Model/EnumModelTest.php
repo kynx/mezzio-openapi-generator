@@ -38,7 +38,10 @@ final class EnumModelTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function matchesProvider(): array
+    /**
+     * @return array<string, array{0: EnumModel|ClassModel|InterfaceModel, 1: bool}>
+     */
+    public static function matchesProvider(): array
     {
         return [
             'enum'      => [new EnumModel('\\B', '/A', new EnumCase('A', 'a')), false],

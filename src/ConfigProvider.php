@@ -5,8 +5,10 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator;
 
+use DateInterval;
 use DateTimeImmutable;
 use Kynx\Code\Normalizer\UniqueVariableLabeler;
+use Kynx\Mezzio\OpenApi\Hydrator\DateIntervalHydrator;
 use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGenerator;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGeneratorFactory;
@@ -60,7 +62,6 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriter;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterFactory;
-use Symfony\Component\Console\Command\Command;
 
 use function getcwd;
 
@@ -68,8 +69,8 @@ use function getcwd;
  * phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
- * @psalm-type CliConfigArray array{commands: array<string, class-string<Command>>}
- * @psalm-type GenConfigArray array{
+ * @psalm-type CliConfigArray = array{commands: array<string, class-string<\Symfony\Component\Console\Command\Command>>}
+ * @psalm-type GenConfigArray = array{
  *      project-dir: string,
  *      openapi-file?: string,
  *      src-dir?: string,
@@ -79,10 +80,11 @@ use function getcwd;
  *      handler-namespace?: string,
  *      route-prefix: string,
  *      type-mappers: list<class-string<\Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapperInterface>>,
- *      hydrators: array<class-string, class-string<\Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface>>
+ *      hydrators: array<class-string, class-string<\Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface>>,
+ *      extension-middleware?: array<string, class-string>
  * }
- * @psalm-type DependencyConfigArray array{factories: array<class-string, class-string>}
- * @psalm-type ConfigArray array{
+ * @psalm-type DependencyConfigArray = array{factories: array<class-string, class-string>}
+ * @psalm-type ConfigArray = array{
  *      openapi-gen: GenConfigArray,
  *      laminas-cli: CliConfigArray,
  *      dependencies: DependencyConfigArray
@@ -131,6 +133,7 @@ final class ConfigProvider
                 UriInterfaceMapper::class,
             ],
             'hydrators'    => [
+                DateInterval::class      => DateIntervalHydrator::class,
                 DateTimeImmutable::class => DateTimeImmutableHydrator::class,
             ],
         ];

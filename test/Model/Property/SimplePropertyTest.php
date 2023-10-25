@@ -21,6 +21,7 @@ final class SimplePropertyTest extends TestCase
     {
         $type     = PropertyType::Integer;
         $property = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), $type);
+        /** @psalm-suppress RedundantConditionGivenDocblockType */
         self::assertSame($type, $property->getType());
         self::assertSame([$type], $property->getTypes());
     }
@@ -36,7 +37,10 @@ final class SimplePropertyTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function getPhpTypeProvider(): array
+    /**
+     * @return array<string, array{0: PropertyType|ClassString, 1: string}>
+     */
+    public static function getPhpTypeProvider(): array
     {
         return [
             'class'    => [new ClassString('\\A\\B'), '\\A\\B'],
@@ -55,7 +59,10 @@ final class SimplePropertyTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function getUsesProvider(): array
+    /**
+     * @return array<string, array{0: PropertyType|ClassString, 1: array}>
+     */
+    public static function getUsesProvider(): array
     {
         return [
             'class'    => [new ClassString('\\A\\B'), ['\\A\\B']],

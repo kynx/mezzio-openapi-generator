@@ -59,18 +59,21 @@ final class OperationBuilderTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function addParameterProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: string, 2: OperationModel}>
+     */
+    public static function addParameterProvider(): array
     {
         $class     = '\\Operation';
         $pointer   = '/paths/{foo}/get';
-        $responses = [$this->getResponse()];
+        $responses = [self::getResponse()];
 
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'path'   => ['path', 'foo', new OperationModel($class, $pointer, $this->getPathParams(), null, null, null, [], $responses)],
-            'query'  => ['query', 'bar', new OperationModel($class, $pointer, null, $this->getQueryParams(), null, null, [], $responses)],
-            'header' => ['header', 'X-Foo', new OperationModel($class, $pointer, null, null, $this->getHeaderParams(), null, [], $responses)],
-            'cookie' => ['cookie', 'cook', new OperationModel($class, $pointer, null, null, null, $this->getCookieParams(), [], $responses)],
+            'path'   => ['path', 'foo', new OperationModel($class, $pointer, self::getPathParams(), null, null, null, [], $responses)],
+            'query'  => ['query', 'bar', new OperationModel($class, $pointer, null, self::getQueryParams(), null, null, [], $responses)],
+            'header' => ['header', 'X-Foo', new OperationModel($class, $pointer, null, null, self::getHeaderParams(), null, [], $responses)],
+            'cookie' => ['cookie', 'cook', new OperationModel($class, $pointer, null, null, null, self::getCookieParams(), [], $responses)],
         ];
         // phpcs:enable
     }

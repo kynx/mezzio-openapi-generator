@@ -51,7 +51,6 @@ final class HandlerFactoryGenerator
             );
         }
 
-
         return $file;
     }
 }

@@ -69,7 +69,10 @@ final class GenerateCommandTest extends TestCase
         self::assertSame($actualModels, $actualRoutes);
     }
 
-    public function specificationArgumentProvider(): array
+    /**
+     * @return array<string, array{0: array, 1: string}>
+     */
+    public static function specificationArgumentProvider(): array
     {
         return [
             'default'   => [[], 'Test Yaml'],

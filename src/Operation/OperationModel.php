@@ -225,10 +225,10 @@ final class OperationModel
      */
     public function getResponsesDocBlock(array $responses): string
     {
-        $types = [];
+        $types    = [];
         $forUnion = count($responses) > 1;
         foreach ($responses as $response) {
-            $types[] = $response->getType()->getDocBlockType($forUnion);
+            $types[] = $response->getType()?->getDocBlockType($forUnion);
         }
 
         $allTypes = explode('|', implode('|', array_filter($types)));

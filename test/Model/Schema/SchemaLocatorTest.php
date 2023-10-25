@@ -64,7 +64,7 @@ final class SchemaLocatorTest extends TestCase
 
     public function testGetNamedSchemasReturnsArrayItemSchema(): void
     {
-        $item = [
+        $item       = [
             'type'       => 'object',
             'properties' => [
                 'id' => [
@@ -83,7 +83,7 @@ final class SchemaLocatorTest extends TestCase
         $itemPointer = $pointer . '/items';
         $itemSchema->setDocumentContext(new OpenApi([]), new JsonPointer($itemPointer));
 
-        $expected   = [$pointer . '/items' => new NamedSpecification('schema FooItem', $itemSchema)];
+        $expected = [$pointer . '/items' => new NamedSpecification('schema FooItem', $itemSchema)];
 
         self::assertTrue($schema->validate());
         $actual = $this->locator->getNamedSpecifications('Foo', $schema);
@@ -92,7 +92,7 @@ final class SchemaLocatorTest extends TestCase
 
     public function testGetNamedSchemasReturnsAdditionalPropertiesSchema(): void
     {
-        $item = [
+        $item       = [
             'type'       => 'object',
             'properties' => [
                 'id' => [
@@ -111,7 +111,7 @@ final class SchemaLocatorTest extends TestCase
         $itemPointer = $pointer . '/additionalProperties';
         $itemSchema->setDocumentContext(new OpenApi([]), new JsonPointer($itemPointer));
 
-        $expected   = [$itemPointer => new NamedSpecification('schema FooItem', $itemSchema)];
+        $expected = [$itemPointer => new NamedSpecification('schema FooItem', $itemSchema)];
 
         self::assertTrue($schema->validate());
         $actual = $this->locator->getNamedSpecifications('Foo', $schema);

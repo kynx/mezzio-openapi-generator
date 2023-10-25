@@ -54,7 +54,10 @@ final class ModelCollectionTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function hasProvider(): array
+    /**
+     * @return array<string, array{0: ClassModel, 1: bool}>
+     */
+    public static function hasProvider(): array
     {
         $property = new SimpleProperty('$bar', 'bar', new PropertyMetadata(), PropertyType::String);
         return [

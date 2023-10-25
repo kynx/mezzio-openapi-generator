@@ -22,7 +22,6 @@ use Laminas\Diactoros\Response\EmptyResponse;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\PromotedParameter;
 use PHPUnit\Framework\TestCase;
-
 use Psr\Http\Message\ServerRequestInterface;
 
 use function trim;
@@ -72,7 +71,16 @@ final class ResponseFactoryGeneratorTest extends TestCase
         $response  = new ResponseModel('201', 'Created', null, null);
         $className = self::NAMESPACE . '\\Operation';
         $pointer   = '/paths/foo/get';
-        $operation = new OperationModel($className, $pointer, null, null, null, null, [], [$response]);
+        $operation = new OperationModel(
+            $className,
+            $pointer,
+            null,
+            null,
+            null,
+            null,
+            [],
+            [$response]
+        );
 
         $file = $this->generator->generate($operation, []);
 
@@ -196,9 +204,9 @@ final class ResponseFactoryGeneratorTest extends TestCase
 
         $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
 
-        $namespace   = $this->getNamespace($file, self::NAMESPACE);
-        $class       = $this->getClass($namespace, 'ResponseFactory');
-        $method      = $this->getMethod($class, 'get200Response');
+        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $class     = $this->getClass($namespace, 'ResponseFactory');
+        $method    = $this->getMethod($class, 'get200Response');
 
         $uses = $namespace->getUses();
         self::assertArrayHasKey('HydratorUtil', $uses);
@@ -223,7 +231,14 @@ final class ResponseFactoryGeneratorTest extends TestCase
         SINGLE_MIME_TYPE;
         // phpcs:enable
 
-        $type      = new UnionProperty('', '', new PropertyMetadata(), null, PropertyType::Array, new ClassString('Foo\\Bar'));
+        $type      = new UnionProperty(
+            '',
+            '',
+            new PropertyMetadata(),
+            null,
+            PropertyType::Array,
+            new ClassString('Foo\\Bar')
+        );
         $response  = new ResponseModel('200', 'OK', 'application/json', $type);
         $className = self::NAMESPACE . '\\Operation';
         $pointer   = '/paths/foo/get';
@@ -231,9 +246,9 @@ final class ResponseFactoryGeneratorTest extends TestCase
 
         $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
 
-        $namespace   = $this->getNamespace($file, self::NAMESPACE);
-        $class       = $this->getClass($namespace, 'ResponseFactory');
-        $method      = $this->getMethod($class, 'get200Response');
+        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $class     = $this->getClass($namespace, 'ResponseFactory');
+        $method    = $this->getMethod($class, 'get200Response');
 
         $parameters = $method->getParameters();
         self::assertCount(1, $parameters);
@@ -269,9 +284,9 @@ final class ResponseFactoryGeneratorTest extends TestCase
 
         $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
 
-        $namespace   = $this->getNamespace($file, self::NAMESPACE);
-        $class       = $this->getClass($namespace, 'ResponseFactory');
-        $method      = $this->getMethod($class, 'get200Response');
+        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $class     = $this->getClass($namespace, 'ResponseFactory');
+        $method    = $this->getMethod($class, 'get200Response');
 
         $parameters = $method->getParameters();
         self::assertCount(2, $parameters);
@@ -297,9 +312,9 @@ final class ResponseFactoryGeneratorTest extends TestCase
 
         $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
 
-        $namespace   = $this->getNamespace($file, self::NAMESPACE);
-        $class       = $this->getClass($namespace, 'ResponseFactory');
-        $method      = $this->getMethod($class, 'get200Response');
+        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $class     = $this->getClass($namespace, 'ResponseFactory');
+        $method    = $this->getMethod($class, 'get200Response');
 
         $actual = $method->getComment();
         self::assertSame($expected, $actual);

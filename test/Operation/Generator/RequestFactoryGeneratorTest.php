@@ -146,7 +146,10 @@ final class RequestFactoryGeneratorTest extends TestCase
         self::assertSame($expected, trim($getter->getBody()));
     }
 
-    public function parameterProvider(): Generator
+    /**
+     * @return Generator<string, array{0: OperationModel, 1: string, 2: string}>
+     */
+    public static function parameterProvider(): Generator
     {
         $default   = [
             'pathParams'    => null,
@@ -156,10 +159,10 @@ final class RequestFactoryGeneratorTest extends TestCase
             'requestBodies' => [],
         ];
         $tests     = [
-            'path'   => $this->getPathParams(self::NAMESPACE),
-            'query'  => $this->getQueryParams(self::NAMESPACE),
-            'header' => $this->getHeaderParams(self::NAMESPACE),
-            'cookie' => $this->getCookieParams(self::NAMESPACE),
+            'path'   => self::getPathParams(self::NAMESPACE),
+            'query'  => self::getQueryParams(self::NAMESPACE),
+            'header' => self::getHeaderParams(self::NAMESPACE),
+            'cookie' => self::getCookieParams(self::NAMESPACE),
         ];
         $templates = [
             'path'   => "'{foo}'",
@@ -170,7 +173,7 @@ final class RequestFactoryGeneratorTest extends TestCase
 
         foreach ($tests as $type => $param) {
             $args = array_merge($default, [$type . 'Params' => $param]);
-            /** @psalm-suppress PossiblyInvalidArgument */
+            /** @psalm-suppress InvalidArgument */
             yield $type => [new OperationModel(self::CLASS_NAME, self::POINTER, ...$args), $type, $templates[$type]];
         }
     }
@@ -194,7 +197,10 @@ final class RequestFactoryGeneratorTest extends TestCase
         self::assertStringNotContainsString('OperationUtil::listToAssociativeArray', $body);
     }
 
-    public function doesNotConvertListToArrayProvider(): array
+    /**
+     * @return array<string, array{0: PropertyInterface, 1: string}>
+     */
+    public static function doesNotConvertListToArrayProvider(): array
     {
         $metadata = new PropertyMetadata();
         // phpcs:disable Generic.Files.LineLength.TooLong
@@ -303,7 +309,10 @@ final class RequestFactoryGeneratorTest extends TestCase
         self::assertSame("return new Request(\$this->getRequestBody(\$request));", trim($parse));
     }
 
-    public function requestBodyParserProvider(): array
+    /**
+     * @return array<string, array{0: RequestBodyModel, 1: string, 2: array<string, string>, 3: string}>
+     */
+    public static function requestBodyParserProvider(): array
     {
         $class            = 'Foo';
         $arrayRequestBody = new RequestBodyModel(

@@ -11,6 +11,7 @@ use Nette\PhpGenerator\Dumper;
 
 use function array_pop;
 use function array_slice;
+use function count;
 use function explode;
 use function implode;
 use function ltrim;
@@ -29,6 +30,9 @@ use function ucfirst;
  */
 final class GeneratorUtil
 {
+    /**
+     * @psalm-suppress UnusedConstructor
+     */
     private function __construct()
     {
     }

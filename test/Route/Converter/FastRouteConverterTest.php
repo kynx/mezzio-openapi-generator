@@ -48,7 +48,10 @@ final class FastRouteConverterTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function sortProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: string, 2: string, 3: string}>
+     */
+    public static function sortProvider(): array
     {
         return [
             'path'         => ['/a', 'get', '/b', 'get'],
@@ -73,7 +76,10 @@ final class FastRouteConverterTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function routeProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: list<ParameterModel>, 2: string}>
+     */
+    public static function routeProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [

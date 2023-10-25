@@ -53,9 +53,6 @@ final class ClassGenerator extends AbstractGenerator
         return $class;
     }
 
-    /**
-     * @param UsesArray $aliases
-     */
     private function addMethods(ClassType $type, ClassModel $model): void
     {
         foreach ($model->getProperties() as $property) {

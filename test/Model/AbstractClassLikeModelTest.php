@@ -47,7 +47,10 @@ final class AbstractClassLikeModelTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function hasMatchesProvider(): array
+    /**
+     * @return array<string, array{0: ClassModel|EnumModel|InterfaceModel, 1: bool}>
+     */
+    public static function hasMatchesProvider(): array
     {
         $property = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::String);
         $another  = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::Integer);

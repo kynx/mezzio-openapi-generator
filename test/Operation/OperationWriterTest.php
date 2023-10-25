@@ -20,7 +20,6 @@ use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-use function array_keys;
 use function assert;
 use function current;
 use function is_array;
@@ -114,22 +113,5 @@ final class OperationWriterTest extends TestCase
         }
 
         return $collection;
-    }
-
-    private function getWrittenClassNames(array $written): array
-    {
-        $actual = [];
-        foreach ($written as $file) {
-            self::assertInstanceOf(PhpFile::class, $file);
-            $actual[] = $this->getClassName($file);
-        }
-
-        return $actual;
-    }
-
-    private function getClassName(PhpFile $file): string
-    {
-        $classes = $file->getClasses();
-        return (string) current(array_keys($classes));
     }
 }
