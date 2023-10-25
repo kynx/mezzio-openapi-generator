@@ -43,7 +43,10 @@ final class ModelUtilTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function isEnumProvider(): array
+    /**
+     * @return array<string, array{0: array, 1: bool}>
+     */
+    public static function isEnumProvider(): array
     {
         return [
             'enum'    => [['type' => 'string', 'enum' => ['a', 'b']], true],

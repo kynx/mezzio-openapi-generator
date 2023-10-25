@@ -119,7 +119,7 @@ final class RouteDelegatorGenerator
         }
         $middleware[] = new Literal($handlerAlias . '::class');
 
-        $converted  = $this->routeConverter->convert($route);
+        $converted = $this->routeConverter->convert($route);
 
         $openApiOperationClass = $namespace->simplifyName(OpenApiRequestFactory::class);
         $options               = [new Literal("$openApiOperationClass::class => ?", [$pointer])];

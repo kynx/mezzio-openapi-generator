@@ -23,7 +23,10 @@ final class UriInterfaceMapperTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function canMapProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: string|null, 2: bool}>
+     */
+    public static function canMapProvider(): array
     {
         return [
             'int_null'             => ['int', null, false],

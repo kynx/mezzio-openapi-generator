@@ -39,15 +39,15 @@ use function ucfirst;
 
 trait OperationTrait
 {
-    protected function getNamedSpecification(string $method, array $spec): NamedSpecification
+    protected static function getNamedSpecification(string $method, array $spec): NamedSpecification
     {
-        $operation = $this->getOperation($method, $spec);
+        $operation = self::getOperation($method, $spec);
 
         $name = ucfirst($method) . 'Operation';
         return new NamedSpecification($name, $operation);
     }
 
-    protected function getOperation(string $method, array $spec): Operation
+    protected static function getOperation(string $method, array $spec): Operation
     {
         $spec['responses'] = [
             'default' => [
@@ -69,102 +69,102 @@ trait OperationTrait
         return $operation;
     }
 
-    protected function getPropertiesBuilder(): PropertiesBuilder
+    protected static function getPropertiesBuilder(): PropertiesBuilder
     {
-        return new PropertiesBuilder($this->getUniquePropertyLabeler(), $this->getPropertyBuilder());
+        return new PropertiesBuilder(self::getUniquePropertyLabeler(), self::getPropertyBuilder());
     }
 
-    protected function getOperationCollectionBuilder(string $namespace): OperationCollectionBuilder
+    protected static function getOperationCollectionBuilder(string $namespace): OperationCollectionBuilder
     {
         $classLabeler = new UniqueClassLabeler(new ClassNameNormalizer('Operation'), new NumberSuffix());
         $classNamer   = new NamespacedNamer($namespace, $classLabeler);
 
-        return new OperationCollectionBuilder($classNamer, $this->getOperationBuilder());
+        return new OperationCollectionBuilder($classNamer, self::getOperationBuilder());
     }
 
-    protected function getOperationBuilder(): OperationBuilder
+    protected static function getOperationBuilder(): OperationBuilder
     {
         return new OperationBuilder(
-            $this->getParameterBuilder(),
-            $this->getRequestBodyBuilder(),
-            $this->getResponseBuilder()
+            self::getParameterBuilder(),
+            self::getRequestBodyBuilder(),
+            self::getResponseBuilder()
         );
     }
 
-    protected function getParameterBuilder(): ParameterBuilder
+    protected static function getParameterBuilder(): ParameterBuilder
     {
-        return new ParameterBuilder($this->getUniquePropertyLabeler(), $this->getPropertyBuilder());
+        return new ParameterBuilder(self::getUniquePropertyLabeler(), self::getPropertyBuilder());
     }
 
-    protected function getPropertyBuilder(): PropertyBuilder
+    protected static function getPropertyBuilder(): PropertyBuilder
     {
-        return new PropertyBuilder($this->getTypeMapper());
+        return new PropertyBuilder(self::getTypeMapper());
     }
 
-    protected function getRequestBodyBuilder(): RequestBodyBuilder
+    protected static function getRequestBodyBuilder(): RequestBodyBuilder
     {
-        return new RequestBodyBuilder($this->getPropertyBuilder());
+        return new RequestBodyBuilder(self::getPropertyBuilder());
     }
 
-    protected function getResponseBuilder(): ResponseBuilder
+    protected static function getResponseBuilder(): ResponseBuilder
     {
-        return new ResponseBuilder($this->getPropertyBuilder());
+        return new ResponseBuilder(self::getPropertyBuilder());
     }
 
-    protected function getUniquePropertyLabeler(): UniqueVariableLabeler
+    protected static function getUniquePropertyLabeler(): UniqueVariableLabeler
     {
         return new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
     }
 
-    protected function getTypeMapper(): TypeMapper
+    protected static function getTypeMapper(): TypeMapper
     {
         return new TypeMapper(new DateTimeImmutableMapper());
     }
 
-    protected function getPathParams(
+    protected static function getPathParams(
         string $namespace = '',
         string $pointer = '/paths/{foo}/get/parameters/path'
     ): PathOrQueryParams {
         return new PathOrQueryParams(
             '{foo}',
-            new ClassModel($namespace . '\\PathParams', $pointer, [], $this->getSimpleProperty('foo'))
+            new ClassModel($namespace . '\\PathParams', $pointer, [], self::getSimpleProperty('foo'))
         );
     }
 
-    protected function getQueryParams(
+    protected static function getQueryParams(
         string $namespace = '',
         string $pointer = '/paths/{foo}/get/parameters/query'
     ): PathOrQueryParams {
         return new PathOrQueryParams(
             '{?bar}',
-            new ClassModel($namespace . '\\QueryParams', $pointer, [], $this->getSimpleProperty('bar'))
+            new ClassModel($namespace . '\\QueryParams', $pointer, [], self::getSimpleProperty('bar'))
         );
     }
 
-    protected function getHeaderParams(
+    protected static function getHeaderParams(
         string $namespace = '',
         string $pointer = '/paths/{foo}/get/parameters/header'
     ): CookieOrHeaderParams {
         return new CookieOrHeaderParams(
             ['X-Foo' => '{X-Foo}'],
-            new ClassModel($namespace . '\\HeaderParams', $pointer, [], $this->getSimpleProperty('xFoo', 'X-Foo'))
+            new ClassModel($namespace . '\\HeaderParams', $pointer, [], self::getSimpleProperty('xFoo', 'X-Foo'))
         );
     }
 
-    protected function getCookieParams(
+    protected static function getCookieParams(
         string $namespace = '',
         string $pointer = '/paths/{foo}/get/parameters/cookie'
     ): CookieOrHeaderParams {
         return new CookieOrHeaderParams(
             ['cook' => '{cook}'],
-            new ClassModel($namespace . '\\CookieParams', $pointer, [], $this->getSimpleProperty('cook'))
+            new ClassModel($namespace . '\\CookieParams', $pointer, [], self::getSimpleProperty('cook'))
         );
     }
 
     /**
      * @return list<RequestBodyModel>
      */
-    protected function getRequestBodies(): array
+    protected static function getRequestBodies(): array
     {
         return [
             new RequestBodyModel(
@@ -174,13 +174,13 @@ trait OperationTrait
         ];
     }
 
-    protected function getResponse(): ResponseModel
+    protected static function getResponse(): ResponseModel
     {
         $property = new SimpleProperty('', '', new PropertyMetadata(required: true), PropertyType::String);
         return new ResponseModel('default', 'Hello world', 'text/plain', $property);
     }
 
-    protected function getSimpleProperty(string $name, string|null $originalName = null): SimpleProperty
+    protected static function getSimpleProperty(string $name, string|null $originalName = null): SimpleProperty
     {
         $originalName = $originalName ?? $name;
         return new SimpleProperty(
@@ -194,7 +194,7 @@ trait OperationTrait
     /**
      * @param list<OperationModel> $operations
      */
-    protected function getOperationCollection(array $operations): OperationCollection
+    protected static function getOperationCollection(array $operations): OperationCollection
     {
         $collection = new OperationCollection();
         foreach ($operations as $operation) {
@@ -207,11 +207,11 @@ trait OperationTrait
     /**
      * @return list<OperationModel>
      */
-    protected function getOperations(string $namespace = 'Api\\Operation'): array
+    protected static function getOperations(string $namespace = 'Api\\Operation'): array
     {
         return [
-            new OperationModel($namespace . '\\Foo\\Get\\Operation', '/paths/~1foo/get', $this->getPathParams()),
-            new OperationModel($namespace . '\\Bar\\Get\\Operation', '/paths/~1bar/get', null, $this->getQueryParams()),
+            new OperationModel($namespace . '\\Foo\\Get\\Operation', '/paths/~1foo/get', self::getPathParams()),
+            new OperationModel($namespace . '\\Bar\\Get\\Operation', '/paths/~1bar/get', null, self::getQueryParams()),
         ];
     }
 }

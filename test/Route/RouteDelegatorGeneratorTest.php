@@ -14,7 +14,6 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelInterface;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Mezzio\Application;
-use Mezzio\Authentication\AuthenticationMiddleware;
 use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -137,9 +136,9 @@ final class RouteDelegatorGeneratorTest extends TestCase
 
     public function testGenerateAddsAuthenticationMiddleware(): void
     {
-        $path       = '/pets';
-        $pointer    = '/paths/~pets/get';
-        $handler    = self::NAMESPACE . "\\Handlers\\Pet\\GetHandler";
+        $path    = '/pets';
+        $pointer = '/paths/~pets/get';
+        $handler = self::NAMESPACE . "\\Handlers\\Pet\\GetHandler";
 
         // phpcs:disable Generic.Files.LineLength.TooLong
         $expected = <<<INVOKE_BODY
@@ -158,12 +157,12 @@ final class RouteDelegatorGeneratorTest extends TestCase
         // phpcs:enable
 
         $security   = $this->createStub(SecurityModelInterface::class);
-        $model = new RouteModel($pointer, $path, 'get', [], [], $security, []);
+        $model      = new RouteModel($pointer, $path, 'get', [], [], $security, []);
         $collection = new RouteCollection();
         $collection->add($model);
 
         $map = [
-            $pointer  => $handler,
+            $pointer => $handler,
         ];
 
         $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE);
@@ -203,12 +202,13 @@ final class RouteDelegatorGeneratorTest extends TestCase
         INVOKE_BODY;
         // phpcs:enable
 
-        $model = new RouteModel($pointer, $path, 'get', [], [], null, [$middleware]);
+        /** @psalm-suppress ArgumentTypeCoercion */
+        $model      = new RouteModel($pointer, $path, 'get', [], [], null, [$middleware]);
         $collection = new RouteCollection();
         $collection->add($model);
 
         $map = [
-            $pointer  => $handler,
+            $pointer => $handler,
         ];
 
         $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE);

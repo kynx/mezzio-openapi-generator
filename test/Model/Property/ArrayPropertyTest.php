@@ -47,7 +47,10 @@ final class ArrayPropertyTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function getUsesProvider(): array
+    /**
+     * @return array<string, array{0: PropertyType|ClassString, 1: array}>
+     */
+    public static function getUsesProvider(): array
     {
         return [
             'scalar' => [PropertyType::String, []],
@@ -72,7 +75,10 @@ final class ArrayPropertyTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function getDocBlockProvider(): array
+    /**
+     * @return array<string, array{0: PropertyType|ClassString, 1: bool, 2: bool, 3: bool, 4: string}>
+     */
+    public static function getDocBlockProvider(): array
     {
         return [
             'array_string'          => [PropertyType::String, false, false, false, 'array<string, string>|null'],

@@ -25,8 +25,8 @@ final class RouteModelTest extends TestCase
         $queryParams = [
             new ParameterModel('age', false, 'integer', 'form', true),
         ];
-        $security   = $this->createStub(SecurityModelInterface::class);
-        $middleware = [
+        $security    = $this->createStub(SecurityModelInterface::class);
+        $middleware  = [
             self::class,
         ];
 

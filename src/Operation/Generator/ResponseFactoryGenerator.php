@@ -8,10 +8,8 @@ use Kynx\Mezzio\OpenApi\Hydrator\HydratorInterface;
 use Kynx\Mezzio\OpenApi\Hydrator\HydratorUtil;
 use Kynx\Mezzio\OpenApi\Operation\AbstractResponseFactory;
 use Kynx\Mezzio\OpenApi\Serializer\SerializerInterface;
-use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseModel;
@@ -29,14 +27,15 @@ use Psr\Http\Message\ServerRequestInterface;
 use function array_filter;
 use function array_map;
 use function array_merge;
-use function array_pop;
-use function array_reduce;
 use function array_unique;
 use function count;
 use function current;
 use function explode;
 use function implode;
+use function in_array;
 use function is_numeric;
+use function ksort;
+use function sprintf;
 use function strtolower;
 use function ucfirst;
 
@@ -151,8 +150,6 @@ final class ResponseFactoryGenerator
             ->setComment('@var array<class-string, class-string<HydratorInterface>>');
     }
 
-    /**
-     */
     private function addGetResponseMethod(
         PhpNamespace $namespace,
         ClassType $class,
@@ -181,8 +178,6 @@ final class ResponseFactoryGenerator
         }
     }
 
-    /**
-     */
     private function addNegotiatedResponse(
         PhpNamespace $namespace,
         Method $method,
@@ -222,8 +217,6 @@ final class ResponseFactoryGenerator
         $method->addBody('return $this->getResponse($body, ?, ?, $headers);', [$status, $reasonPhrase]);
     }
 
-    /**
-     */
     private function addSingleMimeTypeResponse(
         PhpNamespace $namespace,
         Method $method,
@@ -331,7 +324,6 @@ final class ResponseFactoryGenerator
 
         return array_unique($uses);
     }
-
 
     /**
      * Returns `true` if all responses are `array<array-key, ClassString>`

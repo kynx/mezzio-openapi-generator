@@ -9,16 +9,15 @@ use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Parameter;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
-
 use cebe\openapi\spec\Server;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
-use Kynx\Mezzio\OpenApiGenerator\Security\UnsupportedSecurityRequirement;
-use Psr\Http\Server\MiddlewareInterface;
 
 use function array_filter;
-use function is_string;
+use function current;
 use function parse_url;
 use function strtolower;
+
+use const PHP_URL_PATH;
 
 /**
  * @internal
@@ -42,7 +41,7 @@ final class RouteCollectionBuilder
         $collection = new RouteCollection();
 
         $basePath = '';
-        $server = current($openApi->servers);
+        $server   = current($openApi->servers);
         if ($server instanceof Server) {
             $basePath = parse_url($server->url, PHP_URL_PATH);
         }
@@ -111,7 +110,8 @@ final class RouteCollectionBuilder
      */
     private function getMiddleware(Operation $operation): array
     {
-        $extensions      = $operation->getExtensions();
+        $extensions = $operation->getExtensions();
+        /** @var array<array-key, class-string> $middlewareNames */
         $middlewareNames = (array) ($extensions['x-psr15-middleware'] ?? null);
         if ($middlewareNames === []) {
             return [];

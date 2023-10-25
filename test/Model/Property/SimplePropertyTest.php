@@ -36,6 +36,9 @@ final class SimplePropertyTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    /**
+     * @return array<string, array{0: PropertyType|ClassString, 1: string}>
+     */
     public function getPhpTypeProvider(): array
     {
         return [
@@ -55,6 +58,9 @@ final class SimplePropertyTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    /**
+     * @return array<string, array{0: PropertyType|ClassString, 1: array}>
+     */
     public function getUsesProvider(): array
     {
         return [

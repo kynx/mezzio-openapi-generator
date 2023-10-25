@@ -6,11 +6,13 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Security;
 
 use cebe\openapi\Reader;
 use cebe\openapi\spec\OpenApi;
+use cebe\openapi\spec\Operation;
+use cebe\openapi\spec\Paths;
 use Kynx\Mezzio\OpenApiGenerator\Security\ApiKeySecurityModel;
 use Kynx\Mezzio\OpenApiGenerator\Security\BasicSecurityModel;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelInterface;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
-use Kynx\Mezzio\OpenApiGenerator\Security\UnsupportedSecurityRequirement;
+use Kynx\Mezzio\OpenApiGenerator\Security\UnsupportedSecurityRequirementException;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
@@ -23,7 +25,7 @@ final class SecurityModelResolverTest extends TestCase
     public function testConstructUnsupportedSchemeThrowsException(): void
     {
         $openApi = $this->getOpenApi('unsupported.yaml');
-        $this->expectException(UnsupportedSecurityRequirement::class);
+        $this->expectException(UnsupportedSecurityRequirementException::class);
         $this->expectExceptionMessage("Security requirement 'openIdConnect' is not supported");
         new SecurityModelResolver($openApi);
     }
@@ -46,14 +48,14 @@ final class SecurityModelResolverTest extends TestCase
 
     public function testResolveMultipleSchemesThrowsException(): void
     {
-        $this->expectException(UnsupportedSecurityRequirement::class);
+        $this->expectException(UnsupportedSecurityRequirementException::class);
         $this->expectExceptionMessage('Multiple security requirements are not supported');
         $this->assertSecuritySchemeMatches('no-global.yaml', '/multiple', null);
     }
 
     public function testResolveMissingSchemeThrowsException(): void
     {
-        $this->expectException(UnsupportedSecurityRequirement::class);
+        $this->expectException(UnsupportedSecurityRequirementException::class);
         $this->expectExceptionMessage("Security scheme name 'oauth' does not exist");
         $this->assertSecuritySchemeMatches('no-global.yaml', '/missing-scheme', null);
     }
@@ -86,9 +88,12 @@ final class SecurityModelResolverTest extends TestCase
     {
         $openApi  = $this->getOpenApi($spec);
         $resolver = new SecurityModelResolver($openApi);
-        $operation = $openApi->paths->getPath($path)->getOperations()['get'];
+        $paths    = $openApi->paths;
+        self::assertInstanceOf(Paths::class, $paths);
+        $operation = $paths->getPath($path)?->getOperations()['get'];
+        self::assertInstanceOf(Operation::class, $operation);
         $security = $operation->security;
-        $actual = $resolver->resolve($security);
+        $actual   = $resolver->resolve($security);
         if ($expected === null) {
             self::assertNull($actual);
         } else {

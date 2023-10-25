@@ -6,7 +6,6 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model;
 
 use cebe\openapi\spec\Schema;
 use Kynx\Code\Normalizer\UniqueClassConstantLabeler;
-use Kynx\Code\Normalizer\UniqueConstantLabeler;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
@@ -70,6 +69,7 @@ final class ModelsBuilder
 
     /**
      * @param array<string, string> $interfaceNames
+     * @return list<string>
      */
     private function getImplements(NamedSpecification $namedSpec, array $interfaceNames): array
     {

@@ -38,7 +38,10 @@ final class UnionPropertyTest extends TestCase
         self::assertSame($discriminator, $property->getDiscriminator());
     }
 
-    public function discriminatorProvider(): array
+    /**
+     * @return array<string, array{0: PropertyList|PropertyValue|null}>
+     */
+    public static function discriminatorProvider(): array
     {
         return [
             'property_list'  => [new PropertyList(['\\Foo' => ['a'], '\\Bar' => ['b']])],

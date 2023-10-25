@@ -13,6 +13,7 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
 use PHPUnit\Framework\TestCase;
 
+use function array_merge;
 use function implode;
 use function iterator_to_array;
 
@@ -47,7 +48,8 @@ final class RouteCollectionBuilderTest extends TestCase
     public function testGetRouteCollectionAddsMiddleware(): void
     {
         $middlware = 'Api\Pet\Middleware\Guard';
-        $expected = [
+        /** @psalm-suppress ArgumentTypeCoercion */
+        $expected   = [
             new RouteModel('/paths/~1my~1pets/get', '/my/pets', 'get', [], [], null, [
                 $middlware,
             ]),
@@ -58,6 +60,7 @@ final class RouteCollectionBuilderTest extends TestCase
         }
 
         $openApi = $this->getOpenApi($this->getMiddlewareExtensionSpec());
+        /** @psalm-suppress ArgumentTypeCoercion */
         $builder = new RouteCollectionBuilder(['pet-guard' => $middlware]);
         $actual  = iterator_to_array($builder->getRouteCollection($openApi, new SecurityModelResolver($openApi)));
         self::assertEquals($expected, $actual);
@@ -65,7 +68,7 @@ final class RouteCollectionBuilderTest extends TestCase
 
     public function testGetRouteCollectionPrependsServerPath(): void
     {
-        $expected = [
+        $expected   = [
             new RouteModel('/paths/~1my~1pets/get', '/v1/my/pets', 'get', [], [], null, []),
         ];
         $collection = new RouteCollection();
@@ -81,7 +84,7 @@ final class RouteCollectionBuilderTest extends TestCase
 
         $openApi = $this->getOpenApi($this->getPrependBasePathSpec(), $servers);
         $builder = new RouteCollectionBuilder([]);
-        $actual = iterator_to_array($builder->getRouteCollection($openApi, new SecurityModelResolver($openApi)));
+        $actual  = iterator_to_array($builder->getRouteCollection($openApi, new SecurityModelResolver($openApi)));
         self::assertEquals($expected, $actual);
     }
 
@@ -139,7 +142,7 @@ final class RouteCollectionBuilderTest extends TestCase
         return [
             '/my/pets' => [
                 'get' => [
-                    'type'       => 'object',
+                    'type'               => 'object',
                     'x-psr15-middleware' => 'pet-guard',
                     'responses'          => $this->getStringResponse(),
                 ],
@@ -152,8 +155,8 @@ final class RouteCollectionBuilderTest extends TestCase
         return [
             '/my/pets' => [
                 'get' => [
-                    'type'       => 'object',
-                    'responses'  => $this->getStringResponse(),
+                    'type'      => 'object',
+                    'responses' => $this->getStringResponse(),
                 ],
             ],
         ];

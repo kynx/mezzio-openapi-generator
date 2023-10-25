@@ -16,6 +16,9 @@ use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+use function assert;
+use function is_array;
+
 /**
  * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriter
  */
@@ -39,7 +42,8 @@ final class HandlerWriterTest extends TestCase
     {
         $written = [];
         $this->writer->method('write')
-            ->willReturnCallback(function (PhpFile $file) use (&$written) {
+            ->willReturnCallback(static function (PhpFile $file) use (&$written): void {
+                assert(is_array($written));
                 $written[] = $file;
             });
 
@@ -49,8 +53,10 @@ final class HandlerWriterTest extends TestCase
         $collection->add(new HandlerModel('/paths/~1foo/get', $className, $operation));
 
         $this->handlerWriter->write($collection);
+        /** @psalm-suppress MixedArgument Don't know why psalm can't figure out this is an array */
         self::assertCount(2, $written);
 
+        /** @psalm-suppress MixedArrayAccess */
         $handler = $written[0];
         self::assertInstanceOf(PhpFile::class, $handler);
         $namespace = $this->getNamespace($handler, __NAMESPACE__);
@@ -58,6 +64,7 @@ final class HandlerWriterTest extends TestCase
         self::assertCount(1, $classes);
         self::assertArrayHasKey('GetHandler', $classes);
 
+        /** @psalm-suppress MixedArrayAccess */
         $factory = $written[1];
         self::assertInstanceOf(PhpFile::class, $factory);
         $namespace = $this->getNamespace($factory, __NAMESPACE__);

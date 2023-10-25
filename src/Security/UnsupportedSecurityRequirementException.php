@@ -6,7 +6,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Security;
 
 use RuntimeException;
 
-final class UnsupportedSecurityRequirement extends RuntimeException
+final class UnsupportedSecurityRequirementException extends RuntimeException
 {
     public static function multipleSecurityRequirements(): self
     {

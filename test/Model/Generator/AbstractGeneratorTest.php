@@ -77,7 +77,10 @@ final class AbstractGeneratorTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function getTypeProvider(): array
+    /**
+     * @return array<string, array{0: PropertyInterface, 1: string}>
+     */
+    public static function getTypeProvider(): array
     {
         $nullable    = new PropertyMetadata('', '', false, true);
         $required    = new PropertyMetadata('', '', true, false);
@@ -104,7 +107,10 @@ final class AbstractGeneratorTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function getPropertyUsesProvider(): array
+    /**
+     * @return array<string, array{0: list<PropertyInterface>, 1: array}>
+     */
+    public static function getPropertyUsesProvider(): array
     {
         $metadata = new PropertyMetadata();
         $a        = new ClassString('\\A');

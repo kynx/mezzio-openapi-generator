@@ -7,12 +7,12 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <directory name="src" />
-        <directory name="test" />
+        <directory name="src"/>
+        <directory name="test"/>
         <ignoreFiles>
-            <directory name="test/Handler/Asset" />
-            <directory name="test/Model/Asset/Broken" />
-            <directory name="vendor" />
+            <directory name="test/Handler/Asset"/>
+            <directory name="test/Model/Asset/Broken"/>
+            <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>
 
@@ -25,6 +25,6 @@
     </issueHandlers>
 
     <stubs>
-        <file name=".psr-container.php.stub" preloadClasses="true" />
+        <file name=".psr-container.php.stub" preloadClasses="true"/>
     </stubs>
-</psalm>
+<plugins><pluginClass class="Psalm\PhpUnitPlugin\Plugin"/></plugins></psalm>

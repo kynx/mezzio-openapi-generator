@@ -29,7 +29,6 @@ use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-use function strpos;
 use function trim;
 
 /**
@@ -370,8 +369,8 @@ final class HydratorGeneratorTest extends TestCase
         $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
         $class     = $this->getClass($namespace, 'FooHydrator');
 
-        $method   = $this->getHydrateMethod($class);
-        $body     = $method->getBody();
+        $method = $this->getHydrateMethod($class);
+        $body   = $method->getBody();
 
         $expected = "\$data = array_merge(self::DEFAULTS, \$data);\n"
             . "\$data = HydratorUtil::hydrateEnums(\$data, self::ARRAY_PROPERTIES, self::ENUMS);";
@@ -381,6 +380,7 @@ final class HydratorGeneratorTest extends TestCase
 
     /**
      * @dataProvider defaultProvider
+     * @param array{default?: string, required?: bool, readOnly?: bool} $metadata
      */
     public function testGenerateSetsDefaults(array $metadata, array $expected): void
     {
@@ -410,6 +410,9 @@ final class HydratorGeneratorTest extends TestCase
         self::assertStringContainsString($expected, $body);
     }
 
+    /**
+     * @return array<string, array{0: array{default?: string, required?: bool, readOnly?: bool}, 1: array}>
+     */
     public static function defaultProvider(): array
     {
         return [

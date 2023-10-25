@@ -260,14 +260,14 @@ final class ModelCollectionBuilderEnd2EndTest extends TestCase
     {
         $unresolved = $this->getUnresolved('self-reference.yaml');
 
-        $pointer = '/components/schemas/First';
-        $properties  = [
+        $pointer    = '/components/schemas/First';
+        $properties = [
             new ArrayProperty('$children', 'children', new PropertyMetadata(), true, new ClassString('\Schema\First')),
         ];
-        $models           = [
+        $models     = [
             new ClassModel('\\Schema\\First', $pointer, [], ...$properties),
         ];
-        $expected         = new ModelCollection();
+        $expected   = new ModelCollection();
         foreach ($models as $model) {
             $expected->add($model);
         }

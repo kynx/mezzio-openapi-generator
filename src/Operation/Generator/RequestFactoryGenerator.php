@@ -264,6 +264,9 @@ final class RequestFactoryGenerator
 
     private function isCastable(PropertyInterface $property): bool
     {
+        if (! ($property instanceof SimpleProperty || $property instanceof ArrayProperty)) {
+            return false;
+        }
         $type = $property->getType();
         if ($type instanceof ClassString) {
             return false;

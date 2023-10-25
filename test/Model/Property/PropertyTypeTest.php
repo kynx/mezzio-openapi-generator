@@ -31,7 +31,10 @@ final class PropertyTypeTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function baseTypeProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: PropertyType}>
+     */
+    public static function baseTypeProvider(): array
     {
         return [
             "array"   => ["array", PropertyType::Array],
@@ -67,7 +70,10 @@ final class PropertyTypeTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function formatProvider(): array
+    /**
+     * @return array<string, array{0: string, 1: PropertyType}>
+     */
+    public static function formatProvider(): array
     {
         return [
             'date'                  => ['date', PropertyType::Date],
@@ -101,7 +107,10 @@ final class PropertyTypeTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function valueProvider(): array
+    /**
+     * @return array<string, array{0: mixed, 1: PropertyType}>
+     */
+    public static function valueProvider(): array
     {
         return [
             'boolean' => [true, PropertyType::Boolean],
@@ -129,7 +138,10 @@ final class PropertyTypeTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function toPhpTypeProvider(): array
+    /**
+     * @return array<string, array{0: PropertyType, 1: string}>
+     */
+    public static function toPhpTypeProvider(): array
     {
         return [
             'array'    => [PropertyType::Array, 'array'],

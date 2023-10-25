@@ -11,6 +11,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 
 use function array_merge;
+use function in_array;
 
 /**
  * @internal
@@ -27,7 +28,7 @@ final class SchemaLocator
      */
     public function getNamedSpecifications(string $name, Schema $schema, array $visited = []): array
     {
-        $pointer          = $schema->getDocumentPosition()?->getPointer() ?? '';
+        $pointer = $schema->getDocumentPosition()?->getPointer() ?? '';
         if (in_array($pointer, $visited)) {
             return [];
         }

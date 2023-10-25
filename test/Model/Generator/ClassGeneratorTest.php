@@ -147,7 +147,10 @@ final class ClassGeneratorTest extends TestCase
         self::assertFalse($parameter->hasDefaultValue());
     }
 
-    public function parameterDefaultProvider(): array
+    /**
+     * @return array<string, array{0: bool, 1: bool, 2: bool|null}>
+     */
+    public static function parameterDefaultProvider(): array
     {
         return [
             'required'     => [true, false, null],
