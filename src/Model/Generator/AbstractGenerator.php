@@ -8,7 +8,6 @@ use Kynx\Mezzio\OpenApiGenerator\GeneratorUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
-use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 
 use function array_combine;
 use function array_merge;
@@ -21,7 +20,6 @@ use function implode;
 use function in_array;
 use function ksort;
 use function uksort;
-use function usort;
 
 /**
  * @internal

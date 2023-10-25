@@ -7,7 +7,6 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Code\Normalizer\UniqueVariableLabeler;
 use Kynx\Code\Normalizer\VariableNameNormalizer;
-use Psr\Container\ContainerInterface;
 
 /**
  * @internal

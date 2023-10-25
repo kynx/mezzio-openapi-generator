@@ -20,7 +20,6 @@ use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-use function array_keys;
 use function assert;
 use function current;
 use function is_array;

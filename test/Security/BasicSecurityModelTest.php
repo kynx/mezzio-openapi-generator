@@ -16,14 +16,14 @@ final class BasicSecurityModelTest extends TestCase
     public function testConstructorSetsScopes(): void
     {
         $expected = ['foo', 'bar'];
-        $model = new BasicSecurityModel('bearer', $expected);
-        $actual = $model->getScopes();
+        $model    = new BasicSecurityModel('bearer', $expected);
+        $actual   = $model->getScopes();
         self::assertSame($expected, $actual);
     }
 
     public function testGetAuthenticationAdapter(): void
     {
-        $model = new BasicSecurityModel('bearer', []);
+        $model  = new BasicSecurityModel('bearer', []);
         $actual = $model->getAuthenticationAdapter();
         self::assertSame(BasicAccess::class, $actual);
     }
@@ -31,9 +31,9 @@ final class BasicSecurityModelTest extends TestCase
     public function testWithScopesReturnsNewInstance(): void
     {
         $expected = ['foo', 'bar'];
-        $model = new BasicSecurityModel('bearer', []);
-        $new = $model->withScopes($expected);
-        $actual = $new->getScopes();
+        $model    = new BasicSecurityModel('bearer', []);
+        $new      = $model->withScopes($expected);
+        $actual   = $new->getScopes();
         self::assertNotSame($model, $new);
         self::assertSame($expected, $actual);
     }

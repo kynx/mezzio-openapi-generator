@@ -16,14 +16,14 @@ final class ApiKeySecurityModelTest extends TestCase
     public function testConstructorSetsScopes(): void
     {
         $expected = ['foo', 'bar'];
-        $model = new ApiKeySecurityModel('api-key', $expected);
-        $actual = $model->getScopes();
+        $model    = new ApiKeySecurityModel('api-key', $expected);
+        $actual   = $model->getScopes();
         self::assertSame($expected, $actual);
     }
 
     public function testGetAuthenticationAdapter(): void
     {
-        $model = new ApiKeySecurityModel('api-key');
+        $model  = new ApiKeySecurityModel('api-key');
         $actual = $model->getAuthenticationAdapter();
         self::assertSame(ApiKeyAuthentication::class, $actual);
     }
@@ -31,9 +31,9 @@ final class ApiKeySecurityModelTest extends TestCase
     public function testWithScopesReturnsNewInstance(): void
     {
         $expected = ['foo', 'bar'];
-        $model = new ApiKeySecurityModel('api-key', []);
-        $new = $model->withScopes($expected);
-        $actual = $new->getScopes();
+        $model    = new ApiKeySecurityModel('api-key', []);
+        $new      = $model->withScopes($expected);
+        $actual   = $new->getScopes();
         self::assertNotSame($model, $new);
         self::assertSame($expected, $actual);
     }

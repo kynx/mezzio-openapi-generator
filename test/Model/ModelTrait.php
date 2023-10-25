@@ -9,8 +9,6 @@ use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassConstantLabeler;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
-use Kynx\Code\Normalizer\UniqueVariableLabeler;
-use Kynx\Code\Normalizer\VariableNameNormalizer;
 use Kynx\Code\Normalizer\WordCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;

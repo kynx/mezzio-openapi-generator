@@ -17,7 +17,6 @@ use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Negotiation\Negotiator;
 use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\Dumper;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpFile;

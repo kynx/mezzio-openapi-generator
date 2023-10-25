@@ -34,7 +34,7 @@ final class HydratorGeneratorFactoryTest extends TestCase
         self::assertInstanceOf(HydratorGenerator::class, $instance);
 
         $reflection = new ReflectionProperty($instance, 'overrideHydrators');
-        $actual = $reflection->getValue($instance);
+        $actual     = $reflection->getValue($instance);
         self::assertSame($expected, $actual);
     }
 }
