@@ -5,8 +5,10 @@ declare(strict_types=1);
 
 namespace Kynx\Mezzio\OpenApiGenerator;
 
+use DateInterval;
 use DateTimeImmutable;
 use Kynx\Code\Normalizer\UniqueVariableLabeler;
+use Kynx\Mezzio\OpenApi\Hydrator\DateIntervalHydrator;
 use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGenerator;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGeneratorFactory;
@@ -60,7 +62,6 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriter;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterFactory;
-use Symfony\Component\Console\Command\Command;
 
 use function getcwd;
 
@@ -131,6 +132,7 @@ final class ConfigProvider
                 UriInterfaceMapper::class,
             ],
             'hydrators'    => [
+                DateInterval::class      => DateIntervalHydrator::class,
                 DateTimeImmutable::class => DateTimeImmutableHydrator::class,
             ],
         ];
