@@ -115,21 +115,4 @@ final class OperationWriterTest extends TestCase
 
         return $collection;
     }
-
-    private function getWrittenClassNames(array $written): array
-    {
-        $actual = [];
-        foreach ($written as $file) {
-            self::assertInstanceOf(PhpFile::class, $file);
-            $actual[] = $this->getClassName($file);
-        }
-
-        return $actual;
-    }
-
-    private function getClassName(PhpFile $file): string
-    {
-        $classes = $file->getClasses();
-        return (string) current(array_keys($classes));
-    }
 }

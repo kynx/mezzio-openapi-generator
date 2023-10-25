@@ -34,7 +34,7 @@
         "kynx/mezzio-authentication-apikey": "^0.1.1",
         "kynx/mezzio-openapi": "^0.5",
         "laminas/laminas-cli": "^1.7",
-        "laminas/laminas-diactoros": "^2.24",
+        "laminas/laminas-diactoros": "^3.2",
         "laminas/laminas-filter": "^2.30",
         "mezzio/mezzio-authentication-basic": "^1.7",
         "nette/php-generator": "^v4.0"
@@ -45,7 +45,7 @@ Up        "phpunit/phpunit": "^10.4",
         "psalm/plugin-phpunit": "^0.18.4",
         "roave/security-advisories": "dev-master",
         "squizlabs/php_codesniffer": "^3.7",
-        "vimeo/psalm": "^4.28"
+        "vimeo/psalm": "^5.15"
     },
     "autoload": {
         "psr-4": {

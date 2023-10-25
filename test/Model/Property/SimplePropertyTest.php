@@ -21,6 +21,7 @@ final class SimplePropertyTest extends TestCase
     {
         $type     = PropertyType::Integer;
         $property = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), $type);
+        /** @psalm-suppress RedundantConditionGivenDocblockType */
         self::assertSame($type, $property->getType());
         self::assertSame([$type], $property->getTypes());
     }

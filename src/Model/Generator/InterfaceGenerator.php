@@ -36,9 +36,6 @@ final class InterfaceGenerator extends AbstractGenerator
         return $interface;
     }
 
-    /**
-     * @param UsesArray $aliases
-     */
     private function addMethods(InterfaceType $type, InterfaceModel $model): void
     {
         foreach ($model->getProperties() as $property) {

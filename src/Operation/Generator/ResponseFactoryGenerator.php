@@ -45,10 +45,8 @@ final class ResponseFactoryGenerator
      * @param array<string, string> $overrideExtractors
      */
     public function __construct(
-        private readonly array $overrideExtractors,
-        private readonly Dumper $dumper = new Dumper()
+        private readonly array $overrideExtractors
     ) {
-        $this->dumper->indentation = '    ';
     }
 
     /**
@@ -278,7 +276,6 @@ final class ResponseFactoryGenerator
 
     /**
      * @param array<int, ResponseModel> $responses
-     * @param array<string, string> $extractorMap
      */
     private function getExtractor(PhpNamespace $namespace, array $responses): Literal
     {

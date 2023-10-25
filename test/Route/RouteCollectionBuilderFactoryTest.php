@@ -38,7 +38,6 @@ final class RouteCollectionBuilderFactoryTest extends TestCase
         $instance = $factory($container);
 
         $reflection = new ReflectionProperty($instance, 'middleware');
-        $reflection->setAccessible(true);
         $actual = $reflection->getValue($instance);
         self::assertSame($expected, $actual);
     }

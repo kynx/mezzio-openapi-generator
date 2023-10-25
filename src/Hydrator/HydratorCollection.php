@@ -13,7 +13,7 @@ use function count;
 
 /**
  * @internal
- *
+ * @implements Iterator<int, HydratorModel>
  * @psalm-internal Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal KynxTest\Mezzio\OpenApiGenerator
  */

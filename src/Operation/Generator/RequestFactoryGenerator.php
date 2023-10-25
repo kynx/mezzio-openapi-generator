@@ -123,9 +123,6 @@ final class RequestFactoryGenerator
         return $file;
     }
 
-    /**
-     * @param list<RequestBodyModel> $requestBodies
-     */
     private function addConstructor(PhpNamespace $namespace, ClassType $class, OperationModel $operation): void
     {
         $requestBodies = $operation->getRequestBodies();
@@ -276,7 +273,6 @@ final class RequestFactoryGenerator
     }
 
     /**
-     * @param list<RequestBodyModel> $requestBodies
      * @param array<string, string> $hydratorMap
      */
     private function addRequestBodyParser(

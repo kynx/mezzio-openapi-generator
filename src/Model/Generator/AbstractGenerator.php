@@ -34,30 +34,6 @@ use function usort;
  */
 abstract class AbstractGenerator
 {
-    /**
-     * @return list<PropertyInterface> $property
-     */
-    protected function getOrderedParameters(AbstractClassLikeModel $model): array
-    {
-        $properties = $model->getProperties();
-        usort($properties, function (PropertyInterface $a, PropertyInterface $b): int {
-            return $this->getOrder($a->getMetadata()) <=> $this->getOrder($b->getMetadata());
-        });
-
-        return $properties;
-    }
-
-    private function getOrder(PropertyMetadata $metadata): int
-    {
-        if ($metadata->getDefault() !== null) {
-            return 1;
-        }
-        if ($metadata->isNullable()) {
-            return 2;
-        }
-        return $metadata->isRequired() ? 0 : 2;
-    }
-
     protected function getClassLikeName(AbstractClassLikeModel|EnumModel $modelClass): string
     {
         return GeneratorUtil::getClassName($modelClass->getClassName());

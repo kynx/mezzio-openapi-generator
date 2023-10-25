@@ -9,6 +9,9 @@ use Iterator;
 
 use function count;
 
+/**
+ * @implements Iterator<int, AbstractClassLikeModel|EnumModel>
+ */
 final class ModelCollection implements Iterator, Countable
 {
     /** @var list<AbstractClassLikeModel|EnumModel> */

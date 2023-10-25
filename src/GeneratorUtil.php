@@ -30,6 +30,9 @@ use function ucfirst;
  */
 final class GeneratorUtil
 {
+    /**
+     * @psalm-suppress UnusedConstructor
+     */
     private function __construct()
     {
     }

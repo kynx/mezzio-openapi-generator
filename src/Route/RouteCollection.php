@@ -11,7 +11,7 @@ use function count;
 
 /**
  * @internal
- *
+ * @implements Iterator<int, RouteModel>
  * @see \KynxTest\Mezzio\OpenApiGenerator\Route\RouteCollectionTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator

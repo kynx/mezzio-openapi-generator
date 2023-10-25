@@ -53,10 +53,16 @@ final class HandlerWriterTest extends TestCase
         $collection->add(new HandlerModel('/paths/~1foo/get', $className, $operation));
 
         $this->handlerWriter->write($collection);
-        /** @psalm-suppress MixedArgument Don't know why psalm can't figure out this is an array */
+
+        /**
+         * @psalm-suppress MixedArgument Don't know why psalm can't figure out this is an array
+         */
         self::assertCount(2, $written);
 
-        /** @psalm-suppress MixedArrayAccess */
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod Now it thinks it's countable :(
+         * @psalm-suppress PossiblyInvalidArrayAccess
+         */
         $handler = $written[0];
         self::assertInstanceOf(PhpFile::class, $handler);
         $namespace = $this->getNamespace($handler, __NAMESPACE__);
@@ -64,7 +70,10 @@ final class HandlerWriterTest extends TestCase
         self::assertCount(1, $classes);
         self::assertArrayHasKey('GetHandler', $classes);
 
-        /** @psalm-suppress MixedArrayAccess */
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod Now it thinks it's countable :(
+         * @psalm-suppress PossiblyInvalidArrayAccess
+         */
         $factory = $written[1];
         self::assertInstanceOf(PhpFile::class, $factory);
         $namespace = $this->getNamespace($factory, __NAMESPACE__);

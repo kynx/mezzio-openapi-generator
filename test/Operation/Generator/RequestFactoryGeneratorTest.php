@@ -173,7 +173,7 @@ final class RequestFactoryGeneratorTest extends TestCase
 
         foreach ($tests as $type => $param) {
             $args = array_merge($default, [$type . 'Params' => $param]);
-            /** @psalm-suppress PossiblyInvalidArgument */
+            /** @psalm-suppress InvalidArgument */
             yield $type => [new OperationModel(self::CLASS_NAME, self::POINTER, ...$args), $type, $templates[$type]];
         }
     }

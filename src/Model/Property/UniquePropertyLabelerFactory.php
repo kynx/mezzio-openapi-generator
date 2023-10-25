@@ -17,7 +17,7 @@ use Psr\Container\ContainerInterface;
  */
 final class UniquePropertyLabelerFactory
 {
-    public function __invoke(ContainerInterface $container): UniqueVariableLabeler
+    public function __invoke(): UniqueVariableLabeler
     {
         // @fixme Why aren't we using UniquePropertyLabeler?!
         return new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());

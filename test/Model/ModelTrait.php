@@ -38,9 +38,4 @@ trait ModelTrait
 
         return new ModelCollectionBuilder($classNamer, $this->getModelsBuilder($propertiesBuilder));
     }
-
-    protected function getPropertyLabeler(): UniqueVariableLabeler
-    {
-        return new UniqueVariableLabeler(new VariableNameNormalizer(), new NumberSuffix());
-    }
 }

@@ -11,7 +11,7 @@ use function count;
 
 /**
  * @internal
- *
+ * @implements Iterator<int, OperationModel>
  * @see \KynxTest\Mezzio\OpenApiGenerator\Operation\OperationCollectionTest
  *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator

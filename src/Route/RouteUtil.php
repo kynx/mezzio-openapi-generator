@@ -23,6 +23,9 @@ use function trim;
  */
 final class RouteUtil
 {
+    /**
+     * @psalm-suppress UnusedConstructor
+     */
     private function __construct()
     {
     }
