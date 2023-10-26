@@ -94,7 +94,7 @@ final class HydratorGeneratorTest extends TestCase
         self::assertArrayHasKey('data', $parameters);
         $parameter = $parameters['data'];
         self::assertSame('data', $parameter->getName());
-        self::assertSame('array', $parameter->getType());
+        self::assertSame('mixed', $parameter->getType());
 
         $expected = <<<EOB
         try {
