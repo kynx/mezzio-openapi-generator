@@ -262,7 +262,7 @@ final class HydratorGenerator
             ->setStatic()
             ->setReturnType($model->getClassName());
         $method->addParameter('data')
-            ->setType('array');
+            ->setType('mixed');
 
         // phpcs:disable Generic.Files.LineLength.TooLong
         if ($valueDiscriminators !== []) {
