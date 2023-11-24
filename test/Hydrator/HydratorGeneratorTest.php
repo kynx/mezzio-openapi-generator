@@ -378,6 +378,50 @@ final class HydratorGeneratorTest extends TestCase
         self::assertStringContainsString($expected, $body);
     }
 
+    public function testGenerateAddsUnions(): void
+    {
+        $first      = new ClassString(self::MODEL_NAMESPACE . '\\Bar', true);
+        $second     = new ClassString(self::MODEL_NAMESPACE . '\\Baz', true);
+        $properties = [
+            new UnionProperty(
+                '$bar',
+                'bar',
+                new PropertyMetadata(default: 'baz'),
+                null,
+                $first,
+                $second
+            ),
+        ];
+        $classModel = new ClassModel(self::MODEL_NAMESPACE . '\\Foo', '/component/schemas/Foo', [], ...$properties);
+        $model      = new HydratorModel(self::MODEL_NAMESPACE . '\\FooHydrator', $classModel);
+        $classMap   = [
+            $classModel->getClassName() => $model->getClassName(),
+            $first->getClassString()    => $first->getClassString() . 'Hydrator',
+            $second->getClassString()   => $second->getClassString() . 'Hydrator',
+        ];
+
+        $file      = $this->generator->generate($model, $classMap);
+        $namespace = $this->getNamespace($file, self::MODEL_NAMESPACE);
+        $class     = $this->getClass($namespace, 'FooHydrator');
+
+        $expected = [
+            'bar' => [
+                new Literal('Bar::class => BarHydrator::class'),
+                new Literal('Baz::class => BazHydrator::class'),
+            ],
+        ];
+        /** @var array $actual */
+        $actual = $this->getConstant($class, 'UNIONS')->getValue();
+        self::assertEquals($expected, $actual);
+
+        $method = $this->getMethod($class, 'extract');
+        $body   = $method->getBody();
+
+        $expected = "\$data = HydratorUtil::extractUnions(\$data, self::ARRAY_PROPERTIES, self::UNIONS);";
+
+        self::assertStringContainsString($expected, $body);
+    }
+
     /**
      * @dataProvider defaultProvider
      * @param array{default?: string, required?: bool, readOnly?: bool} $metadata
