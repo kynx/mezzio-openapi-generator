@@ -380,8 +380,8 @@ final class HydratorGeneratorTest extends TestCase
 
     public function testGenerateAddsUnions(): void
     {
-        $first = new ClassString(self::MODEL_NAMESPACE . '\\Bar', true);
-        $second = new ClassString(self::MODEL_NAMESPACE . '\\Baz', true);
+        $first      = new ClassString(self::MODEL_NAMESPACE . '\\Bar', true);
+        $second     = new ClassString(self::MODEL_NAMESPACE . '\\Baz', true);
         $properties = [
             new UnionProperty(
                 '$bar',
@@ -410,7 +410,8 @@ final class HydratorGeneratorTest extends TestCase
                 new Literal('Baz::class => BazHydrator::class'),
             ],
         ];
-        $actual   = $this->getConstant($class, 'UNIONS')->getValue();
+        /** @var array $actual */
+        $actual = $this->getConstant($class, 'UNIONS')->getValue();
         self::assertEquals($expected, $actual);
 
         $method = $this->getMethod($class, 'extract');

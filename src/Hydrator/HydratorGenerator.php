@@ -240,6 +240,9 @@ final class HydratorGenerator
             ->setPrivate();
     }
 
+    /**
+     * @param array<string, array<string, string>> $unions
+     */
     private function addUnionConstant(PhpNamespace $namespace, ClassType $classType, array $unions): void
     {
         if ($unions === []) {
@@ -473,6 +476,10 @@ final class HydratorGenerator
         return $enums;
     }
 
+    /**
+     * @param array<string, string> $hydratorMap
+     * @return array<string, array<string, string>>
+     */
     private function getUnions(ClassModel $classModel, array $hydratorMap): array
     {
         $unions = [];
@@ -486,7 +493,7 @@ final class HydratorGenerator
                 if (! $type instanceof ClassString) {
                     continue;
                 }
-                $classString = $type->getClassString();
+                $classString         = $type->getClassString();
                 $union[$classString] = $this->overrideHydrators[$classString]
                     ?? $this->getFullQualified($hydratorMap[$classString]);
             }
