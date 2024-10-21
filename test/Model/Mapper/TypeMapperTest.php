@@ -7,6 +7,7 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Mapper;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapper;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapperInterface;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +17,17 @@ use PHPUnit\Framework\TestCase;
  */
 final class TypeMapperTest extends TestCase
 {
+    public function testMapTypeArrayThrowsException(): void
+    {
+        $spec       = ['type' => ['string', 'number']];
+        $schema     = new Schema($spec);
+        $typeMapper = new TypeMapper(self::createStub(TypeMapperInterface::class));
+
+        self::expectException(ModelException::class);
+        self::expectExceptionMessage('OpenAPI 3.1 type arrays are not supported yet');
+        $typeMapper->map($schema);
+    }
+
     public function testMapReturnsClassString(): void
     {
         $expected = new ClassString(self::class);
