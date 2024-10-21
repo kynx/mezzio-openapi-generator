@@ -29,22 +29,22 @@
         "php": "~8.2.0 || ~8.3.0",
         "ext-fileinfo": "*",
         "composer-runtime-api": "^2.2",
-        "kynx/code-utils": "^2.0",
+        "kynx/code-utils": "^2.3",
         "kynx/mezzio-authentication-apikey": "^1.2",
         "kynx/mezzio-openapi": "^0.6",
         "laminas/laminas-cli": "^1.7",
         "laminas/laminas-diactoros": "^3.2",
         "laminas/laminas-filter": "^2.30",
-        "mezzio/mezzio-authentication-basic": "^1.7",
-        "nette/php-generator": "^v4.0"
+        "mezzio/mezzio-authentication-basic": "^1.9",
+        "nette/php-generator": "^v4.1"
     },
     "require-dev": {
         "laminas/laminas-coding-standard": "^3.0",
-        "phpunit/phpunit": "^10.4",
+        "phpunit/phpunit": "^10.5.37",
         "psalm/plugin-phpunit": "^0.19",
         "roave/security-advisories": "dev-master",
-        "squizlabs/php_codesniffer": "^3.7",
-        "vimeo/psalm": "^5.15"
+        "squizlabs/php_codesniffer": "^3.10",
+        "vimeo/psalm": "^5.26"
     },
     "autoload": {
         "psr-4": {
