@@ -48,6 +48,7 @@ final class HydratorGenerator
     private const PROPERTY_EXTRACTORS     = 'PROPERTY_EXTRACTORS';
     private const ARRAY_PROPERTIES        = 'ARRAY_PROPERTIES';
     private const ENUMS                   = 'ENUMS';
+    private const UNIONS                  = 'UNIONS';
     private const DEFAULTS                = 'DEFAULTS';
 
     /**
@@ -89,6 +90,7 @@ final class HydratorGenerator
         $propertyDiscriminators = $this->getPropertyDiscriminators($classModel, $hydratorMap);
         $propertyHydrators      = $this->getPropertyHydrators($classModel, $hydratorMap);
         $enums                  = $this->getEnums($classModel);
+        $unions                 = $this->getUnions($classModel, $hydratorMap);
         $defaults               = $this->getDefaults($classModel);
 
         $all = $valueDiscriminators + $propertyDiscriminators + $propertyHydrators + $enums;
@@ -106,6 +108,7 @@ final class HydratorGenerator
         $this->addListDiscriminatorConstant($namespace, $class, $propertyDiscriminators);
         $this->addPropertyHydratorConstant($namespace, $class, $propertyHydrators);
         $this->addEnumConstant($namespace, $class, $enums);
+        $this->addUnionConstant($namespace, $class, $unions);
         $this->addDefaultsConstant($namespace, $class, $defaults);
 
         $this->addHydrateMethod(
@@ -118,7 +121,7 @@ final class HydratorGenerator
             $enums,
             $defaults
         );
-        $this->addExtractMethod($namespace, $classModel, $class, $propertyHydrators, $enums);
+        $this->addExtractMethod($namespace, $classModel, $class, $propertyHydrators, $enums, $unions);
 
         return $file;
     }
@@ -237,6 +240,33 @@ final class HydratorGenerator
             ->setPrivate();
     }
 
+    /**
+     * @param array<string, array<string, string>> $unions
+     */
+    private function addUnionConstant(PhpNamespace $namespace, ClassType $classType, array $unions): void
+    {
+        if ($unions === []) {
+            return;
+        }
+
+        $values = [];
+        foreach ($unions as $property => $union) {
+            $values[$property] = [];
+            foreach ($union as $class => $hydrator) {
+                $namespace->addUse($class);
+                $namespace->addUse($hydrator);
+                $values[$property][] = new Literal(sprintf(
+                    "%s::class => %s::class",
+                    $namespace->simplifyName($class),
+                    $namespace->simplifyName($hydrator)
+                ));
+            }
+        }
+
+        $classType->addConstant(self::UNIONS, $values)
+            ->setPrivate();
+    }
+
     private function addDefaultsConstant(PhpNamespace $namespace, ClassType $class, array $defaults): void
     {
         if ($defaults === []) {
@@ -262,7 +292,7 @@ final class HydratorGenerator
             ->setStatic()
             ->setReturnType($model->getClassName());
         $method->addParameter('data')
-            ->setType('array');
+            ->setType('mixed');
 
         // phpcs:disable Generic.Files.LineLength.TooLong
         if ($valueDiscriminators !== []) {
@@ -300,7 +330,8 @@ final class HydratorGenerator
         ClassModel $model,
         ClassType $class,
         array $propertyHydrators,
-        array $enums
+        array $enums,
+        array $unions
     ): void {
         $className = $namespace->simplifyName($model->getClassName());
         $method    = $class->addMethod('extract')
@@ -321,6 +352,9 @@ final class HydratorGenerator
         // phpcs:disable Generic.Files.LineLength.TooLong
         if ($enums !== []) {
             $method->addBody('$data = HydratorUtil::extractEnums($data, self::ARRAY_PROPERTIES, self::ENUMS);');
+        }
+        if ($unions !== []) {
+            $method->addBody('$data = HydratorUtil::extractUnions($data, self::ARRAY_PROPERTIES, self::UNIONS);');
         }
         if ($propertyHydrators !== []) {
             $method->addBody('$data = HydratorUtil::extractProperties($data, self::ARRAY_PROPERTIES, self::PROPERTY_HYDRATORS);');
@@ -440,6 +474,34 @@ final class HydratorGenerator
         }
 
         return $enums;
+    }
+
+    /**
+     * @param array<string, string> $hydratorMap
+     * @return array<string, array<string, string>>
+     */
+    private function getUnions(ClassModel $classModel, array $hydratorMap): array
+    {
+        $unions = [];
+        foreach ($classModel->getProperties() as $property) {
+            if (! $property instanceof UnionProperty) {
+                continue;
+            }
+
+            $union = [];
+            foreach ($property->getTypes() as $type) {
+                if (! $type instanceof ClassString) {
+                    continue;
+                }
+                $classString         = $type->getClassString();
+                $union[$classString] = $this->overrideHydrators[$classString]
+                    ?? $this->getFullQualified($hydratorMap[$classString]);
+            }
+
+            $unions[$property->getOriginalName()] = $union;
+        }
+
+        return $unions;
     }
 
     private function getDefaults(ClassModel $model): array
