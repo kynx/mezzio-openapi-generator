@@ -26,13 +26,12 @@
         }
     },
     "require": {
-        "php": "~8.2",
+        "php": "~8.2.0 || ~8.3.0",
         "ext-fileinfo": "*",
         "composer-runtime-api": "^2.2",
-        "cebe/php-openapi": "^1.7",
         "kynx/code-utils": "^2.0",
-        "kynx/mezzio-authentication-apikey": "^0.1.1",
-        "kynx/mezzio-openapi": "^0.5",
+        "kynx/mezzio-authentication-apikey": "^1.2",
+        "kynx/mezzio-openapi": "^0.6",
         "laminas/laminas-cli": "^1.7",
         "laminas/laminas-diactoros": "^3.2",
         "laminas/laminas-filter": "^2.30",
@@ -40,9 +39,9 @@
         "nette/php-generator": "^v4.0"
     },
     "require-dev": {
-        "laminas/laminas-coding-standard": "^2.4",
+        "laminas/laminas-coding-standard": "^3.0",
         "phpunit/phpunit": "^10.4",
-        "psalm/plugin-phpunit": "^0.18.4",
+        "psalm/plugin-phpunit": "^0.19",
         "roave/security-advisories": "dev-master",
         "squizlabs/php_codesniffer": "^3.7",
         "vimeo/psalm": "^5.15"
