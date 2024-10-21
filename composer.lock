@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56c5fe9e2615560312c7350ff64405a0",
+    "content-hash": "ebc940504811cca8e4c1a5e741452677",
     "packages": [
         {
             "name": "devizzent/cebe-php-openapi",
@@ -481,7 +481,7 @@
             "version": "0.6.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:kynx/mezzio-openapi.git",
+                "url": "https://github.com/kynx/mezzio-openapi.git",
                 "reference": "9066f39aa1e4b39fa11ee7b363a99617681c89ad"
             },
             "dist": {
@@ -518,33 +518,7 @@
                     "Kynx\\Mezzio\\OpenApi\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "KynxTest\\Mezzio\\OpenApi\\": "test/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@cs-check",
-                    "@static-analysis",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "static-analysis": [
-                    "psalm --shepherd --stats"
-                ],
-                "test": [
-                    "phpunit --colors=always"
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -560,6 +534,10 @@
                 "openapi",
                 "psr-15"
             ],
+            "support": {
+                "issues": "https://github.com/kynx/mezzio-openapi/issues",
+                "source": "https://github.com/kynx/mezzio-openapi/tree/0.6.0"
+            },
             "time": "2024-10-21T14:03:28+00:00"
         },
         {
