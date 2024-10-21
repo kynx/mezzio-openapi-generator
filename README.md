@@ -1,5 +1,7 @@
 # kynx/mezzio-openapi-generator
 
+[![Build Status](https://github.com/kynx/mezzio-openapi/workflows/Continuous%20Integration/badge.svg)](https://github.com/kynx/mezzio-openapi-generator/actions?query=workflow%3A"Continuous+Integration")
+
 Generate Mezzio REST APIs from OpenAPI specifications
 
 ## This is a Work in Progress
