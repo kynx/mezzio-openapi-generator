@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ed4875a794266d308b613a2735555d31",
+    "content-hash": "56c5fe9e2615560312c7350ff64405a0",
     "packages": [
         {
             "name": "devizzent/cebe-php-openapi",
@@ -481,7 +481,7 @@
             "version": "0.6.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/kynx/mezzio-openapi.git",
+                "url": "git@github.com:kynx/mezzio-openapi.git",
                 "reference": "9066f39aa1e4b39fa11ee7b363a99617681c89ad"
             },
             "dist": {
@@ -560,10 +560,6 @@
                 "openapi",
                 "psr-15"
             ],
-            "support": {
-                "source": "https://github.com/kynx/mezzio-openapi/tree/0.6.0",
-                "issues": "https://github.com/kynx/mezzio-openapi/issues"
-            },
             "time": "2024-10-21T14:03:28+00:00"
         },
         {
