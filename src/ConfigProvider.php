@@ -67,6 +67,7 @@ use function getcwd;
 
 /**
  * phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
+ *
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  * @psalm-type CliConfigArray = array{commands: array<string, class-string<\Symfony\Component\Console\Command\Command>>}
@@ -89,7 +90,6 @@ use function getcwd;
  *      laminas-cli: CliConfigArray,
  *      dependencies: DependencyConfigArray
  * }
- * phpcs:enable
  */
 final class ConfigProvider
 {

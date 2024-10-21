@@ -14,10 +14,13 @@ namespace Kynx\Mezzio\OpenApiGenerator\Route;
  */
 final class ParameterModel
 {
+    /**
+     * @param string|array<string>|null $type
+     */
     public function __construct(
         private readonly string $name,
         private readonly bool $hasContent,
-        private readonly string|null $type = null,
+        private readonly string|array|null $type = null,
         private readonly string|null $style = null,
         private readonly bool|null $explode = null
     ) {
@@ -33,7 +36,10 @@ final class ParameterModel
         return $this->hasContent;
     }
 
-    public function getType(): ?string
+    /**
+     * @return string|array<string>|null
+     */
+    public function getType(): string|array|null
     {
         return $this->type;
     }

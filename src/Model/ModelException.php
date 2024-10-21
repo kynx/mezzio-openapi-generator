@@ -11,6 +11,7 @@ use RuntimeException;
 use Throwable;
 
 use function get_debug_type;
+use function is_array;
 use function sprintf;
 
 /**
@@ -31,10 +32,13 @@ final class ModelException extends RuntimeException
         ));
     }
 
-    public static function unrecognizedType(?string $type): self
+    public static function unrecognizedType(string|array|null $type): self
     {
         if ($type === null) {
             return new self("Schema does not specify a type");
+        }
+        if (is_array($type)) {
+            return new self("OpenAPI 3.1 type arrays are not supported yet");
         }
         return new self("Unrecognized type '$type'");
     }

@@ -9,9 +9,10 @@ use Nette\PhpGenerator\Constant;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @psalm-require-extends \PHPUnit\Framework\TestCase
+ * @psalm-require-extends TestCase
  */
 trait GeneratorTrait
 {

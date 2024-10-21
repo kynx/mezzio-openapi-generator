@@ -2,7 +2,7 @@
 
 Generate Mezzio REST APIs from OpenAPI specifications
 
-**This is a Work in Progress**
+## This is a Work in Progress
 
 ## Goals
 
@@ -11,7 +11,8 @@ Generate Mezzio REST APIs from OpenAPI specifications
 * [x] Generate handlers from spec
 * [x] Generate model hydrators from spec (or just use constructor property promotion + JsonSerializable?)
 
-### Performance:
+### Performance
+
 https://github.com/cebe/php-openapi/issues/156
 
-### OpenAPI 3.1:
+### OpenAPI 3.1

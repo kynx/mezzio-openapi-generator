@@ -10,9 +10,10 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @psalm-require-extends \PHPUnit\Framework\TestCase
+ * @psalm-require-extends TestCase
  */
 trait RouteTrait
 {

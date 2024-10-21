@@ -38,6 +38,20 @@ final class ModelExceptionTest extends TestCase
         self::assertSame($expected, $exception->getMessage());
     }
 
+    public function testUnrecognizedNullType(): void
+    {
+        $expected  = "Schema does not specify a type";
+        $exception = ModelException::unrecognizedType(null);
+        self::assertSame($expected, $exception->getMessage());
+    }
+
+    public function testUnrecognizedArrayType(): void
+    {
+        $expected  = "OpenAPI 3.1 type arrays are not supported yet";
+        $exception = ModelException::unrecognizedType(['string', 'number']);
+        self::assertSame($expected, $exception->getMessage());
+    }
+
     public function testUnrecognizedType(): void
     {
         $expected  = "Unrecognized type 'foo'";

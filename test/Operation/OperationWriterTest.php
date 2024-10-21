@@ -20,9 +20,7 @@ use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-use function assert;
 use function current;
-use function is_array;
 
 /**
  * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter
@@ -97,7 +95,6 @@ final class OperationWriterTest extends TestCase
     {
         $this->writer->method('write')
             ->willReturnCallback(function (PhpFile $file) use (&$written) {
-                assert(is_array($written));
                 $written[] = current($file->getClasses())->getName();
             });
     }

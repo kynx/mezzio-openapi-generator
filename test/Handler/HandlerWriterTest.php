@@ -16,9 +16,6 @@ use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-use function assert;
-use function is_array;
-
 /**
  * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriter
  */
@@ -43,7 +40,6 @@ final class HandlerWriterTest extends TestCase
         $written = [];
         $this->writer->method('write')
             ->willReturnCallback(static function (PhpFile $file) use (&$written): void {
-                assert(is_array($written));
                 $written[] = $file;
             });
 
