@@ -57,7 +57,7 @@ final class Writer implements WriterInterface
             return;
         }
 
-        if (! @file_put_contents($path, $this->printer->printFile($file))) {
+        if (@file_put_contents($path, $this->printer->printFile($file)) === false) {
             throw WriterException::cannotWriteFile($path);
         }
     }

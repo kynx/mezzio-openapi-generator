@@ -51,7 +51,7 @@ final class ModelUtil
 
         /** @var list<string> $paths */
         $paths = $specification->getDocumentPosition()?->getPath() ?? [];
-        return rtrim($section, 's') . ' ' . (array_pop($paths) ?: '');
+        return rtrim($section, 's') . ' ' . (array_pop($paths) ?? '');
     }
 
     public static function isComponent(string $section, Schema $schema): bool

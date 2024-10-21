@@ -61,11 +61,15 @@ final class SecurityModelResolver
         );
         // phpcs:enable
 
-        /** @var array $requirement */
+        /** @var array<string> $requirement */
         $requirement = current($requirements) ?: [];
         $name        = (string) array_key_first($requirement);
-        /** @psalm-suppress MixedArgument */
-        return $this->getSecurityModel($name)->withScopes(current($requirement) ?: []);
+        $scope       = current($requirement);
+        if ($scope === false) {
+            $scope = [];
+        }
+
+        return $this->getSecurityModel($name)->withScopes((array) $scope);
     }
 
     private function getSecurityModel(string $name): SecurityModelInterface
