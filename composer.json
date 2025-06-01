@@ -31,7 +31,7 @@
         "composer-runtime-api": "^2.2",
         "kynx/code-utils": "^2.3",
         "kynx/mezzio-authentication-apikey": "^1.2",
-        "kynx/mezzio-openapi": "^0.6 || ^0.7",
+        "kynx/mezzio-openapi": "^0.6 || ^0.7 || ^0.8",
         "laminas/laminas-cli": "^1.7",
         "laminas/laminas-diactoros": "^3.2",
         "laminas/laminas-filter": "^2.30",
