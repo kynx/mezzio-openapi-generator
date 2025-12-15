@@ -58,6 +58,8 @@ final class RouteDelegatorGenerator
             ->setFinal();
 
         $namespace = current($file->getNamespaces());
+        assert($namespace instanceof PhpNamespace);
+
         $namespace->addUse(Application::class)
             ->addUse(OpenApiOperationMiddleware::class)
             ->addUse(OpenApiRequestFactory::class)

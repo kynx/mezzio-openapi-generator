@@ -57,7 +57,7 @@ final class ResponseLocator
 
     public function normalizeHeaderName(string $name): string
     {
-        $parts = preg_split('/[^a-z0-9]+/i', strtolower($name));
+        $parts = preg_split('/[^a-z0-9]+/i', strtolower($name)) ?: [];
         return implode('', array_map('ucfirst', $parts)) . 'Header';
     }
 }

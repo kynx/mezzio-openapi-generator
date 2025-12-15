@@ -57,7 +57,7 @@ final class MediaTypeLocator
 
             // add content type to name if they're not all pointing at same schema
             if ($numPointers > 1) {
-                $name = $baseName . ' ' . preg_replace('/[^a-z0-9]+/i', ' ', (string) $type);
+                $name = $baseName . ' ' . (string) preg_replace('/[^a-z0-9]+/i', ' ', (string) $type);
             } else {
                 $name = $baseName;
             }

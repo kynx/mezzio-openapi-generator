@@ -13,8 +13,10 @@ use Nette\PhpGenerator\Attribute;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\EnumType;
 use Nette\PhpGenerator\InterfaceType;
+use Nette\PhpGenerator\PhpNamespace;
 use PHPUnit\Framework\TestCase;
 
+use function assert;
 use function current;
 
 /**
@@ -53,6 +55,7 @@ final class ModelGeneratorTest extends TestCase
         $namespaces = $file->getNamespaces();
         self::assertCount(1, $namespaces);
         $namespace = current($namespaces);
+        assert($namespace instanceof PhpNamespace);
         self::assertSame('A', $namespace->getName());
 
         $uses = $namespace->getUses();

@@ -20,6 +20,7 @@ use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+use function assert;
 use function current;
 
 /**
@@ -95,7 +96,9 @@ final class OperationWriterTest extends TestCase
     {
         $this->writer->method('write')
             ->willReturnCallback(function (PhpFile $file) use (&$written) {
-                $written[] = current($file->getClasses())->getName();
+                $class = current($file->getClasses());
+                self::assertNotFalse($class);
+                $written[] = $class->getName();
             });
     }
 

@@ -35,7 +35,7 @@ final class DotSnakeCaseNamer implements NamerInterface
         $parts = [$this->prefix];
 
         $routeParts = array_map(
-            fn (string $part): string => preg_replace('/{(.+)}/', '$1', $part),
+            fn (string $part): string => (string) preg_replace('/{(.+)}/', '$1', $part),
             array_slice(explode('/', $route->getPath()), 1)
         );
         $parts      = array_merge($parts, $routeParts);

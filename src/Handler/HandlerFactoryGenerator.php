@@ -7,8 +7,10 @@ namespace Kynx\Mezzio\OpenApiGenerator\Handler;
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiHandlerFactory;
 use Kynx\Mezzio\OpenApi\Serializer\SerializerInterface;
 use Nette\PhpGenerator\PhpFile;
+use Nette\PhpGenerator\PhpNamespace;
 use Psr\Container\ContainerInterface;
 
+use function assert;
 use function current;
 
 final class HandlerFactoryGenerator
@@ -26,6 +28,7 @@ final class HandlerFactoryGenerator
             ->addAttribute(OpenApiHandlerFactory::class, [$pointer]);
 
         $namespace = current($file->getNamespaces());
+        assert($namespace instanceof PhpNamespace);
         $namespace->addUse(ContainerInterface::class)
             ->addUse(OpenApiHandlerFactory::class)
             ->addUse($operation->getResponseFactoryClassName());

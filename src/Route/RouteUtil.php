@@ -49,7 +49,7 @@ final class RouteUtil
     {
         $parts = array_slice(explode('/', $path), 1);
         return array_map(
-            fn (string $part): string => preg_replace('/\{(.*)}/Uu', '$1', $part),
+            fn (string $part): string => (string) preg_replace('/\{(.*)}/Uu', '$1', $part),
             $parts
         );
     }

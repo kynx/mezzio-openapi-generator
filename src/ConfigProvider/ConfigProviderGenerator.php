@@ -17,6 +17,7 @@ use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
 
 use function asort;
+use function assert;
 use function current;
 use function ksort;
 use function ltrim;
@@ -47,6 +48,7 @@ final class ConfigProviderGenerator
             ->setFinal();
 
         $namespace = current($file->getNamespaces());
+        assert($namespace instanceof PhpNamespace);
         $namespace->addUse(InvokableFactory::class)
             ->addUse(OpenApiConfigProvider::class)
             ->addUse(Application::class)

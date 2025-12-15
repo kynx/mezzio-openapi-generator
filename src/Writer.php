@@ -69,7 +69,7 @@ final class Writer implements WriterInterface
         }
 
         try {
-            $file = PhpFile::fromCode(@file_get_contents($path));
+            $file = PhpFile::fromCode((string) @file_get_contents($path));
         } catch (InvalidStateException) {
             return true;
         }
@@ -89,7 +89,7 @@ final class Writer implements WriterInterface
         assert($namespace instanceof PhpNamespace);
 
         $regExp       = '/^' . str_replace('\\', '\\\\', $this->normalize($this->baseNamespace)) . '/';
-        $subNamespace = preg_replace($regExp, '', $this->normalize($namespace->getName()));
+        $subNamespace = (string) preg_replace($regExp, '', $this->normalize($namespace->getName()));
 
         return rtrim($this->baseDir . '/' . str_replace('\\', '/', $this->normalize($subNamespace)), '/');
     }

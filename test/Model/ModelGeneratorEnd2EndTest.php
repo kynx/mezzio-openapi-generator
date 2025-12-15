@@ -78,9 +78,9 @@ final class ModelGeneratorEnd2EndTest extends TestCase
     public function getAsset(string $className): string
     {
         $namespace = str_replace('\\', '\\\\', self::NAMESPACE);
-        $partName  = preg_replace('/^' . $namespace . '/', '', $className);
+        $partName  = (string) preg_replace('/^' . $namespace . '/', '', $className);
         $filePath  = self::ASSET_DIR . str_replace('\\', '/', $partName) . '.php';
-        return file_get_contents($filePath);
+        return (string) file_get_contents($filePath);
     }
 
     public function getPrinter(): Printer
