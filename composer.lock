@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c68d4f963f18133cac1a0d205561b62a",
+    "content-hash": "021f36083bd82bd74f453ff85ee788ab",
     "packages": [
         {
             "name": "devizzent/cebe-php-openapi",
@@ -267,27 +267,27 @@
         },
         {
             "name": "kynx/code-utils",
-            "version": "2.4.0",
+            "version": "2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kynx/code-utils.git",
-                "reference": "925505faf6615c4a0f1b090e9f18340e913499bf"
+                "reference": "56d65d6e0e4339bac2df49afb28db3b6e9ff33d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kynx/code-utils/zipball/925505faf6615c4a0f1b090e9f18340e913499bf",
-                "reference": "925505faf6615c4a0f1b090e9f18340e913499bf",
+                "url": "https://api.github.com/repos/kynx/code-utils/zipball/56d65d6e0e4339bac2df49afb28db3b6e9ff33d9",
+                "reference": "56d65d6e0e4339bac2df49afb28db3b6e9ff33d9",
                 "shasum": ""
             },
             "require": {
                 "ext-intl": "*",
-                "php": "~8.3.0 || ~8.4.0"
+                "php": "~8.3.0 || ~8.4.0 || ~8.5.0"
             },
             "require-dev": {
-                "laminas/laminas-coding-standard": "^3.0",
-                "phpunit/phpunit": "^12.0",
-                "psalm/plugin-phpunit": "^0.19.2",
-                "vimeo/psalm": "^6.0"
+                "laminas/laminas-coding-standard": "^3.1",
+                "phpunit/phpunit": "^12.4",
+                "psalm/plugin-phpunit": "^0.19.5",
+                "vimeo/psalm": "^6.13"
             },
             "type": "library",
             "autoload": {
@@ -314,9 +314,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kynx/code-utils/issues",
-                "source": "https://github.com/kynx/code-utils/tree/2.4.0"
+                "source": "https://github.com/kynx/code-utils/tree/2.4.1"
             },
-            "time": "2025-05-27T17:36:31+00:00"
+            "time": "2025-12-15T16:46:46+00:00"
         },
         {
             "name": "kynx/mezzio-authentication-apikey",

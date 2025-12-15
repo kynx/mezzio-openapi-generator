@@ -29,7 +29,7 @@
         "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
         "ext-fileinfo": "*",
         "composer-runtime-api": "^2.2",
-        "kynx/code-utils": "^2.4",
+        "kynx/code-utils": "^2.4.1",
         "kynx/mezzio-authentication-apikey": "^1.3",
         "kynx/mezzio-openapi": "^0.8",
         "laminas/laminas-cli": "^1.11",
