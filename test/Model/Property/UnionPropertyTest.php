@@ -10,15 +10,15 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
- */
+#[CoversClass(UnionProperty::class)]
+#[UsesClass(PropertyList::class)]
+#[UsesClass(PropertyValue::class)]
+#[UsesClass(PropertyMetadata::class)]
 final class UnionPropertyTest extends TestCase
 {
     public function testConstructorSetsMembers(): void
@@ -28,9 +28,7 @@ final class UnionPropertyTest extends TestCase
         self::assertSame($members, $property->getTypes());
     }
 
-    /**
-     * @dataProvider discriminatorProvider
-     */
+    #[DataProvider('discriminatorProvider')]
     public function testConstructorSetsDiscriminator(PropertyList|PropertyValue|null $discriminator): void
     {
         $members  = [new ClassString('\\Foo'), new ClassString('\\Bar')];

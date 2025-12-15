@@ -26,14 +26,14 @@ use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpNamespace;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
 use function trim;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator
- */
+#[CoversClass(HydratorGenerator::class)]
 final class HydratorGeneratorTest extends TestCase
 {
     use GeneratorTrait;
@@ -423,9 +423,9 @@ final class HydratorGeneratorTest extends TestCase
     }
 
     /**
-     * @dataProvider defaultProvider
      * @param array{default?: string, required?: bool, readOnly?: bool} $metadata
      */
+    #[DataProvider('defaultProvider')]
     public function testGenerateSetsDefaults(array $metadata, array $expected): void
     {
         $properties = [

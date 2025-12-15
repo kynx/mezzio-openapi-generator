@@ -6,11 +6,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseHeader;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\ResponseHeader
- */
+#[CoversClass(ResponseHeader::class)]
 final class ResponseHeaderTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

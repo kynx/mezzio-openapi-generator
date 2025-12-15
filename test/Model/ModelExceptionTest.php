@@ -9,18 +9,18 @@ use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Responses;
 use Exception;
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use stdClass;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
- */
+#[CoversClass(ModelException::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(InterfaceModel::class)]
 final class ModelExceptionTest extends TestCase
 {
     public function testInvalidModelPath(): void

@@ -25,12 +25,11 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterInterface;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\GenerateServiceFactory
- */
+#[CoversClass(GenerateServiceFactory::class)]
 final class GenerateServiceFactoryTest extends TestCase
 {
     use HandlerTrait;

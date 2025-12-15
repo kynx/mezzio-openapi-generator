@@ -21,14 +21,13 @@ use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\PromotedParameter;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 use function trim;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Generator\ResponseFactoryGenerator
- */
+#[CoversClass(ResponseFactoryGenerator::class)]
 final class ResponseFactoryGeneratorTest extends TestCase
 {
     use GeneratorTrait;

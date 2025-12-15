@@ -6,16 +6,14 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Mapper;
 
 use DateInterval;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateIntervalMapper;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateIntervalMapper
- */
+#[CoversClass(DateIntervalMapper::class)]
 final class DateIntervalMapperTest extends TestCase
 {
-    /**
-     * @dataProvider canMapProvider
-     */
+    #[DataProvider('canMapProvider')]
     public function testCanMap(string $type, string|null $format, bool $expected): void
     {
         $mapper = new DateIntervalMapper();

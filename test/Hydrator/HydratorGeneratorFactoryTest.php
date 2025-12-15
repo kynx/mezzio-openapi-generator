@@ -9,13 +9,12 @@ use Kynx\Mezzio\OpenApi\Hydrator\DateTimeImmutableHydrator;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGeneratorFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionProperty;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorGeneratorFactory
- */
+#[CoversClass(HydratorGeneratorFactory::class)]
 final class HydratorGeneratorFactoryTest extends TestCase
 {
     public function testInvokeReturnsInstance(): void

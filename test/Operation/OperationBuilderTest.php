@@ -6,11 +6,11 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder
- */
+#[CoversClass(OperationBuilder::class)]
 final class OperationBuilderTest extends TestCase
 {
     use OperationTrait;
@@ -36,9 +36,7 @@ final class OperationBuilderTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @dataProvider addParameterProvider
-     */
+    #[DataProvider('addParameterProvider')]
     public function testGetModelsAddsParams(string $in, string $name, OperationModel $expected): void
     {
         $namedSpec = $this->getNamedSpecification('get', spec: [

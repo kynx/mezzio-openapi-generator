@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
@@ -11,30 +12,30 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumCase
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels
- */
+#[CoversClass(ExistingModels::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(ClassModel::class)]
+#[UsesClass(EnumCase::class)]
+#[UsesClass(EnumModel::class)]
+#[UsesClass(InterfaceModel::class)]
+#[UsesClass(ModelCollection::class)]
+#[UsesClass(ModelException::class)]
+#[UsesClass(AbstractProperty::class)]
+#[UsesClass(ArrayProperty::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(SimpleProperty::class)]
+#[UsesClass(UnionProperty::class)]
 final class ExistingModelsTest extends TestCase
 {
     private const NAMESPACE = __NAMESPACE__ . '\\Asset\\Existing';

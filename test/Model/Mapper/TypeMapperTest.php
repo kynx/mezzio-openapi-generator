@@ -10,11 +10,10 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapperInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapper
- */
+#[CoversClass(TypeMapper::class)]
 final class TypeMapperTest extends TestCase
 {
     public function testMapTypeArrayThrowsException(): void
@@ -34,7 +33,7 @@ final class TypeMapperTest extends TestCase
         $spec     = ['type' => 'foo'];
         $schema   = new Schema($spec);
 
-        $mapper = $this->createMock(TypeMapperInterface::class);
+        $mapper = self::createStub(TypeMapperInterface::class);
         $mapper->method('canMap')
             ->with('foo', null)
             ->willReturn(true);
@@ -53,7 +52,7 @@ final class TypeMapperTest extends TestCase
         $spec     = ['type' => 'string', 'format' => 'datetime'];
         $schema   = new Schema($spec);
 
-        $mapper = $this->createMock(TypeMapperInterface::class);
+        $mapper = self::createStub(TypeMapperInterface::class);
         $mapper->method('canMap')
             ->with('string', 'datetime')
             ->willReturn(false);

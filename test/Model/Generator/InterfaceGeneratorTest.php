@@ -4,30 +4,32 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Generator;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use Nette\PhpGenerator\PhpNamespace;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function array_map;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator
- */
+#[CoversClass(InterfaceGenerator::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(AbstractGenerator::class)]
+#[UsesClass(InterfaceModel::class)]
+#[UsesClass(AbstractProperty::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(PropertyType::class)]
+#[UsesClass(SimpleProperty::class)]
+#[UsesClass(UnionProperty::class)]
 final class InterfaceGeneratorTest extends TestCase
 {
     private InterfaceGenerator $generator;

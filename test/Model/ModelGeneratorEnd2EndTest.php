@@ -13,15 +13,14 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Nette\PhpGenerator\Printer;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 use function file_get_contents;
 use function preg_replace;
 use function str_replace;
 
-/**
- * @coversNothing
- */
+#[CoversNothing]
 final class ModelGeneratorEnd2EndTest extends TestCase
 {
     private const NAMESPACE = __NAMESPACE__ . '\\Asset\\Generator';
@@ -78,9 +77,9 @@ final class ModelGeneratorEnd2EndTest extends TestCase
     public function getAsset(string $className): string
     {
         $namespace = str_replace('\\', '\\\\', self::NAMESPACE);
-        $partName  = preg_replace('/^' . $namespace . '/', '', $className);
+        $partName  = (string) preg_replace('/^' . $namespace . '/', '', $className);
         $filePath  = self::ASSET_DIR . str_replace('\\', '/', $partName) . '.php';
-        return file_get_contents($filePath);
+        return (string) file_get_contents($filePath);
     }
 
     public function getPrinter(): Printer

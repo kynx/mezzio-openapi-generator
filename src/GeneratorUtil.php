@@ -75,7 +75,7 @@ final class GeneratorUtil
 
     public static function normalizePropertyName(PropertyInterface $property): string
     {
-        return preg_replace('/^\$/', '', $property->getName());
+        return (string) preg_replace('/^\$/', '', $property->getName());
     }
 
     /**
@@ -85,6 +85,6 @@ final class GeneratorUtil
     {
         /** @psalm-suppress ImpureMethodCall */
         $dump = $dumper->dump($list);
-        return preg_replace('/^\s*\[(.*)]\s*$/s', '$1', $dump);
+        return (string) preg_replace('/^\s*\[(.*)]\s*$/s', '$1', $dump);
     }
 }

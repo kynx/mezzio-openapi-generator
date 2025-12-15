@@ -8,6 +8,8 @@ use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Kynx\Mezzio\OpenApiGenerator\WriterException;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function copy;
@@ -23,11 +25,8 @@ use function tempnam;
 use function touch;
 use function unlink;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\WriterException
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Writer
- */
+#[CoversClass(Writer::class)]
+#[UsesClass(WriterException::class)]
 final class WriterTest extends TestCase
 {
     private const BASE_NAMESPACE = 'Foo';
@@ -39,7 +38,7 @@ final class WriterTest extends TestCase
     {
         parent::setUp();
 
-        $this->dir = tempnam(sys_get_temp_dir(), 'phpunit_writer');
+        $this->dir = (string) tempnam(sys_get_temp_dir(), 'phpunit_writer');
         unlink($this->dir) && mkdir($this->dir);
 
         $this->writer = new Writer(self::BASE_NAMESPACE, $this->dir);
@@ -94,8 +93,10 @@ final class WriterTest extends TestCase
         $this->writer->write($file);
         self::assertFileExists($expected);
 
-        $written = PhpFile::fromCode(file_get_contents($expected));
-        self::assertSame('Broken', current($written->getClasses())->getName());
+        $written = PhpFile::fromCode((string) file_get_contents($expected));
+        $class   = current($written->getClasses());
+        self::assertNotFalse($class);
+        self::assertSame('Broken', $class->getName());
     }
 
     public function testWriteNoClassOverwrites(): void
@@ -109,8 +110,10 @@ final class WriterTest extends TestCase
         $this->writer->write($file);
         self::assertFileExists($expected);
 
-        $written = PhpFile::fromCode(file_get_contents($expected));
-        self::assertSame('NoClass', current($written->getClasses())->getName());
+        $written = PhpFile::fromCode((string) file_get_contents($expected));
+        $class   = current($written->getClasses());
+        self::assertNotFalse($class);
+        self::assertSame('NoClass', $class->getName());
     }
 
     public function testWriteNoOverwriteDoesNotWrite(): void
@@ -124,7 +127,7 @@ final class WriterTest extends TestCase
         $this->writer->write($file);
         self::assertFileExists($expected);
 
-        $written = PhpFile::fromCode(file_get_contents($expected));
+        $written = PhpFile::fromCode((string) file_get_contents($expected));
         $class   = current($written->getClasses());
         self::assertInstanceOf(ClassType::class, $class);
         self::assertTrue($class->hasMethod('custom'));
@@ -139,8 +142,8 @@ final class WriterTest extends TestCase
     private function unlink(string $dir): void
     {
         if (is_dir($dir)) {
-            foreach (glob($dir . '/*') as $file) {
-                $this->unlink($file);
+            foreach ((array) glob($dir . '/*') as $file) {
+                $this->unlink((string) $file);
             }
             rmdir($dir);
         } elseif (file_exists($dir)) {

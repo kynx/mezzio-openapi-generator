@@ -9,12 +9,11 @@ use Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGeneratorFactory;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGeneratorFactory
- */
+#[CoversClass(ConfigProviderGeneratorFactory::class)]
 final class ConfigProviderGeneratorFactoryTest extends TestCase
 {
     use GeneratorTrait;

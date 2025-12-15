@@ -9,11 +9,10 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyBuilder
- */
+#[CoversClass(RequestBodyBuilder::class)]
 final class RequestBodyBuilderTest extends TestCase
 {
     use OperationTrait;

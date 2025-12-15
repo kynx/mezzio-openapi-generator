@@ -12,12 +12,11 @@ use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorWriterFactory
- */
+#[CoversClass(RouteDelegatorWriterFactory::class)]
 final class RouteDelegatorWriterFactoryTest extends TestCase
 {
     use GeneratorTrait;

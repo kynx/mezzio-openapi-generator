@@ -26,6 +26,8 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Rize\UriTemplate;
@@ -34,9 +36,7 @@ use function array_merge;
 use function trim;
 use function ucfirst;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestFactoryGenerator
- */
+#[CoversClass(RequestFactoryGenerator::class)]
 final class RequestFactoryGeneratorTest extends TestCase
 {
     use GeneratorTrait;
@@ -101,9 +101,7 @@ final class RequestFactoryGeneratorTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    /**
-     * @dataProvider parameterProvider
-     */
+    #[DataProvider('parameterProvider')]
     public function testGenerateAddsParameterGetter(OperationModel $operation, string $type, string $template): void
     {
         $var           = '$' . $type;
@@ -178,9 +176,7 @@ final class RequestFactoryGeneratorTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider doesNotConvertListToArrayProvider
-     */
+    #[DataProvider('doesNotConvertListToArrayProvider')]
     public function testGenerateDoesNotConvertListToArray(PropertyInterface $property, string $template): void
     {
         $model     = new ClassModel(self::NAMESPACE . '\\PathParams', '/foo', [], $property);
@@ -268,9 +264,9 @@ final class RequestFactoryGeneratorTest extends TestCase
     }
 
     /**
-     * @dataProvider requestBodyParserProvider
      * @param array<string, string> $hydrators
      */
+    #[DataProvider('requestBodyParserProvider')]
     public function testGenerateAddsRequestBodyParser(
         RequestBodyModel $requestBody,
         string $returnType,

@@ -6,11 +6,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams
- */
+#[CoversClass(CookieOrHeaderParams::class)]
 final class CookieOrHeaderParamsTest extends TestCase
 {
     public function testConstructorSetsParams(): void

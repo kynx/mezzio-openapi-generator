@@ -6,11 +6,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Security;
 
 use Kynx\Mezzio\OpenApiGenerator\Security\BasicSecurityModel;
 use Mezzio\Authentication\Basic\BasicAccess;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Security\BasicSecurityModel
- */
+#[CoversClass(BasicSecurityModel::class)]
 final class BasicSecurityModelTest extends TestCase
 {
     public function testConstructorSetsScopes(): void

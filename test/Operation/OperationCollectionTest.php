@@ -6,13 +6,12 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function iterator_to_array;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection
- */
+#[CoversClass(OperationCollection::class)]
 final class OperationCollectionTest extends TestCase
 {
     public function testCollectionIsIterable(): void

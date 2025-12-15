@@ -10,19 +10,18 @@ use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateTimeImmutableMapper;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapperFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapperFactory
- */
+#[CoversClass(TypeMapperFactory::class)]
 final class TypeMapperFactoryTest extends TestCase
 {
     public function testInvokeReturnsConfiguredInstance(): void
     {
         $expected  = new ClassString(DateTimeImmutable::class);
         $schema    = new Schema(['type' => 'string', 'format' => 'date']);
-        $container = $this->createMock(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->with('config')
             ->willReturn([

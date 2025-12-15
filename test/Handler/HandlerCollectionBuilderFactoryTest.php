@@ -13,12 +13,11 @@ use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilderFactory
- */
+#[CoversClass(HandlerCollectionBuilderFactory::class)]
 final class HandlerCollectionBuilderFactoryTest extends TestCase
 {
     use HandlerTrait;

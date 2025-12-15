@@ -12,56 +12,52 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function trim;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommand
- */
+#[CoversClass(GenerateCommand::class)]
 final class GenerateCommandTest extends TestCase
 {
     private string $projectDir = __DIR__ . '/Asset';
-    /** @var GenerateServiceInterface&MockObject */
-    private GenerateServiceInterface $service;
-    private CommandTester $commandTester;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->service       = $this->createMock(GenerateServiceInterface::class);
-        $command             = new GenerateCommand($this->projectDir, 'test.yaml', $this->service);
-        $this->commandTester = new CommandTester($command);
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingAnyTypeHint
+    private function getCommandTester(
+        (GenerateServiceInterface&MockObject)|(GenerateServiceInterface&Stub ) $service
+    ): CommandTester {
+        $command = new GenerateCommand($this->projectDir, 'test.yaml', $service);
+        return new CommandTester($command);
     }
 
-    /**
-     * @dataProvider specificationArgumentProvider
-     */
+    #[DataProvider('specificationArgumentProvider')]
     public function testConfigureSetsSpecificationArgument(array $arguments, string $expected): void
     {
         $actualModels = $actualOperations = $actualRoutes = null;
-        $this->service->method('getModels')
+        $service      = self::createStub(GenerateServiceInterface::class);
+        $service->method('getModels')
             ->willReturnCallback(function (OpenApi $openApi) use (&$actualModels): ModelCollection {
                 $actualModels = $openApi;
                 return new ModelCollection();
             });
-        $this->service->method('getOperations')
+        $service->method('getOperations')
             ->willReturnCallback(function (OpenApi $openApi) use (&$actualOperations): OperationCollection {
                 $actualOperations = $openApi;
                 return new OperationCollection();
             });
-        $this->service->method('getRoutes')
+        $service->method('getRoutes')
             ->willReturnCallback(function (OpenApi $openApi) use (&$actualRoutes): RouteCollection {
                 $actualRoutes = $openApi;
                 return new RouteCollection();
             });
-        $this->service->method('getHandlers')
+        $service->method('getHandlers')
             ->willReturn(new HandlerCollection());
 
-        $exit = $this->commandTester->execute($arguments);
+        $exit = $this->getCommandTester($service)->execute($arguments);
         self::assertSame(0, $exit);
         self::assertInstanceOf(OpenApi::class, $actualModels);
         self::assertSame($expected, $actualModels->info->title);
@@ -85,9 +81,13 @@ final class GenerateCommandTest extends TestCase
         $specFile = $this->projectDir . '/nonexistent.yaml';
         $expected = "Specification file '$specFile' does not exist.";
 
-        $exit = $this->commandTester->execute(['specification' => 'nonexistent.yaml']);
+        $service = self::createStub(GenerateServiceInterface::class);
+        $service->method('getModels')
+            ->willReturn(new ModelCollection());
+        $commandTester = $this->getCommandTester($service);
+        $exit          = $commandTester->execute(['specification' => 'nonexistent.yaml']);
         self::assertSame(1, $exit);
-        $actual = trim($this->commandTester->getDisplay());
+        $actual = trim($commandTester->getDisplay());
         self::assertSame($expected, $actual);
     }
 
@@ -96,9 +96,13 @@ final class GenerateCommandTest extends TestCase
         $specFile = $this->projectDir . '/empty.yaml';
         $expected = "Error reading '$specFile':";
 
-        $exit = $this->commandTester->execute(['specification' => 'empty.yaml']);
+        $service = self::createStub(GenerateServiceInterface::class);
+        $service->method('getModels')
+            ->willReturn(new ModelCollection());
+        $commandTester = $this->getCommandTester($service);
+        $exit          = $commandTester->execute(['specification' => 'empty.yaml']);
         self::assertSame(1, $exit);
-        $actual = trim($this->commandTester->getDisplay());
+        $actual = trim($commandTester->getDisplay());
         self::assertStringStartsWith($expected, $actual);
     }
 
@@ -106,91 +110,107 @@ final class GenerateCommandTest extends TestCase
     {
         $expected = "OpenApi is missing required property: paths";
 
-        $exit = $this->commandTester->execute(['specification' => 'invalid.yaml']);
+        $service = self::createStub(GenerateServiceInterface::class);
+        $service->method('getModels')
+            ->willReturn(new ModelCollection());
+        $commandTester = $this->getCommandTester($service);
+        $exit          = $commandTester->execute(['specification' => 'invalid.yaml']);
         self::assertSame(1, $exit);
-        $actual = trim($this->commandTester->getDisplay());
+        $actual = trim($commandTester->getDisplay());
         self::assertStringContainsString($expected, $actual);
     }
 
     public function testGenerateCreatesModels(): void
     {
-        [$modelCollection] = $this->configureModels();
-        $this->service->expects(self::once())
+        $service           = $this->createMock(GenerateServiceInterface::class);
+        [$modelCollection] = $this->configureModels($service);
+        $service->expects(self::once())
             ->method('createModels')
             ->with($modelCollection);
 
-        $exit = $this->commandTester->execute([]);
+        $commandTester = $this->getCommandTester($service);
+        $exit          = $commandTester->execute([]);
         self::assertSame(0, $exit);
     }
 
     public function testGenerateCreatesHydrators(): void
     {
-        [$modelCollection]  = $this->configureModels();
+        $service            = $this->createMock(GenerateServiceInterface::class);
+        [$modelCollection]  = $this->configureModels($service);
         $hydratorCollection = HydratorCollection::fromModelCollection($modelCollection);
-        $this->service->expects(self::once())
+        $service->expects(self::once())
             ->method('createHydrators')
             ->with($hydratorCollection);
 
-        $exit = $this->commandTester->execute([]);
+        $commandTester = $this->getCommandTester($service);
+        $exit          = $commandTester->execute([]);
         self::assertSame(0, $exit);
     }
 
     public function testGenerateCreatesOperations(): void
     {
-        [, $operationCollection] = $this->configureModels();
-        $this->service->expects(self::once())
+        $service                 = $this->createMock(GenerateServiceInterface::class);
+        [, $operationCollection] = $this->configureModels($service);
+        $service->expects(self::once())
             ->method('createOperations')
             ->with($operationCollection);
 
-        $exit = $this->commandTester->execute([]);
+        $commandTester = $this->getCommandTester($service);
+        $exit          = $commandTester->execute([]);
         self::assertSame(0, $exit);
     }
 
     public function testGenerateCreatesRouteDelegator(): void
     {
+        $service = $this->createMock(GenerateServiceInterface::class);
         // Gets very confused here and wants both 1 space before and 0 space before
         // phpcs:ignore WebimpressCodingStandard.WhiteSpace.CommaSpacing.SpaceBeforeComma
-        [, , $routeCollection, $handlerCollection] = $this->configureModels();
+        [, , $routeCollection, $handlerCollection] = $this->configureModels($service);
 
-        $this->service->expects(self::once())
+        $service->expects(self::once())
             ->method('createRouteDelegator')
             ->with($routeCollection, $handlerCollection);
 
-        $exit = $this->commandTester->execute([]);
+        $commandTester = $this->getCommandTester($service);
+        $exit          = $commandTester->execute([]);
         self::assertSame(0, $exit);
     }
 
     public function testGenerateCreatesHandler(): void
     {
+        $service = $this->createMock(GenerateServiceInterface::class);
         // Gets very confused here and wants both 1 space before and 0 space before
         // phpcs:ignore WebimpressCodingStandard.WhiteSpace.CommaSpacing.SpaceBeforeComma
-        [, , , $handlerCollection] = $this->configureModels();
+        [, , , $handlerCollection] = $this->configureModels($service);
 
-        $this->service->expects(self::once())
+        $service->method('getModels')
+            ->willReturn(new ModelCollection());
+        $service->expects(self::once())
             ->method('createHandlers')
             ->with($handlerCollection);
 
-        $exit = $this->commandTester->execute([]);
+        $commandTester = $this->getCommandTester($service);
+        $exit          = $commandTester->execute([]);
         self::assertSame(0, $exit);
     }
 
     /**
      * @return array{0: ModelCollection, 1: OperationCollection, 2: RouteCollection, 3: HandlerCollection}
      */
-    private function configureModels(): array
+    private function configureModels(GenerateServiceInterface&MockObject $service): array
     {
         $modelCollection     = new ModelCollection();
         $operationCollection = new OperationCollection();
         $routeCollection     = new RouteCollection();
         $handlerCollection   = new HandlerCollection();
 
-        $this->service->method('getModels')
+        $service->method('getModels')
             ->willReturn($modelCollection);
-        $this->service->method('getOperations')
+        $service->method('getOperations')
             ->willReturn($operationCollection);
-        $this->service->method('getRoutes')
+        $service->method('getRoutes')
             ->willReturn($routeCollection);
-        $this->service->method('getHandlers')
+        $service->method('getHandlers')
             ->willReturn($handlerCollection);
 
         return [$modelCollection, $operationCollection, $routeCollection, $handlerCollection];

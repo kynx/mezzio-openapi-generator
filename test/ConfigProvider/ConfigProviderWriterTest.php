@@ -11,11 +11,10 @@ use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriter
- */
+#[CoversClass(ConfigProviderWriter::class)]
 final class ConfigProviderWriterTest extends TestCase
 {
     use GeneratorTrait;
@@ -27,7 +26,7 @@ final class ConfigProviderWriterTest extends TestCase
         $operations = $this->getOperationCollection($this->getOperations());
         $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
         $generator  = new ConfigProviderGenerator('public/openapi.yaml', 'Api\\ConfigProvider');
-        $writer     = $this->createMock(WriterInterface::class);
+        $writer     = self::createStub(WriterInterface::class);
         $written    = null;
         $writer->method('write')
             ->willReturnCallback(function (PhpFile $file) use (&$written) {

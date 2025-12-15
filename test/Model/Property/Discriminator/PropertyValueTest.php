@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property\Discriminator;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue
- */
+#[CoversClass(PropertyValue::class)]
 final class PropertyValueTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

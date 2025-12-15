@@ -27,6 +27,7 @@ use function array_filter;
 use function array_map;
 use function array_merge;
 use function array_unique;
+use function assert;
 use function count;
 use function current;
 use function explode;
@@ -61,6 +62,8 @@ final class ResponseFactoryGenerator
             ->setFinal();
 
         $namespace = current($file->getNamespaces());
+        assert($namespace instanceof PhpNamespace);
+
         $namespace->addUse(AbstractResponseFactory::class);
 
         $this->addConstructor($namespace, $class, $operation);

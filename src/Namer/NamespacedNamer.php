@@ -22,7 +22,7 @@ final class NamespacedNamer implements NamerInterface
     public function keyByUniqueName(array $names): array
     {
         $namespaced = array_map(
-            fn (string $name): string => preg_replace('/\s+/', '\\', $name),
+            fn (string $name): string => (string) preg_replace('/\s+/', '\\', $name),
             $names
         );
         $classNames = array_map(

@@ -8,13 +8,13 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
- */
+#[CoversClass(ArrayProperty::class)]
+#[UsesClass(PropertyMetadata::class)]
 final class ArrayPropertyTest extends TestCase
 {
     public function testGettersReturnValues(): void
@@ -36,9 +36,7 @@ final class ArrayPropertyTest extends TestCase
         self::assertSame('array', $actual);
     }
 
-    /**
-     * @dataProvider getUsesProvider
-     */
+    #[DataProvider('getUsesProvider')]
     public function testGetUsesReturnUse(ClassString|PropertyType $type, array $expected): void
     {
         $property = new ArrayProperty('$foo', 'foo', new PropertyMetadata(), false, $type);
@@ -58,9 +56,7 @@ final class ArrayPropertyTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getDocBlockProvider
-     */
+    #[DataProvider('getDocBlockProvider')]
     public function testGetDocBlockTypeReturnsType(
         ClassString|PropertyType $type,
         bool $isList,

@@ -6,11 +6,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Route\Namer;
 
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamer;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamer
- */
+#[CoversClass(DotSnakeCaseNamer::class)]
 final class DotSnakeCaseNamerTest extends TestCase
 {
     private const PREFIX = 'api';

@@ -17,14 +17,13 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Nette\PhpGenerator\PromotedParameter;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function array_keys;
 use function implode;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Generator\RequestGenerator
- */
+#[CoversClass(RequestGenerator::class)]
 final class RequestGeneratorTest extends TestCase
 {
     use GeneratorTrait;

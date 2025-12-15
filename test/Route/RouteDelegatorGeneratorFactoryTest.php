@@ -7,12 +7,11 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\NamerInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGeneratorFactory
- */
+#[CoversClass(RouteDelegatorGeneratorFactory::class)]
 final class RouteDelegatorGeneratorFactoryTest extends TestCase
 {
     use RouteTrait;

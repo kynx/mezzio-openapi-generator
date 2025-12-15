@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels;
 use Kynx\Mezzio\OpenApiGenerator\Model\ExistingModelsFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModels
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ExistingModelsFactory
- */
+#[CoversClass(ExistingModelsFactory::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(ExistingModels::class)]
 final class ExistingModelsFactoryTest extends TestCase
 {
     public function testInvokeReturnsInstance(): void

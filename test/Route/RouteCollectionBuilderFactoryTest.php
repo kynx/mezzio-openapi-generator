@@ -6,14 +6,13 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilderFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use ReflectionProperty;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilderFactory
- */
+#[CoversClass(RouteCollectionBuilderFactory::class)]
 final class RouteCollectionBuilderFactoryTest extends TestCase
 {
     public function testInvokeReturnsConfiguredInstance(): void

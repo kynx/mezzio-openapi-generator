@@ -8,11 +8,10 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel
- */
+#[CoversClass(RequestBodyModel::class)]
 final class RequestBodyModelTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

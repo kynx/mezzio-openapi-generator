@@ -4,23 +4,24 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection
- */
+#[CoversClass(ModelCollection::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(ClassModel::class)]
+#[UsesClass(ModelException::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(SimpleProperty::class)]
 final class ModelCollectionTest extends TestCase
 {
     private ModelCollection $collection;
@@ -44,9 +45,7 @@ final class ModelCollectionTest extends TestCase
         $this->collection->add(clone $this->class);
     }
 
-    /**
-     * @dataProvider hasProvider
-     */
+    #[DataProvider('hasProvider')]
     public function testHas(ClassModel $test, bool $expected): void
     {
         $this->collection->add($this->class);

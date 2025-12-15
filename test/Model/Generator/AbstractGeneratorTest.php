@@ -8,6 +8,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
@@ -15,21 +16,23 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
  * @psalm-suppress InaccessibleMethod
  */
+#[CoversClass(AbstractGenerator::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(ClassModel::class)]
+#[UsesClass(AbstractProperty::class)]
+#[UsesClass(ArrayProperty::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(PropertyType::class)]
+#[UsesClass(SimpleProperty::class)]
+#[UsesClass(UnionProperty::class)]
 final class AbstractGeneratorTest extends TestCase
 {
     private AbstractGenerator $generator;
@@ -68,9 +71,7 @@ final class AbstractGeneratorTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    /**
-     * @dataProvider getTypeProvider
-     */
+    #[DataProvider('getTypeProvider')]
     public function testGetType(PropertyInterface $property, string $expected): void
     {
         $actual = $this->generator->getType($property);
@@ -98,9 +99,9 @@ final class AbstractGeneratorTest extends TestCase
     }
 
     /**
-     * @dataProvider getPropertyUsesProvider
      * @param list<PropertyInterface> $properties
      */
+    #[DataProvider('getPropertyUsesProvider')]
     public function testGetPropertyUses(array $properties, array $expected): void
     {
         $actual = $this->generator->getPropertyUses($properties);

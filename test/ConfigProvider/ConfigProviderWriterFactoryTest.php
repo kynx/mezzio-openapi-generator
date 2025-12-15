@@ -10,12 +10,11 @@ use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriterFactory
- */
+#[CoversClass(ConfigProviderWriterFactory::class)]
 final class ConfigProviderWriterFactoryTest extends TestCase
 {
     use HandlerTrait;

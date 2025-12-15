@@ -10,15 +10,14 @@ use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\DiscriminatorBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyValue;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function array_merge;
 use function array_values;
 use function implode;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\DiscriminatorBuilder
- */
+#[CoversClass(DiscriminatorBuilder::class)]
 final class DiscriminatorBuilderTest extends TestCase
 {
     private DiscriminatorBuilder $builder;

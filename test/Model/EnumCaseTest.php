@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\EnumCase
- */
+#[CoversClass(EnumCase::class)]
 final class EnumCaseTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

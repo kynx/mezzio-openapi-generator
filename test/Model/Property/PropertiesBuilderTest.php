@@ -7,25 +7,26 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
- */
+#[CoversClass(PropertiesBuilder::class)]
+#[UsesClass(ModelUtil::class)]
+#[UsesClass(PropertyBuilder::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(PropertyType::class)]
+#[UsesClass(SimpleProperty::class)]
 final class PropertiesBuilderTest extends TestCase
 {
     use OperationTrait;

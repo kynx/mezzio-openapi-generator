@@ -6,11 +6,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Hydrator;
 
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorModel
- */
+#[CoversClass(HydratorModel::class)]
 final class HydratorModelTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

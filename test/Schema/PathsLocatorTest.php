@@ -9,27 +9,34 @@ use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Paths;
 use cebe\openapi\spec\Schema;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- * @uses \Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator
- */
+#[CoversClass(PathsLocator::class)]
+#[UsesClass(MediaTypeLocator::class)]
+#[UsesClass(NamedSpecification::class)]
+#[UsesClass(OperationLocator::class)]
+#[UsesClass(ParameterLocator::class)]
+#[UsesClass(PathItemLocator::class)]
+#[UsesClass(RequestBodyLocator::class)]
+#[UsesClass(ResponseLocator::class)]
+#[UsesClass(SchemaLocator::class)]
+#[UsesClass(ModelUtil::class)]
+#[UsesClass(RouteUtil::class)]
 final class PathsLocatorTest extends TestCase
 {
     private PathsLocator $locator;

@@ -6,20 +6,22 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Schema;
 
 use cebe\openapi\spec\RequestBody;
 use cebe\openapi\spec\Schema;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
- */
+#[CoversClass(RequestBodyLocator::class)]
+#[UsesClass(MediaTypeLocator::class)]
+#[UsesClass(NamedSpecification::class)]
+#[UsesClass(SchemaLocator::class)]
+#[UsesClass(ModelUtil::class)]
 final class RequestBodyLocatorTest extends TestCase
 {
     private RequestBodyLocator $locator;

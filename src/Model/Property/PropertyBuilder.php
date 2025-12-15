@@ -61,7 +61,10 @@ final class PropertyBuilder
             if (count($types) > 1) {
                 return new UnionProperty($name, $originalName, $metadata, null, ...$types);
             }
-            return new SimpleProperty($name, $originalName, $metadata, array_pop($types));
+
+            $type = array_pop($types);
+            assert($type instanceof PropertyType);
+            return new SimpleProperty($name, $originalName, $metadata, $type);
         }
 
         if (! empty($schema->oneOf)) {

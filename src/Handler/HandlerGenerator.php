@@ -15,6 +15,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+use function assert;
 use function current;
 
 /**
@@ -41,6 +42,7 @@ final class HandlerGenerator
             ->addAttribute(OpenApiHandler::class, [$pointer]);
 
         $namespace = current($file->getNamespaces());
+        assert($namespace instanceof PhpNamespace);
 
         $namespace->addUse(OpenApiHandler::class)
             ->addUse(RequestHandlerInterface::class)

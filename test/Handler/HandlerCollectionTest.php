@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
+use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function iterator_to_array;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollection
- */
+#[CoversClass(HandlerCollection::class)]
 final class HandlerCollectionTest extends TestCase
 {
     use HandlerTrait;

@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator;
 
 use Kynx\Mezzio\OpenApiGenerator\WriterException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\WriterException
- */
+#[CoversClass(WriterException::class)]
 final class WriterExceptionTest extends TestCase
 {
     public function testCannotCreateDirectory(): void

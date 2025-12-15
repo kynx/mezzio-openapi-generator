@@ -75,6 +75,8 @@ final class RequestFactoryGenerator
             ->setFinal();
 
         $namespace = current($file->getNamespaces());
+        assert($namespace instanceof PhpNamespace);
+
         $namespace->addUse(OpenApiRequestFactory::class)
             ->addUse(RequestFactoryInterface::class)
             ->addUse(ServerRequestInterface::class);

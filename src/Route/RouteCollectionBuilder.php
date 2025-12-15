@@ -43,7 +43,7 @@ final class RouteCollectionBuilder
         $basePath = '';
         $server   = current($openApi->servers);
         if ($server instanceof Server) {
-            $basePath = parse_url($server->url, PHP_URL_PATH);
+            $basePath = (string) parse_url($server->url, PHP_URL_PATH);
         }
         if ($basePath === '/') {
             $basePath = '';

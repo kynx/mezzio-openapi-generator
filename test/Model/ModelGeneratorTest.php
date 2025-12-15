@@ -5,30 +5,36 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
 use Kynx\Mezzio\OpenApi\Attribute\OpenApiModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\EnumGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
 use Nette\PhpGenerator\Attribute;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\EnumType;
 use Nette\PhpGenerator\InterfaceType;
+use Nette\PhpGenerator\PhpNamespace;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
+use function assert;
 use function current;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\EnumGenerator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\InterfaceGenerator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator
- */
+#[CoversClass(ModelGenerator::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(ClassModel::class)]
+#[UsesClass(EnumModel::class)]
+#[UsesClass(AbstractGenerator::class)]
+#[UsesClass(ClassGenerator::class)]
+#[UsesClass(EnumGenerator::class)]
+#[UsesClass(InterfaceGenerator::class)]
+#[UsesClass(InterfaceModel::class)]
 final class ModelGeneratorTest extends TestCase
 {
     private ModelGenerator $generator;
@@ -53,6 +59,7 @@ final class ModelGeneratorTest extends TestCase
         $namespaces = $file->getNamespaces();
         self::assertCount(1, $namespaces);
         $namespace = current($namespaces);
+        assert($namespace instanceof PhpNamespace);
         self::assertSame('A', $namespace->getName());
 
         $uses = $namespace->getUses();

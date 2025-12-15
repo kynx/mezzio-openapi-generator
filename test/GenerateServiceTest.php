@@ -26,12 +26,11 @@ use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Route\RouteTrait;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\GenerateService
- */
+#[CoversClass(GenerateService::class)]
 final class GenerateServiceTest extends TestCase
 {
     use HandlerTrait;
@@ -42,30 +41,24 @@ final class GenerateServiceTest extends TestCase
     private const NAMESPACE = __NAMESPACE__ . '\\Asset';
     private const DIR       = __DIR__ . '/Asset';
 
-    /** @var ModelWriterInterface&MockObject */
-    private ModelWriterInterface $modelWriter;
-    /** @var HydratorWriterInterface&MockObject */
-    private HydratorWriterInterface $hydratorWriter;
-    /** @var OperationWriterInterface&MockObject */
-    private OperationWriterInterface $operationWriter;
-    /** @var HandlerWriterInterface&MockObject */
-    private HandlerWriterInterface $handlerWriter;
-    /** @var RouteDelegatorWriterInterface&MockObject */
-    private RouteDelegatorWriterInterface $routeDelegatorWriter;
-    /** @var ConfigProviderWriterInterface&MockObject */
-    private ConfigProviderWriterInterface $configProviderWriter;
+    private ModelWriterInterface&Stub $modelWriter;
+    private HydratorWriterInterface&Stub $hydratorWriter;
+    private OperationWriterInterface&Stub $operationWriter;
+    private HandlerWriterInterface&Stub $handlerWriter;
+    private RouteDelegatorWriterInterface&Stub $routeDelegatorWriter;
+    private ConfigProviderWriterInterface&Stub $configProviderWriter;
     private GenerateService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->modelWriter          = $this->createMock(ModelWriterInterface::class);
-        $this->hydratorWriter       = $this->createMock(HydratorWriterInterface::class);
-        $this->operationWriter      = $this->createMock(OperationWriterInterface::class);
-        $this->routeDelegatorWriter = $this->createMock(RouteDelegatorWriterInterface::class);
-        $this->handlerWriter        = $this->createMock(HandlerWriterInterface::class);
-        $this->configProviderWriter = $this->createMock(ConfigProviderWriterInterface::class);
+        $this->modelWriter          = self::createStub(ModelWriterInterface::class);
+        $this->hydratorWriter       = self::createStub(HydratorWriterInterface::class);
+        $this->operationWriter      = self::createStub(OperationWriterInterface::class);
+        $this->routeDelegatorWriter = self::createStub(RouteDelegatorWriterInterface::class);
+        $this->handlerWriter        = self::createStub(HandlerWriterInterface::class);
+        $this->configProviderWriter = self::createStub(ConfigProviderWriterInterface::class);
 
         $this->service = new GenerateService(
             new OpenApiLocator(new PathsLocator(new ModelPathItemLocator())),

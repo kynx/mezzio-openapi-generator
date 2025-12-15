@@ -12,14 +12,13 @@ use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mezzio\Application;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function str_replace;
 use function trim;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderGenerator
- */
+#[CoversClass(ConfigProviderGenerator::class)]
 final class ConfigProviderGeneratorTest extends TestCase
 {
     use GeneratorTrait;
