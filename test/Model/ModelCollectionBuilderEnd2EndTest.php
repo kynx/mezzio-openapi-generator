@@ -22,13 +22,12 @@ use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @coversNothing
- */
+#[CoversNothing]
 final class ModelCollectionBuilderEnd2EndTest extends TestCase
 {
     use ModelTrait;

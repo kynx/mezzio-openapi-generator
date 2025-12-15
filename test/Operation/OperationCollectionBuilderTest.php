@@ -11,13 +11,12 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollection;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder
- */
+#[CoversClass(OperationCollectionBuilder::class)]
 final class OperationCollectionBuilderTest extends TestCase
 {
     use OperationTrait;

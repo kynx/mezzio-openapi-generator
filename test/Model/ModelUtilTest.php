@@ -9,11 +9,11 @@ use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- */
+#[CoversClass(ModelUtil::class)]
 final class ModelUtilTest extends TestCase
 {
     public function testGetJsonPointerReferenceReturnsEmptyString(): void
@@ -33,9 +33,7 @@ final class ModelUtilTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    /**
-     * @dataProvider isEnumProvider
-     */
+    #[DataProvider('isEnumProvider')]
     public function testIsEnum(array $spec, bool $expected): void
     {
         $schema = new Schema($spec);

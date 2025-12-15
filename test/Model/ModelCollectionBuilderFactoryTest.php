@@ -5,23 +5,26 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer
- * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilderFactory
- */
+#[CoversClass(ModelCollectionBuilderFactory::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(ModelCollectionBuilder::class)]
+#[UsesClass(ModelsBuilder::class)]
+#[UsesClass(NamespacedNamer::class)]
+#[UsesClass(OperationBuilder::class)]
+#[UsesClass(PropertiesBuilder::class)]
 final class ModelCollectionBuilderFactoryTest extends TestCase
 {
     use ModelTrait;

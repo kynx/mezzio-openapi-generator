@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
 use Kynx\Mezzio\OpenApiGenerator\Route\ParameterModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\ParameterModel
- */
+#[CoversClass(ParameterModel::class)]
 final class ParameterModelTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

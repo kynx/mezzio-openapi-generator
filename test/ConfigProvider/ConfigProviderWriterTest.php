@@ -11,11 +11,10 @@ use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\ConfigProvider\ConfigProviderWriter
- */
+#[CoversClass(ConfigProviderWriter::class)]
 final class ConfigProviderWriterTest extends TestCase
 {
     use GeneratorTrait;

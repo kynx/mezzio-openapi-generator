@@ -7,12 +7,11 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapper;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilderFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilderFactory
- */
+#[CoversClass(PropertyBuilderFactory::class)]
 final class PropertyBuilderFactoryTest extends TestCase
 {
     public function testInvokeReturnsInstance(): void

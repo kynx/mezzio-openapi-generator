@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- */
+#[CoversClass(PropertyMetadata::class)]
 final class PropertyMetadataTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

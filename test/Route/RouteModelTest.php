@@ -7,11 +7,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 use Kynx\Mezzio\OpenApiGenerator\Route\ParameterModel;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\RouteModel
- */
+#[CoversClass(RouteModel::class)]
 final class RouteModelTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

@@ -10,11 +10,10 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerCollectionBuilder
- */
+#[CoversClass(HandlerCollectionBuilder::class)]
 final class HandlerCollectionBuilderTest extends TestCase
 {
     use HandlerTrait;

@@ -17,15 +17,13 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-use function assert;
 use function current;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter
- */
+#[CoversClass(OperationWriter::class)]
 final class OperationWriterTest extends TestCase
 {
     use OperationTrait;

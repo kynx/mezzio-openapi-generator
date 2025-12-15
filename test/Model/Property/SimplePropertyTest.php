@@ -8,13 +8,13 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- */
+#[CoversClass(SimpleProperty::class)]
+#[UsesClass(PropertyMetadata::class)]
 final class SimplePropertyTest extends TestCase
 {
     public function testConstructorSetsProperties(): void
@@ -26,9 +26,7 @@ final class SimplePropertyTest extends TestCase
         self::assertSame([$type], $property->getTypes());
     }
 
-    /**
-     * @dataProvider getPhpTypeProvider
-     */
+    #[DataProvider('getPhpTypeProvider')]
     public function testGetPhpTypeReturnsType(ClassString|PropertyType $type, string $expected): void
     {
         $property = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), $type);
@@ -48,9 +46,7 @@ final class SimplePropertyTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getUsesProvider
-     */
+    #[DataProvider('getUsesProvider')]
     public function testGetUsesReturnUses(ClassString|PropertyType $type, array $expected): void
     {
         $property = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), $type);

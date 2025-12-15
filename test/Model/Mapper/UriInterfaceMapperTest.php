@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Model\Mapper;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\UriInterfaceMapper;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Mapper\UriInterfaceMapper
- */
+#[CoversClass(UriInterfaceMapper::class)]
 final class UriInterfaceMapperTest extends TestCase
 {
-    /**
-     * @dataProvider canMapProvider
-     */
+    #[DataProvider('canMapProvider')]
     public function testCanMap(string $type, string|null $format, bool $expected): void
     {
         $mapper = new UriInterfaceMapper();

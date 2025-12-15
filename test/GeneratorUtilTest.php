@@ -12,19 +12,17 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
 use Nette\PhpGenerator\Dumper;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_map;
 use function implode;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\GeneratorUtil
- */
+#[CoversClass(GeneratorUtil::class)]
 final class GeneratorUtilTest extends TestCase
 {
-    /**
-     * @dataProvider namespaceProvider
-     */
+    #[DataProvider('namespaceProvider')]
     public function testGetNamespaceReturnsNamespace(string $fqcn, string $expected): void
     {
         $actual = GeneratorUtil::getNamespace($fqcn);
@@ -44,9 +42,7 @@ final class GeneratorUtilTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider classNameProvider
-     */
+    #[DataProvider('classNameProvider')]
     public function testGetClassNameReturnsClassName(string $fqcn, string $expected): void
     {
         $actual = GeneratorUtil::getClassName($fqcn);
@@ -66,9 +62,7 @@ final class GeneratorUtilTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getMethodNameProvider
-     */
+    #[DataProvider('getMethodNameProvider')]
     public function testGetMethodName(PropertyInterface $property, string $expected): void
     {
         $actual = GeneratorUtil::getMethodName($property);

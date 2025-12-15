@@ -9,19 +9,19 @@ use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
- */
+#[CoversClass(SchemaLocator::class)]
+#[UsesClass(NamedSpecification::class)]
+#[UsesClass(ModelException::class)]
+#[UsesClass(ModelUtil::class)]
 final class SchemaLocatorTest extends TestCase
 {
     private SchemaLocator $locator;

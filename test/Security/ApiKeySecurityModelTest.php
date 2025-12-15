@@ -6,11 +6,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Security;
 
 use Kynx\Mezzio\Authentication\ApiKey\ApiKeyAuthentication;
 use Kynx\Mezzio\OpenApiGenerator\Security\ApiKeySecurityModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Security\ApiKeySecurityModel
- */
+#[CoversClass(ApiKeySecurityModel::class)]
 final class ApiKeySecurityModelTest extends TestCase
 {
     public function testConstructorSetsScopes(): void

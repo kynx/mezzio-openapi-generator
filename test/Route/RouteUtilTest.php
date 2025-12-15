@@ -5,16 +5,14 @@ declare(strict_types=1);
 namespace KynxTest\Mezzio\OpenApiGenerator\Route;
 
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil
- */
+#[CoversClass(RouteUtil::class)]
 final class RouteUtilTest extends TestCase
 {
-    /**
-     * @dataProvider pathProvider
-     */
+    #[DataProvider('pathProvider')]
     public function testEncodePath(string $path, string $expected): void
     {
         $actual = RouteUtil::encodePath($path);

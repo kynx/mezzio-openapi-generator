@@ -9,12 +9,11 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriter;
 use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriterFactory;
 use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriterFactory
- */
+#[CoversClass(HydratorWriterFactory::class)]
 final class HydratorWriterFactoryTest extends TestCase
 {
     public function testInvokeReturnsInstance(): void

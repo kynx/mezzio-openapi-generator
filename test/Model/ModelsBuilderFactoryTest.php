@@ -8,15 +8,14 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilderFactory
- */
+#[CoversClass(ModelsBuilderFactory::class)]
+#[UsesClass(ModelsBuilder::class)]
+#[UsesClass(PropertiesBuilder::class)]
 final class ModelsBuilderFactoryTest extends TestCase
 {
     use OperationTrait;

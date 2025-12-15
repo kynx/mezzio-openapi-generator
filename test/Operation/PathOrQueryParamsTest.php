@@ -6,11 +6,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams
- */
+#[CoversClass(PathOrQueryParams::class)]
 final class PathOrQueryParamsTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

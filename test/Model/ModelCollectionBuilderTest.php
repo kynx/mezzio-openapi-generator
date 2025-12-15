@@ -10,37 +10,47 @@ use cebe\openapi\spec\Schema;
 use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer
- * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder
- */
+#[CoversClass(ModelCollectionBuilder::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(ClassModel::class)]
+#[UsesClass(InterfaceModel::class)]
+#[UsesClass(NamedSpecification::class)]
+#[UsesClass(ModelCollection::class)]
+#[UsesClass(ModelException::class)]
+#[UsesClass(ModelUtil::class)]
+#[UsesClass(ModelsBuilder::class)]
+#[UsesClass(NamespacedNamer::class)]
+#[UsesClass(OperationBuilder::class)]
+#[UsesClass(OperationModel::class)]
+#[UsesClass(PropertiesBuilder::class)]
+#[UsesClass(PropertyBuilder::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(PropertyType::class)]
+#[UsesClass(SimpleProperty::class)]
 final class ModelCollectionBuilderTest extends TestCase
 {
     use ModelTrait;

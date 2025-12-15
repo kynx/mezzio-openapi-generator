@@ -11,15 +11,15 @@ use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- */
+#[CoversClass(AbstractClassLikeModel::class)]
+#[UsesClass(ClassModel::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(SimpleProperty::class)]
 final class AbstractClassLikeModelTest extends TestCase
 {
     public function testConstructorSetsProperties(): void
@@ -36,9 +36,7 @@ final class AbstractClassLikeModelTest extends TestCase
         self::assertSame([$property], $actual->getProperties());
     }
 
-    /**
-     * @dataProvider hasMatchesProvider
-     */
+    #[DataProvider('hasMatchesProvider')]
     public function testMatches(EnumModel|ClassModel|InterfaceModel $test, bool $expected): void
     {
         $property   = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::String);

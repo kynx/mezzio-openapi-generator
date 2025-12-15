@@ -6,11 +6,10 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Handler;
 
 use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerModel
- */
+#[CoversClass(HandlerModel::class)]
 final class HandlerModelTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

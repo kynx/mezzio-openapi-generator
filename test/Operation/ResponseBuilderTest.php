@@ -14,13 +14,12 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseHeader;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\ResponseBuilder
- */
+#[CoversClass(ResponseBuilder::class)]
 final class ResponseBuilderTest extends TestCase
 {
     use OperationTrait;

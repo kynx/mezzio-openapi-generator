@@ -10,6 +10,8 @@ use cebe\openapi\spec\Schema;
 use DateTimeImmutable;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateTimeImmutableMapper;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapper;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\Discriminator\PropertyList;
@@ -18,23 +20,23 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function array_combine;
 use function array_map;
 use function implode;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\UnionProperty
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
- */
+#[CoversClass(PropertyBuilder::class)]
+#[UsesClass(ModelUtil::class)]
+#[UsesClass(AbstractProperty::class)]
+#[UsesClass(ArrayProperty::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(PropertyType::class)]
+#[UsesClass(SimpleProperty::class)]
+#[UsesClass(UnionProperty::class)]
 final class PropertyBuilderTest extends TestCase
 {
     private PropertyBuilder $builder;
@@ -47,9 +49,7 @@ final class PropertyBuilderTest extends TestCase
         $this->builder = new PropertyBuilder($typeMapper);
     }
 
-    /**
-     * @dataProvider metadataProvider
-     */
+    #[DataProvider('metadataProvider')]
     public function testGetPropertySetsMetadata(
         string $key,
         array|string|bool|null $value,

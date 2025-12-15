@@ -7,21 +7,19 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 use function implode;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
- */
+#[CoversClass(PropertyType::class)]
+#[UsesClass(ModelException::class)]
 final class PropertyTypeTest extends TestCase
 {
-    /**
-     * @dataProvider baseTypeProvider
-     */
+    #[DataProvider('baseTypeProvider')]
     public function testFromSchemaReturnsBaseTypes(string $type, PropertyType $expected): void
     {
         $schema = $this->getSchema([
@@ -57,9 +55,7 @@ final class PropertyTypeTest extends TestCase
         PropertyType::fromSchema($schema);
     }
 
-    /**
-     * @dataProvider formatProvider
-     */
+    #[DataProvider('formatProvider')]
     public function testFromSchemaReturnsFormatType(string $format, PropertyType $expected): void
     {
         $schema = $this->getSchema([
@@ -98,9 +94,7 @@ final class PropertyTypeTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider valueProvider
-     */
+    #[DataProvider('valueProvider')]
     public function testFromValueReturnsType(mixed $value, PropertyType $expected): void
     {
         $actual = PropertyType::fromValue($value);
@@ -129,9 +123,7 @@ final class PropertyTypeTest extends TestCase
         PropertyType::fromValue($value);
     }
 
-    /**
-     * @dataProvider toPhpTypeProvider
-     */
+    #[DataProvider('toPhpTypeProvider')]
     public function testToPhpType(PropertyType $type, string $expected): void
     {
         $actual = $type->toPhpType();

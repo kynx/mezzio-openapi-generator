@@ -8,11 +8,10 @@ use cebe\openapi\json\JsonPointer;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
- */
+#[CoversClass(NamedSpecification::class)]
 final class NamedSpecificationTest extends TestCase
 {
     public function testConstructorSetsProperties(): void

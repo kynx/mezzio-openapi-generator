@@ -26,12 +26,11 @@ use KynxTest\Mezzio\OpenApiGenerator\Handler\HandlerTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Route\RouteTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\GenerateService
- */
+#[CoversClass(GenerateService::class)]
 final class GenerateServiceTest extends TestCase
 {
     use HandlerTrait;

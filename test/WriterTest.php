@@ -8,6 +8,8 @@ use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Kynx\Mezzio\OpenApiGenerator\WriterException;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function copy;
@@ -23,11 +25,8 @@ use function tempnam;
 use function touch;
 use function unlink;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\WriterException
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Writer
- */
+#[CoversClass(Writer::class)]
+#[UsesClass(WriterException::class)]
 final class WriterTest extends TestCase
 {
     private const BASE_NAMESPACE = 'Foo';
@@ -95,7 +94,7 @@ final class WriterTest extends TestCase
         self::assertFileExists($expected);
 
         $written = PhpFile::fromCode((string) file_get_contents($expected));
-        $class = current($written->getClasses());
+        $class   = current($written->getClasses());
         self::assertNotFalse($class);
         self::assertSame('Broken', $class->getName());
     }
@@ -112,7 +111,7 @@ final class WriterTest extends TestCase
         self::assertFileExists($expected);
 
         $written = PhpFile::fromCode((string) file_get_contents($expected));
-        $class = current($written->getClasses());
+        $class   = current($written->getClasses());
         self::assertNotFalse($class);
         self::assertSame('NoClass', $class->getName());
     }

@@ -10,12 +10,11 @@ use Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriterFactory;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriterFactory
- */
+#[CoversClass(HandlerWriterFactory::class)]
 final class HandlerWriterFactoryTest extends TestCase
 {
     public function testInvokeReturnsConfiguredInstance(): void

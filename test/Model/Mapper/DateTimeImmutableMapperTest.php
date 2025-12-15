@@ -6,16 +6,14 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Mapper;
 
 use DateTimeImmutable;
 use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateTimeImmutableMapper;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Mapper\DateTimeImmutableMapper
- */
+#[CoversClass(DateTimeImmutableMapper::class)]
 final class DateTimeImmutableMapperTest extends TestCase
 {
-    /**
-     * @dataProvider canMapProvider
-     */
+    #[DataProvider('canMapProvider')]
     public function testCanMap(string $type, string|null $format, bool $expected): void
     {
         $mapper = new DateTimeImmutableMapper();

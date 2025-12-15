@@ -8,11 +8,10 @@ use Kynx\Code\Normalizer\ClassNameNormalizer;
 use Kynx\Code\Normalizer\UniqueClassLabeler;
 use Kynx\Code\Normalizer\UniqueStrategy\NumberSuffix;
 use Kynx\Mezzio\OpenApiGenerator\Namer\FlatNamer;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Namer\FlatNamer
- */
+#[CoversClass(FlatNamer::class)]
 final class FlatNamerTest extends TestCase
 {
     public function testKeyByUniqueNameReturnsUnique(): void

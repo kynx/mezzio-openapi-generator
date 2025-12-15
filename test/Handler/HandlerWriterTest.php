@@ -13,12 +13,11 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerWriter
- */
+#[CoversClass(HandlerWriter::class)]
 final class HandlerWriterTest extends TestCase
 {
     use GeneratorTrait;

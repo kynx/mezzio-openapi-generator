@@ -8,13 +8,13 @@ use Kynx\Mezzio\OpenApiGenerator\Route\Converter\FastRouteConverter;
 use Kynx\Mezzio\OpenApiGenerator\Route\ParameterModel;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function iterator_to_array;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\Converter\FastRouteConverter
- */
+#[CoversClass(FastRouteConverter::class)]
 final class FastRouteConverterTest extends TestCase
 {
     private FastRouteConverter $routeConverter;
@@ -26,9 +26,7 @@ final class FastRouteConverterTest extends TestCase
         $this->routeConverter = new FastRouteConverter();
     }
 
-    /**
-     * @dataProvider sortProvider
-     */
+    #[DataProvider('sortProvider')]
     public function testSortReturnsSorted(
         string $aPath,
         string $aMethod,
@@ -66,9 +64,9 @@ final class FastRouteConverterTest extends TestCase
     }
 
     /**
-     * @dataProvider routeProvider
      * @param list<ParameterModel> $parameters
      */
+    #[DataProvider('routeProvider')]
     public function testConvertReturnsConverted(string $path, array $parameters, string $expected): void
     {
         $route  = new RouteModel('/foo/bar', $path, 'get', $parameters, [], null, []);

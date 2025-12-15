@@ -10,14 +10,13 @@ use Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommandFactory;
 use Kynx\Mezzio\OpenApiGenerator\GenerateService;
 use Kynx\Mezzio\OpenApiGenerator\GenerateServiceInterface;
 use KynxTest\Mezzio\OpenApiGenerator\Model\ModelTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommand
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Console\GenerateCommandFactory
- */
+#[CoversClass(GenerateCommandFactory::class)]
+#[UsesClass(GenerateCommand::class)]
 final class GenerateCommandFactoryTest extends TestCase
 {
     use ModelTrait;

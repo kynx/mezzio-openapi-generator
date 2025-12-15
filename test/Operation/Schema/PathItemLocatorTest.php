@@ -11,13 +11,12 @@ use cebe\openapi\spec\PathItem;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Operation\Schema\PathItemLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\Schema\PathItemLocator
- */
+#[CoversClass(PathItemLocator::class)]
 final class PathItemLocatorTest extends TestCase
 {
     private PathItemLocator $locator;

@@ -13,13 +13,12 @@ use Kynx\Mezzio\OpenApiGenerator\Security\BasicSecurityModel;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelInterface;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
 use Kynx\Mezzio\OpenApiGenerator\Security\UnsupportedSecurityRequirementException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver
- */
+#[CoversClass(SecurityModelResolver::class)]
 final class SecurityModelResolverTest extends TestCase
 {
     public function testConstructUnsupportedSchemeThrowsException(): void

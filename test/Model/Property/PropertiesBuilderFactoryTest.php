@@ -9,14 +9,13 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderFactory;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilderFactory
- */
+#[CoversClass(PropertiesBuilderFactory::class)]
+#[UsesClass(PropertiesBuilder::class)]
 final class PropertiesBuilderFactoryTest extends TestCase
 {
     use OperationTrait;

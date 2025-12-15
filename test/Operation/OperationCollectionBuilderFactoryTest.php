@@ -8,12 +8,11 @@ use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilderFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationCollectionBuilderFactory
- */
+#[CoversClass(OperationCollectionBuilderFactory::class)]
 final class OperationCollectionBuilderFactoryTest extends TestCase
 {
     use OperationTrait;

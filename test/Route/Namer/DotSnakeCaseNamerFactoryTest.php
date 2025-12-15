@@ -7,12 +7,11 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Route\Namer;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamerFactory;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\Namer\DotSnakeCaseNamerFactory
- */
+#[CoversClass(DotSnakeCaseNamerFactory::class)]
 final class DotSnakeCaseNamerFactoryTest extends TestCase
 {
     public function testInvokeReturnsConfiguredInstance(): void

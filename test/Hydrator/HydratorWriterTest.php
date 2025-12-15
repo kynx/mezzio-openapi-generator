@@ -12,14 +12,13 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 use function current;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorWriter
- */
+#[CoversClass(HydratorWriter::class)]
 final class HydratorWriterTest extends TestCase
 {
     /** @var WriterInterface&MockObject */

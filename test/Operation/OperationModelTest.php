@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Operation;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ArrayProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
@@ -14,15 +15,15 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\RequestBodyModel;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ResponseModel;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel
- */
+#[CoversClass(OperationModel::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(SimpleProperty::class)]
 final class OperationModelTest extends TestCase
 {
     use OperationTrait;
@@ -63,9 +64,9 @@ final class OperationModelTest extends TestCase
     }
 
     /**
-     * @dataProvider hasParameterProvider
      * @param list<RequestBodyModel> $requestBodies
      */
+    #[DataProvider('hasParameterProvider')]
     public function testHasParameters(
         PathOrQueryParams|null $pathParams,
         PathOrQueryParams|null $queryParams,

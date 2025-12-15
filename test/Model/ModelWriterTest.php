@@ -4,51 +4,76 @@ declare(strict_types=1);
 
 namespace KynxTest\Mezzio\OpenApiGenerator\Model;
 
+use Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator;
+use Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer;
+use Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil;
+use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator;
+use Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator;
+use Kynx\Mezzio\OpenApiGenerator\WriterException;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 use function current;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\AbstractClassLikeModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ClassModel
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\AbstractGenerator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Generator\ClassGenerator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
- * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\OpenApiLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\OperationLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ParameterLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\PathItemLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\PathsLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\RequestBodyLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelCollectionBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelGenerator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelsBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Namer\NamespacedNamer
- * @uses \Kynx\Mezzio\OpenApiGenerator\Operation\OperationBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertiesBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyBuilder
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty
- * @uses \Kynx\Mezzio\OpenApiGenerator\Route\RouteUtil
- * @uses \Kynx\Mezzio\OpenApiGenerator\WriterException
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\ModelWriter
- */
+#[CoversClass(ModelWriter::class)]
+#[UsesClass(AbstractClassLikeModel::class)]
+#[UsesClass(ClassModel::class)]
+#[UsesClass(AbstractGenerator::class)]
+#[UsesClass(ClassGenerator::class)]
+#[UsesClass(MediaTypeLocator::class)]
+#[UsesClass(NamedSpecification::class)]
+#[UsesClass(OpenApiLocator::class)]
+#[UsesClass(OperationLocator::class)]
+#[UsesClass(ParameterLocator::class)]
+#[UsesClass(PathItemLocator::class)]
+#[UsesClass(PathsLocator::class)]
+#[UsesClass(RequestBodyLocator::class)]
+#[UsesClass(ResponseLocator::class)]
+#[UsesClass(SchemaLocator::class)]
+#[UsesClass(ModelCollection::class)]
+#[UsesClass(ModelCollectionBuilder::class)]
+#[UsesClass(ModelGenerator::class)]
+#[UsesClass(ModelUtil::class)]
+#[UsesClass(ModelsBuilder::class)]
+#[UsesClass(NamespacedNamer::class)]
+#[UsesClass(OperationBuilder::class)]
+#[UsesClass(AbstractProperty::class)]
+#[UsesClass(PropertiesBuilder::class)]
+#[UsesClass(PropertyBuilder::class)]
+#[UsesClass(PropertyMetadata::class)]
+#[UsesClass(PropertyType::class)]
+#[UsesClass(SimpleProperty::class)]
+#[UsesClass(RouteUtil::class)]
+#[UsesClass(WriterException::class)]
 final class ModelWriterTest extends TestCase
 {
     use ModelTrait;

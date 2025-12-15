@@ -9,13 +9,12 @@ use Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelCollection;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function iterator_to_array;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Hydrator\HydratorCollection
- */
+#[CoversClass(HydratorCollection::class)]
 final class HydratorCollectionTest extends TestCase
 {
     public function testFromModelCollectionSkipsEnumModels(): void

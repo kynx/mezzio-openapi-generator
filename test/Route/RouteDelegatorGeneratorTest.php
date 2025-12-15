@@ -10,19 +10,19 @@ use Kynx\Mezzio\OpenApi\Middleware\OpenApiOperationMiddleware;
 use Kynx\Mezzio\OpenApi\Middleware\ValidationMiddleware;
 use Kynx\Mezzio\OpenApiGenerator\Route\Converter\ConverterInterface;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
+use Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelInterface;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Mezzio\Application;
 use Nette\PhpGenerator\PhpNamespace;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 use function trim;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\RouteDelegatorGenerator
- */
+#[CoversClass(RouteDelegatorGenerator::class)]
 final class RouteDelegatorGeneratorTest extends TestCase
 {
     use GeneratorTrait;

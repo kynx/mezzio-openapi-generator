@@ -11,6 +11,7 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use KynxTest\Mezzio\OpenApiGenerator\Operation\OperationTrait;
 use Nette\PhpGenerator\Literal;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,9 +19,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 use function trim;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Handler\HandlerGenerator
- */
+#[CoversClass(HandlerGenerator::class)]
 final class HandlerGeneratorTest extends TestCase
 {
     use GeneratorTrait;

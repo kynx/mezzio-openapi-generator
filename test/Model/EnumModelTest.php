@@ -8,13 +8,13 @@ use Kynx\Mezzio\OpenApiGenerator\Model\ClassModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumCase;
 use Kynx\Mezzio\OpenApiGenerator\Model\EnumModel;
 use Kynx\Mezzio\OpenApiGenerator\Model\InterfaceModel;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\EnumCase
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\EnumModel
- */
+#[CoversClass(EnumModel::class)]
+#[UsesClass(EnumCase::class)]
 final class EnumModelTest extends TestCase
 {
     public function testConstructorSetsProperties(): void
@@ -28,9 +28,7 @@ final class EnumModelTest extends TestCase
         self::assertSame($cases, $enumModel->getCases());
     }
 
-    /**
-     * @dataProvider matchesProvider
-     */
+    #[DataProvider('matchesProvider')]
     public function testMatches(EnumModel|ClassModel|InterfaceModel $test, bool $expected): void
     {
         $enumModel = new EnumModel('\\A', '/A', new EnumCase('A', 'a'));

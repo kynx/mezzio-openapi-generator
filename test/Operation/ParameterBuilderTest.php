@@ -13,11 +13,11 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\SimpleProperty;
 use Kynx\Mezzio\OpenApiGenerator\Operation\CookieOrHeaderParams;
 use Kynx\Mezzio\OpenApiGenerator\Operation\ParameterBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Operation\PathOrQueryParams;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Operation\ParameterBuilder
- */
+#[CoversClass(ParameterBuilder::class)]
 final class ParameterBuilderTest extends TestCase
 {
     use OperationTrait;
@@ -165,9 +165,7 @@ final class ParameterBuilderTest extends TestCase
         self::assertEquals($expected, $param->getModel()->getProperties());
     }
 
-    /**
-     * @dataProvider paramTemplateProvider
-     */
+    #[DataProvider('paramTemplateProvider')]
     public function testGetParameterModelFormatsTemplate(
         bool $isPathOrQuery,
         string $in,

@@ -7,14 +7,13 @@ namespace KynxTest\Mezzio\OpenApiGenerator;
 use Kynx\Mezzio\OpenApiGenerator\ConfigProvider;
 use Kynx\Mezzio\OpenApiGenerator\Writer;
 use Kynx\Mezzio\OpenApiGenerator\WriterFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Writer
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\WriterFactory
- */
+#[CoversClass(WriterFactory::class)]
+#[UsesClass(Writer::class)]
 final class WriterFactoryTest extends TestCase
 {
     public function testInvokeReturnsInstance(): void

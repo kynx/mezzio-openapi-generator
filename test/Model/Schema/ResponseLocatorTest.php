@@ -8,21 +8,23 @@ use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Response;
 use cebe\openapi\spec\Schema;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
+use Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator;
 use Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator;
+use Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator;
 use Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function implode;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\MediaTypeLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Schema\NamedSpecification
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Schema\SchemaLocator
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelException
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\ModelUtil
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Schema\ResponseLocator
- */
+#[CoversClass(ResponseLocator::class)]
+#[UsesClass(MediaTypeLocator::class)]
+#[UsesClass(NamedSpecification::class)]
+#[UsesClass(SchemaLocator::class)]
+#[UsesClass(ModelException::class)]
+#[UsesClass(ModelUtil::class)]
 final class ResponseLocatorTest extends TestCase
 {
     private ResponseLocator $locator;

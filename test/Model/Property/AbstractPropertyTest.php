@@ -7,13 +7,12 @@ namespace KynxTest\Mezzio\OpenApiGenerator\Model\Property;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @uses \Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyMetadata
- *
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Property\AbstractProperty
- */
+#[CoversClass(AbstractProperty::class)]
+#[UsesClass(PropertyMetadata::class)]
 final class AbstractPropertyTest extends TestCase
 {
     public function testGettersReturnValues(): void

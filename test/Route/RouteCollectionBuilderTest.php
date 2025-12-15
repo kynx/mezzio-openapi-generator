@@ -11,15 +11,14 @@ use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollection;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder;
 use Kynx\Mezzio\OpenApiGenerator\Route\RouteModel;
 use Kynx\Mezzio\OpenApiGenerator\Security\SecurityModelResolver;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function array_merge;
 use function implode;
 use function iterator_to_array;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Route\RouteCollectionBuilder
- */
+#[CoversClass(RouteCollectionBuilder::class)]
 final class RouteCollectionBuilderTest extends TestCase
 {
     public function testGetRouteCollectionReturnsCollection(): void

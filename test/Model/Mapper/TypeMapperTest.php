@@ -10,11 +10,10 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapperInterface;
 use Kynx\Mezzio\OpenApiGenerator\Model\ModelException;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\ClassString;
 use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Mezzio\OpenApiGenerator\Model\Mapper\TypeMapper
- */
+#[CoversClass(TypeMapper::class)]
 final class TypeMapperTest extends TestCase
 {
     public function testMapTypeArrayThrowsException(): void
