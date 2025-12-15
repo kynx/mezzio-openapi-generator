@@ -34,7 +34,7 @@
         "kynx/mezzio-openapi": "^0.8",
         "laminas/laminas-cli": "^1.11",
         "laminas/laminas-diactoros": "^3.6",
-        "laminas/laminas-filter": "^2.41",
+        "laminas/laminas-filter": "^2.41 || ^3.0",
         "mezzio/mezzio-authentication-basic": "^1.9",
         "nette/php-generator": "^4.2"
     },
