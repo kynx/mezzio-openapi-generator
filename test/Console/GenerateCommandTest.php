@@ -26,8 +26,9 @@ final class GenerateCommandTest extends TestCase
 {
     private string $projectDir = __DIR__ . '/Asset';
 
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingAnyTypeHint
     private function getCommandTester(
-        (GenerateServiceInterface&MockObject)|(GenerateServiceInterface&Stub) $service
+        (GenerateServiceInterface&MockObject)|(GenerateServiceInterface&Stub ) $service
     ): CommandTester {
         $command = new GenerateCommand($this->projectDir, 'test.yaml', $service);
         return new CommandTester($command);
