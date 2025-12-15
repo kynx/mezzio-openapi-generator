@@ -14,7 +14,7 @@ use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use KynxTest\Mezzio\OpenApiGenerator\GeneratorTrait;
 use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(HandlerWriter::class)]
@@ -22,15 +22,14 @@ final class HandlerWriterTest extends TestCase
 {
     use GeneratorTrait;
 
-    /** @var WriterInterface&MockObject */
-    private WriterInterface $writer;
+    private WriterInterface&Stub $writer;
     private HandlerWriter $handlerWriter;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->writer        = $this->createMock(WriterInterface::class);
+        $this->writer        = self::createStub(WriterInterface::class);
         $this->handlerWriter = new HandlerWriter(new HandlerGenerator(), new HandlerFactoryGenerator(), $this->writer);
     }
 

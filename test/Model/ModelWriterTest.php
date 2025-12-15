@@ -39,7 +39,7 @@ use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 use function current;
@@ -81,15 +81,14 @@ final class ModelWriterTest extends TestCase
     private const NAMESPACE = __NAMESPACE__ . '\\Asset\\Existing';
     private const DIRECTORY = __DIR__ . '/Asset/Existing';
 
-    /** @var WriterInterface&MockObject */
-    private WriterInterface $writer;
+    private WriterInterface&Stub $writer;
     private ModelWriter $modelWriter;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->writer = $this->createMock(WriterInterface::class);
+        $this->writer = self::createStub(WriterInterface::class);
 
         $this->modelWriter = new ModelWriter(
             new ModelGenerator(),

@@ -18,7 +18,7 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationWriter;
 use Kynx\Mezzio\OpenApiGenerator\WriterInterface;
 use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 use function current;
@@ -28,15 +28,14 @@ final class OperationWriterTest extends TestCase
 {
     use OperationTrait;
 
-    /** @var WriterInterface&MockObject */
-    private WriterInterface $writer;
+    private WriterInterface&Stub $writer;
     private OperationWriter $operationWriter;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->writer          = $this->createMock(WriterInterface::class);
+        $this->writer          = self::createStub(WriterInterface::class);
         $this->operationWriter = new OperationWriter(
             new ModelGenerator(),
             new HydratorGenerator([]),

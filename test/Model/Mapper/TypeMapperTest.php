@@ -33,7 +33,7 @@ final class TypeMapperTest extends TestCase
         $spec     = ['type' => 'foo'];
         $schema   = new Schema($spec);
 
-        $mapper = $this->createMock(TypeMapperInterface::class);
+        $mapper = self::createStub(TypeMapperInterface::class);
         $mapper->method('canMap')
             ->with('foo', null)
             ->willReturn(true);
@@ -52,7 +52,7 @@ final class TypeMapperTest extends TestCase
         $spec     = ['type' => 'string', 'format' => 'datetime'];
         $schema   = new Schema($spec);
 
-        $mapper = $this->createMock(TypeMapperInterface::class);
+        $mapper = self::createStub(TypeMapperInterface::class);
         $mapper->method('canMap')
             ->with('string', 'datetime')
             ->willReturn(false);

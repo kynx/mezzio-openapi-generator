@@ -21,7 +21,7 @@ final class TypeMapperFactoryTest extends TestCase
     {
         $expected  = new ClassString(DateTimeImmutable::class);
         $schema    = new Schema(['type' => 'string', 'format' => 'date']);
-        $container = $this->createMock(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->with('config')
             ->willReturn([

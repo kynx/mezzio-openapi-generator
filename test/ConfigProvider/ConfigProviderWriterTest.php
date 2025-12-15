@@ -26,7 +26,7 @@ final class ConfigProviderWriterTest extends TestCase
         $operations = $this->getOperationCollection($this->getOperations());
         $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
         $generator  = new ConfigProviderGenerator('public/openapi.yaml', 'Api\\ConfigProvider');
-        $writer     = $this->createMock(WriterInterface::class);
+        $writer     = self::createStub(WriterInterface::class);
         $written    = null;
         $writer->method('write')
             ->willReturnCallback(function (PhpFile $file) use (&$written) {
