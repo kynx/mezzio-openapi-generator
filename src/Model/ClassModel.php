@@ -17,7 +17,7 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 final class ClassModel extends AbstractClassLikeModel
 {
     /**
-     * @param array<int, string> $implements
+     * @param list<string> $implements
      */
     public function __construct(
         string $className,
@@ -29,7 +29,7 @@ final class ClassModel extends AbstractClassLikeModel
     }
 
     /**
-     * @return array<int, string>
+     * @return list<string>
      */
     public function getImplements(): array
     {
