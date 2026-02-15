@@ -33,11 +33,13 @@ final class TypeMapperTest extends TestCase
         $spec     = ['type' => 'foo'];
         $schema   = new Schema($spec);
 
-        $mapper = self::createStub(TypeMapperInterface::class);
-        $mapper->method('canMap')
+        $mapper = $this->createMock(TypeMapperInterface::class);
+        $mapper->expects(self::once())
+            ->method('canMap')
             ->with('foo', null)
             ->willReturn(true);
-        $mapper->method('getClassString')
+        $mapper->expects(self::once())
+            ->method('getClassString')
             ->with('foo', null)
             ->willReturn($expected->getClassString());
 
@@ -52,8 +54,9 @@ final class TypeMapperTest extends TestCase
         $spec     = ['type' => 'string', 'format' => 'datetime'];
         $schema   = new Schema($spec);
 
-        $mapper = self::createStub(TypeMapperInterface::class);
-        $mapper->method('canMap')
+        $mapper = $this->createMock(TypeMapperInterface::class);
+        $mapper->expects(self::once())
+            ->method('canMap')
             ->with('string', 'datetime')
             ->willReturn(false);
 
