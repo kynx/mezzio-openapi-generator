@@ -32,7 +32,7 @@ final class ResponseFactoryGeneratorTest extends TestCase
 {
     use GeneratorTrait;
 
-    private const NAMESPACE = __NAMESPACE__ . '\\Foo\\Get';
+    private const string NS = __NAMESPACE__ . '\\Foo\\Get';
 
     private ResponseFactoryGenerator $generator;
 
@@ -45,14 +45,14 @@ final class ResponseFactoryGeneratorTest extends TestCase
 
     public function testGenerateReturnsFile(): void
     {
-        $className = self::NAMESPACE . '\\Operation';
+        $className = self::NS . '\\Operation';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel($className, $pointer);
 
         $file = $this->generator->generate($operation, []);
         self::assertTrue($file->hasStrictTypes());
 
-        $namespace    = $this->getNamespace($file, self::NAMESPACE);
+        $namespace    = $this->getNamespace($file, self::NS);
         $expectedUses = [
             'AbstractResponseFactory' => AbstractResponseFactory::class,
         ];
@@ -68,7 +68,7 @@ final class ResponseFactoryGeneratorTest extends TestCase
     {
         $expected  = "return (new EmptyResponse())->withStatus(201, 'Created');";
         $response  = new ResponseModel('201', 'Created', null, null);
-        $className = self::NAMESPACE . '\\Operation';
+        $className = self::NS . '\\Operation';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel(
             $className,
@@ -83,7 +83,7 @@ final class ResponseFactoryGeneratorTest extends TestCase
 
         $file = $this->generator->generate($operation, []);
 
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'ResponseFactory');
         $method    = $this->getMethod($class, 'get201Response');
 
@@ -105,13 +105,13 @@ final class ResponseFactoryGeneratorTest extends TestCase
     {
         $expected  = "return (new EmptyResponse())->withStatus(204, 'No content');";
         $response  = new ResponseModel('default', 'No content', null, null);
-        $className = self::NAMESPACE . '\\Operation';
+        $className = self::NS . '\\Operation';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel($className, $pointer, null, null, null, null, [], [$response]);
 
         $file = $this->generator->generate($operation, []);
 
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'ResponseFactory');
         $method    = $this->getMethod($class, 'getDefaultResponse');
 
@@ -131,13 +131,13 @@ final class ResponseFactoryGeneratorTest extends TestCase
 
         $type      = new SimpleProperty('', '', new PropertyMetadata(), new ClassString('Foo\\Bar'));
         $response  = new ResponseModel('409', 'Duplicates detected', 'application/json', $type);
-        $className = self::NAMESPACE . '\\Operation';
+        $className = self::NS . '\\Operation';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel(className: $className, jsonPointer: $pointer, responses: [$response]);
 
         $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
 
-        $namespace   = $this->getNamespace($file, self::NAMESPACE);
+        $namespace   = $this->getNamespace($file, self::NS);
         $class       = $this->getClass($namespace, 'ResponseFactory');
         $constructor = $this->getMethod($class, '__construct');
         $method      = $this->getMethod($class, 'get409Response');
@@ -197,13 +197,13 @@ final class ResponseFactoryGeneratorTest extends TestCase
 
         $type      = new ArrayProperty('', '', new PropertyMetadata(), false, new ClassString('Foo\\Bar'));
         $response  = new ResponseModel('200', 'OK', 'application/json', $type);
-        $className = self::NAMESPACE . '\\Operation';
+        $className = self::NS . '\\Operation';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel(className: $className, jsonPointer: $pointer, responses: [$response]);
 
         $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
 
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'ResponseFactory');
         $method    = $this->getMethod($class, 'get200Response');
 
@@ -239,13 +239,13 @@ final class ResponseFactoryGeneratorTest extends TestCase
             new ClassString('Foo\\Bar')
         );
         $response  = new ResponseModel('200', 'OK', 'application/json', $type);
-        $className = self::NAMESPACE . '\\Operation';
+        $className = self::NS . '\\Operation';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel(className: $className, jsonPointer: $pointer, responses: [$response]);
 
         $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
 
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'ResponseFactory');
         $method    = $this->getMethod($class, 'get200Response');
 
@@ -277,13 +277,13 @@ final class ResponseFactoryGeneratorTest extends TestCase
             new ResponseModel('200', 'OK', 'application/json', $json),
             new ResponseModel('200', 'OK', 'text/plain', $text),
         ];
-        $className = self::NAMESPACE . '\\Operation';
+        $className = self::NS . '\\Operation';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel(className: $className, jsonPointer: $pointer, responses: $responses);
 
         $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
 
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'ResponseFactory');
         $method    = $this->getMethod($class, 'get200Response');
 
@@ -305,13 +305,13 @@ final class ResponseFactoryGeneratorTest extends TestCase
         $expected  = '@param list<Bar> $model';
         $type      = new ArrayProperty('', '', new PropertyMetadata(required: true), true, new ClassString('Foo\\Bar'));
         $response  = new ResponseModel('200', 'OK', 'application/json', $type);
-        $className = self::NAMESPACE . '\\Operation';
+        $className = self::NS . '\\Operation';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel(className: $className, jsonPointer: $pointer, responses: [$response]);
 
         $file = $this->generator->generate($operation, ['Foo\\Bar' => 'Foo\\BarHydrator']);
 
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'ResponseFactory');
         $method    = $this->getMethod($class, 'get200Response');
 

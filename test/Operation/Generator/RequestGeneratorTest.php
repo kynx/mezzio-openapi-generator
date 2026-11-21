@@ -29,7 +29,7 @@ final class RequestGeneratorTest extends TestCase
     use GeneratorTrait;
     use OperationTrait;
 
-    private const NAMESPACE = __NAMESPACE__ . '\\Foo\\Get';
+    private const string NS = __NAMESPACE__ . '\\Foo\\Get';
 
     private RequestGenerator $generator;
 
@@ -42,14 +42,14 @@ final class RequestGeneratorTest extends TestCase
 
     public function testGenerateReturnsOperationFile(): void
     {
-        $className = self::NAMESPACE . '\\Request';
+        $className = self::NS . '\\Request';
         $pointer   = '/paths/foo/get';
         $operation = new OperationModel($className, $pointer);
 
         $file = $this->generator->generate($operation);
         self::assertTrue($file->hasStrictTypes());
 
-        $namespace    = $this->getNamespace($file, self::NAMESPACE);
+        $namespace    = $this->getNamespace($file, self::NS);
         $expectedUses = [
             'OpenApiRequest' => OpenApiRequest::class,
         ];
@@ -72,13 +72,13 @@ final class RequestGeneratorTest extends TestCase
 
     public function testGenerateAddsConstructorParameterAndGetter(): void
     {
-        $className  = self::NAMESPACE . '\\Request';
+        $className  = self::NS . '\\Request';
         $pointer    = '/paths/foo/get';
-        $pathParams = $this->getPathParams(self::NAMESPACE);
+        $pathParams = $this->getPathParams(self::NS);
         $operation  = new OperationModel($className, $pointer, $pathParams);
 
         $file      = $this->generator->generate($operation);
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
 
         $class = $this->getClass($namespace, 'Request');
 
@@ -88,12 +88,12 @@ final class RequestGeneratorTest extends TestCase
         $parameter = $parameters['pathParams'];
         self::assertInstanceOf(PromotedParameter::class, $parameter);
         self::assertSame('pathParams', $parameter->getName());
-        self::assertSame(self::NAMESPACE . '\\PathParams', $parameter->getType());
+        self::assertSame(self::NS . '\\PathParams', $parameter->getType());
         self::assertTrue($parameter->isPrivate());
         self::assertTrue($parameter->isReadOnly());
 
         $getter = $this->getMethod($class, 'getPathParams');
-        self::assertSame(self::NAMESPACE . '\\PathParams', $getter->getReturnType());
+        self::assertSame(self::NS . '\\PathParams', $getter->getReturnType());
         self::assertTrue($getter->isPublic());
         self::assertSame('return $this->pathParams;', $getter->getBody());
     }
@@ -101,7 +101,7 @@ final class RequestGeneratorTest extends TestCase
     public function testGenerateAddsRequestBodyParamAndGetter(): void
     {
         $types         = ['Foo' => '\\Api\\Foo', 'Bar' => '\\Api\\Bar'];
-        $className     = self::NAMESPACE . '\\Operation';
+        $className     = self::NS . '\\Operation';
         $pointer       = '/paths/foo/get';
         $requestBodies = [
             new RequestBodyModel(
@@ -116,7 +116,7 @@ final class RequestGeneratorTest extends TestCase
         $operation     = new OperationModel($className, $pointer, null, null, null, null, $requestBodies);
 
         $file      = $this->generator->generate($operation);
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
 
         $uses = $namespace->getUses();
         foreach (array_keys($types) as $use) {
@@ -144,7 +144,7 @@ final class RequestGeneratorTest extends TestCase
     public function testGenerateSetsUnionRequestBodyTypes(): void
     {
         $types         = ['Bar' => '\\Foo\\Bar', 'string' => 'string'];
-        $className     = self::NAMESPACE . '\\Operation';
+        $className     = self::NS . '\\Operation';
         $pointer       = '/paths/foo/get';
         $requestBodies = [
             new RequestBodyModel(
@@ -162,7 +162,7 @@ final class RequestGeneratorTest extends TestCase
         $operation     = new OperationModel($className, $pointer, null, null, null, null, $requestBodies);
 
         $file      = $this->generator->generate($operation);
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
 
         $uses = $namespace->getUses();
         self::assertArrayHasKey('Bar', $uses);

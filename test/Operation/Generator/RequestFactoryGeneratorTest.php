@@ -42,9 +42,9 @@ final class RequestFactoryGeneratorTest extends TestCase
     use GeneratorTrait;
     use OperationTrait;
 
-    private const NAMESPACE  = __NAMESPACE__ . '\\Foo\\Get';
-    private const CLASS_NAME = __NAMESPACE__ . '\\Foo\\Get\\Operation';
-    private const POINTER    = '/paths/foo/get';
+    private const string NS         = __NAMESPACE__ . '\\Foo\\Get';
+    private const string CLASS_NAME = __NAMESPACE__ . '\\Foo\\Get\\Operation';
+    private const string POINTER    = '/paths/foo/get';
 
     private RequestFactoryGenerator $generator;
 
@@ -66,7 +66,7 @@ final class RequestFactoryGeneratorTest extends TestCase
         $file = $this->generator->generate($operation, []);
         self::assertTrue($file->hasStrictTypes());
 
-        $namespace    = $this->getNamespace($file, self::NAMESPACE);
+        $namespace    = $this->getNamespace($file, self::NS);
         $expectedUses = [
             'OpenApiRequestFactory'   => OpenApiRequestFactory::class,
             'RequestFactoryInterface' => RequestFactoryInterface::class,
@@ -108,7 +108,7 @@ final class RequestFactoryGeneratorTest extends TestCase
         $paramName     = ucfirst($type) . 'Params';
         $utilMethod    = 'get' . ucfirst($type) . 'Variables';
         $getMethod     = 'get' . $paramName;
-        $paramClass    = self::NAMESPACE . '\\' . $paramName;
+        $paramClass    = self::NS . '\\' . $paramName;
         $hydratorName  = $paramName . 'Hydrator';
         $hydratorClass = $paramClass . 'Hydrator';
 
@@ -118,7 +118,7 @@ final class RequestFactoryGeneratorTest extends TestCase
         PARAMETER_GETTER;
 
         $file        = $this->generator->generate($operation, [$paramClass => $hydratorClass]);
-        $namespace   = $this->getNamespace($file, self::NAMESPACE);
+        $namespace   = $this->getNamespace($file, self::NS);
         $class       = $this->getClass($namespace, 'RequestFactory');
         $constructor = $this->getMethod($class, '__construct');
         $getter      = $this->getMethod($class, $getMethod);
@@ -157,10 +157,10 @@ final class RequestFactoryGeneratorTest extends TestCase
             'requestBodies' => [],
         ];
         $tests     = [
-            'path'   => self::getPathParams(self::NAMESPACE),
-            'query'  => self::getQueryParams(self::NAMESPACE),
-            'header' => self::getHeaderParams(self::NAMESPACE),
-            'cookie' => self::getCookieParams(self::NAMESPACE),
+            'path'   => self::getPathParams(self::NS),
+            'query'  => self::getQueryParams(self::NS),
+            'header' => self::getHeaderParams(self::NS),
+            'cookie' => self::getCookieParams(self::NS),
         ];
         $templates = [
             'path'   => "'{foo}'",
@@ -179,13 +179,13 @@ final class RequestFactoryGeneratorTest extends TestCase
     #[DataProvider('doesNotConvertListToArrayProvider')]
     public function testGenerateDoesNotConvertListToArray(PropertyInterface $property, string $template): void
     {
-        $model     = new ClassModel(self::NAMESPACE . '\\PathParams', '/foo', [], $property);
+        $model     = new ClassModel(self::NS . '\\PathParams', '/foo', [], $property);
         $param     = new PathOrQueryParams($template, $model);
-        $hydrators = [self::NAMESPACE . '\\PathParams' => self::NAMESPACE . '\\PathParmsHydrator'];
+        $hydrators = [self::NS . '\\PathParams' => self::NS . '\\PathParmsHydrator'];
         $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param);
 
         $file      = $this->generator->generate($operation, $hydrators);
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'RequestFactory');
         $method    = $this->getMethod($class, 'getPathParams');
         $body      = $method->getBody();
@@ -216,13 +216,13 @@ final class RequestFactoryGeneratorTest extends TestCase
         $expected = "\$path = OperationUtil::listToAssociativeArray(\$path, 'foo');";
 
         $property  = new SimpleProperty('foo', 'foo', new PropertyMetadata(), new ClassString('\\Foo'));
-        $model     = new ClassModel(self::NAMESPACE . '\\PathParams', '/foo', [], $property);
+        $model     = new ClassModel(self::NS . '\\PathParams', '/foo', [], $property);
         $param     = new PathOrQueryParams('{foo}', $model);
-        $hydrators = [self::NAMESPACE . '\\PathParams' => self::NAMESPACE . '\\PathParmsHydrator'];
+        $hydrators = [self::NS . '\\PathParams' => self::NS . '\\PathParmsHydrator'];
         $operation = new OperationModel(self::CLASS_NAME, self::POINTER, $param);
 
         $file   = $this->generator->generate($operation, $hydrators);
-        $class  = $this->getClass($this->getNamespace($file, self::NAMESPACE), 'RequestFactory');
+        $class  = $this->getClass($this->getNamespace($file, self::NS), 'RequestFactory');
         $getter = $this->getMethod($class, 'getPathParams');
 
         self::assertStringContainsString($expected, trim($getter->getBody()));
@@ -247,7 +247,7 @@ final class RequestFactoryGeneratorTest extends TestCase
         $hydrators = [__NAMESPACE__ . '\\Foo' => __NAMESPACE__ . '\\FooHydrator'];
 
         $file        = $this->generator->generate($operation, $hydrators);
-        $namespace   = $this->getNamespace($file, self::NAMESPACE);
+        $namespace   = $this->getNamespace($file, self::NS);
         $class       = $this->getClass($namespace, 'RequestFactory');
         $constructor = $this->getMethod($class, '__construct');
 
@@ -287,7 +287,7 @@ final class RequestFactoryGeneratorTest extends TestCase
         $operation = new OperationModel(self::CLASS_NAME, self::POINTER, null, null, null, null, [$requestBody]);
 
         $file      = $this->generator->generate($operation, $hydrators);
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'RequestFactory');
         $method    = $this->getMethod($class, 'getRequestBody');
 
@@ -390,7 +390,7 @@ final class RequestFactoryGeneratorTest extends TestCase
 
     private function getGetOperationBody(PhpFile $file): string
     {
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'RequestFactory');
         $method    = $this->getMethod($class, 'getOperation');
         return $method->getBody();
