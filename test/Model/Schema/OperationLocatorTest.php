@@ -53,7 +53,7 @@ final class OperationLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Unresolved reference: '$ref'");
+        self::expectExceptionMessageIsOrContains("Unresolved reference: '$ref'");
         $this->locator->getNamedSpecifications('', $operation);
     }
 
@@ -102,7 +102,7 @@ final class OperationLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Unresolved reference: '$ref'");
+        self::expectExceptionMessageIsOrContains("Unresolved reference: '$ref'");
         $this->locator->getNamedSpecifications('', $operation);
     }
 
@@ -146,7 +146,7 @@ final class OperationLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Unresolved reference: '$ref'");
+        self::expectExceptionMessageIsOrContains("Unresolved reference: '$ref'");
         $this->locator->getNamedSpecifications('', $operation);
     }
 
@@ -156,8 +156,8 @@ final class OperationLocatorTest extends TestCase
 
         $operation = $openApi->paths['/foo']->getOperations()['get'];
 
-        self::expectExceptionMessage(ModelException::class);
-        self::expectExceptionMessage("Cannot parse response");
+        self::expectExceptionMessageIsOrContains(ModelException::class);
+        self::expectExceptionMessageIsOrContains("Cannot parse response");
         $this->locator->getNamedSpecifications('', $operation);
     }
 

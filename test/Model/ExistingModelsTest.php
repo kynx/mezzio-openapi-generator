@@ -137,7 +137,7 @@ final class ExistingModelsTest extends TestCase
         $existing  = new ExistingModels($namespace, __DIR__ . '/Asset/Broken');
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage($expected);
+        self::expectExceptionMessageIsOrContains($expected);
         $existing->updateClassNames(new ModelCollection());
     }
 

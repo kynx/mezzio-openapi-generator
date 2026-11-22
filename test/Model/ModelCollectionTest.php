@@ -41,7 +41,7 @@ final class ModelCollectionTest extends TestCase
         $this->collection->add($this->class);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Model '\\Foo' already exists");
+        self::expectExceptionMessageIsOrContains("Model '\\Foo' already exists");
         $this->collection->add(clone $this->class);
     }
 

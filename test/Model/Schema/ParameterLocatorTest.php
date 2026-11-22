@@ -44,7 +44,7 @@ final class ParameterLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Unresolved reference: '$ref'");
+        self::expectExceptionMessageIsOrContains("Unresolved reference: '$ref'");
         $this->locator->getNamedSpecifications('', $parameter);
     }
 

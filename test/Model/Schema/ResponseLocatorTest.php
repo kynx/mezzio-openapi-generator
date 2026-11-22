@@ -68,7 +68,7 @@ final class ResponseLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Unresolved reference: '$ref'");
+        self::expectExceptionMessageIsOrContains("Unresolved reference: '$ref'");
         $this->locator->getNamedSchemas('', $response);
     }
 
@@ -88,7 +88,7 @@ final class ResponseLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Unresolved reference: '$ref'");
+        self::expectExceptionMessageIsOrContains("Unresolved reference: '$ref'");
         $this->locator->getNamedSchemas('', $response);
     }
 

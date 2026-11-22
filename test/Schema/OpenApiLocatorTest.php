@@ -56,7 +56,7 @@ final class OpenApiLocatorTest extends TestCase
         $openApi = new OpenApi([]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage('Specification is missing a document context');
+        self::expectExceptionMessageIsOrContains('Specification is missing a document context');
         $this->locator->getNamedSpecifications($openApi);
     }
 

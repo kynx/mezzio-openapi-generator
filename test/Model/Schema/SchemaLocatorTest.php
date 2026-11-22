@@ -208,7 +208,7 @@ final class SchemaLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage($expected);
+        self::expectExceptionMessageIsOrContains($expected);
         $this->locator->getNamedSpecifications('Foo', $schema);
     }
 
@@ -299,7 +299,7 @@ final class SchemaLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage($expected);
+        self::expectExceptionMessageIsOrContains($expected);
         $this->locator->getNamedSpecifications('Foo', $schema);
     }
 
@@ -346,7 +346,7 @@ final class SchemaLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage($expected);
+        self::expectExceptionMessageIsOrContains($expected);
         $this->locator->getNamedSpecifications('Foo', $schema);
     }
 
@@ -390,7 +390,7 @@ final class SchemaLocatorTest extends TestCase
         ]);
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage($expected);
+        self::expectExceptionMessageIsOrContains($expected);
         $this->locator->getNamedSpecifications('Foo', $schema);
     }
 }

@@ -51,7 +51,7 @@ final class PropertyTypeTest extends TestCase
             'type' => 'unknown',
         ]);
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Unrecognized type 'unknown'");
+        self::expectExceptionMessageIsOrContains("Unrecognized type 'unknown'");
         PropertyType::fromSchema($schema);
     }
 
@@ -119,7 +119,7 @@ final class PropertyTypeTest extends TestCase
     {
         $value = new stdClass();
         self::expectException(ModelException::class);
-        self::expectExceptionMessage("Unrecognized value 'stdClass'");
+        self::expectExceptionMessageIsOrContains("Unrecognized value 'stdClass'");
         PropertyType::fromValue($value);
     }
 

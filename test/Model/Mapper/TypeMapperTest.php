@@ -23,7 +23,7 @@ final class TypeMapperTest extends TestCase
         $typeMapper = new TypeMapper(self::createStub(TypeMapperInterface::class));
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage('OpenAPI 3.1 type arrays are not supported yet');
+        self::expectExceptionMessageIsOrContains('OpenAPI 3.1 type arrays are not supported yet');
         $typeMapper->map($schema);
     }
 
