@@ -23,8 +23,8 @@ use function str_replace;
 #[CoversNothing]
 final class ModelGeneratorEnd2EndTest extends TestCase
 {
-    private const NAMESPACE = __NAMESPACE__ . '\\Asset\\Generator';
-    private const ASSET_DIR = __DIR__ . '/Asset/Generator';
+    private const string NS        = __NAMESPACE__ . '\\Asset\\Generator';
+    private const string ASSET_DIR = __DIR__ . '/Asset/Generator';
 
     private ModelGenerator $generator;
 
@@ -37,7 +37,7 @@ final class ModelGeneratorEnd2EndTest extends TestCase
 
     public function testGenerateClassSimple(): void
     {
-        $className = self::NAMESPACE . '\\ClassSimple';
+        $className = self::NS . '\\ClassSimple';
         $expected  = $this->getAsset($className);
 
         $property = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::String);
@@ -50,7 +50,7 @@ final class ModelGeneratorEnd2EndTest extends TestCase
 
     public function testGenerateEnumSimple(): void
     {
-        $className = self::NAMESPACE . '\\EnumSimple';
+        $className = self::NS . '\\EnumSimple';
         $expected  = $this->getAsset($className);
 
         $cases = [new EnumCase('First', 'first'), new EnumCase('Second', 'second')];
@@ -63,7 +63,7 @@ final class ModelGeneratorEnd2EndTest extends TestCase
 
     public function testGenerateInterfaceSimple(): void
     {
-        $className = self::NAMESPACE . '\\InterfaceSimple';
+        $className = self::NS . '\\InterfaceSimple';
         $expected  = $this->getAsset($className);
 
         $property  = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::String);
@@ -76,7 +76,7 @@ final class ModelGeneratorEnd2EndTest extends TestCase
 
     public function getAsset(string $className): string
     {
-        $namespace = str_replace('\\', '\\\\', self::NAMESPACE);
+        $namespace = str_replace('\\', '\\\\', self::NS);
         $partName  = (string) preg_replace('/^' . $namespace . '/', '', $className);
         $filePath  = self::ASSET_DIR . str_replace('\\', '/', $partName) . '.php';
         return (string) file_get_contents($filePath);

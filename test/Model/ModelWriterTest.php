@@ -78,8 +78,8 @@ final class ModelWriterTest extends TestCase
 {
     use ModelTrait;
 
-    private const NAMESPACE = __NAMESPACE__ . '\\Asset\\Existing';
-    private const DIRECTORY = __DIR__ . '/Asset/Existing';
+    private const string NS        = __NAMESPACE__ . '\\Asset\\Existing';
+    private const string DIRECTORY = __DIR__ . '/Asset/Existing';
 
     private WriterInterface&Stub $writer;
     private ModelWriter $modelWriter;

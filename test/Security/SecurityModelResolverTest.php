@@ -24,8 +24,8 @@ final class SecurityModelResolverTest extends TestCase
     public function testConstructUnsupportedSchemeThrowsException(): void
     {
         $openApi = $this->getOpenApi('unsupported.yaml');
-        $this->expectException(UnsupportedSecurityRequirementException::class);
-        $this->expectExceptionMessage("Security requirement 'openIdConnect' is not supported");
+        self::expectException(UnsupportedSecurityRequirementException::class);
+        self::expectExceptionMessageIsOrContains("Security requirement 'openIdConnect' is not supported");
         new SecurityModelResolver($openApi);
     }
 
@@ -47,15 +47,15 @@ final class SecurityModelResolverTest extends TestCase
 
     public function testResolveMultipleSchemesThrowsException(): void
     {
-        $this->expectException(UnsupportedSecurityRequirementException::class);
-        $this->expectExceptionMessage('Multiple security requirements are not supported');
+        self::expectException(UnsupportedSecurityRequirementException::class);
+        self::expectExceptionMessageIsOrContains('Multiple security requirements are not supported');
         $this->assertSecuritySchemeMatches('no-global.yaml', '/multiple', null);
     }
 
     public function testResolveMissingSchemeThrowsException(): void
     {
-        $this->expectException(UnsupportedSecurityRequirementException::class);
-        $this->expectExceptionMessage("Security scheme name 'oauth' does not exist");
+        self::expectException(UnsupportedSecurityRequirementException::class);
+        self::expectExceptionMessageIsOrContains("Security scheme name 'oauth' does not exist");
         $this->assertSecuritySchemeMatches('no-global.yaml', '/missing-scheme', null);
     }
 

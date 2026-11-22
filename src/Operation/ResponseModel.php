@@ -9,7 +9,6 @@ use Kynx\Mezzio\OpenApiGenerator\Model\Property\PropertyInterface;
 /**
  * @internal
  *
- * @psalm-immutable
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */

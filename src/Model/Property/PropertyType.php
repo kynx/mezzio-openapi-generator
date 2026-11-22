@@ -18,7 +18,6 @@ use function gettype;
  * @link https://json-schema.org/understanding-json-schema/reference/string.html#format
  * @see \KynxTest\Mezzio\OpenApiGenerator\Model\Property\PropertyTypeTest
  *
- * @psalm-immutable
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
@@ -55,9 +54,6 @@ enum PropertyType
     case UriTemplate;
     case Uuid;
 
-    /**
-     * @psalm-mutation-free
-     */
     public static function fromSchema(Schema $schema): self
     {
         return match ($schema->type) {
@@ -72,9 +68,6 @@ enum PropertyType
         };
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public static function fromValue(mixed $value): self
     {
         return match (gettype($value)) {
@@ -87,9 +80,6 @@ enum PropertyType
         };
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     private static function fromString(string|null $format): self
     {
         return match ($format) {

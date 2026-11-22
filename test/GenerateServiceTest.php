@@ -38,8 +38,8 @@ final class GenerateServiceTest extends TestCase
     use OperationTrait;
     use RouteTrait;
 
-    private const NAMESPACE = __NAMESPACE__ . '\\Asset';
-    private const DIR       = __DIR__ . '/Asset';
+    private const string NS  = __NAMESPACE__ . '\\Asset';
+    private const string DIR = __DIR__ . '/Asset';
 
     private ModelWriterInterface&Stub $modelWriter;
     private HydratorWriterInterface&Stub $hydratorWriter;
@@ -63,10 +63,10 @@ final class GenerateServiceTest extends TestCase
         $this->service = new GenerateService(
             new OpenApiLocator(new PathsLocator(new ModelPathItemLocator())),
             new OpenApiLocator(new PathsLocator(new OperationPathItemLocator())),
-            $this->getModelCollectionBuilder($this->getPropertiesBuilder(), self::NAMESPACE),
-            $this->getOperationCollectionBuilder(self::NAMESPACE),
+            $this->getModelCollectionBuilder($this->getPropertiesBuilder(), self::NS),
+            $this->getOperationCollectionBuilder(self::NS),
             new RouteCollectionBuilder([]),
-            $this->getHandlerCollectionBuilder(self::NAMESPACE),
+            $this->getHandlerCollectionBuilder(self::NS),
             $this->modelWriter,
             $this->hydratorWriter,
             $this->operationWriter,
@@ -180,7 +180,7 @@ final class GenerateServiceTest extends TestCase
     private function getModelCollection(): ModelCollection
     {
         $collection = new ModelCollection();
-        $collection->add(new ClassModel(self::NAMESPACE . '\\Foo', '/components/schemas/Foo', []));
+        $collection->add(new ClassModel(self::NS . '\\Foo', '/components/schemas/Foo', []));
 
         return $collection;
     }

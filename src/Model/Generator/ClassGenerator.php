@@ -44,7 +44,9 @@ final class ClassGenerator extends AbstractGenerator
                 ->setReadOnly();
 
             if ($property->getDocBlockType() !== null) {
-                $constructor->addComment('@param ' . $property->getDocBlockType() . ' ' . $property->getName());
+                $constructor->addComment(
+                    '@param ' . (string) $property->getDocBlockType() . ' ' . $property->getName()
+                );
             }
         }
 

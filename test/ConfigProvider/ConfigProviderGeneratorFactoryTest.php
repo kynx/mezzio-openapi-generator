@@ -20,14 +20,14 @@ final class ConfigProviderGeneratorFactoryTest extends TestCase
     use HandlerTrait;
     use OperationTrait;
 
-    private const NAMESPACE = 'Api';
+    private const string NS = 'Api';
 
     public function testInvokeReturnsConfiguredInstance(): void
     {
         $configuration = [
             ConfigProvider::GEN_KEY => [
                 'project-dir'   => __DIR__,
-                'api-namespace' => self::NAMESPACE,
+                'api-namespace' => self::NS,
             ],
         ];
         $container     = $this->createStub(ContainerInterface::class);
@@ -42,8 +42,8 @@ final class ConfigProviderGeneratorFactoryTest extends TestCase
         $operations = $this->getOperationCollection($this->getOperations());
         $handlers   = $this->getHandlerCollection($this->getHandlers($operations));
 
-        $file      = $instance->generate($operations, $handlers, self::NAMESPACE . '\\RouteDelegator');
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $file      = $instance->generate($operations, $handlers, self::NS . '\\RouteDelegator');
+        $namespace = $this->getNamespace($file, self::NS);
         $classes   = $namespace->getClasses();
         self::assertArrayHasKey('ConfigProvider', $classes);
     }

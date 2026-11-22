@@ -54,7 +54,7 @@ final class WriterTest extends TestCase
         $file->addClass(self::BASE_NAMESPACE . '\\Bar\\Baz');
 
         self::expectException(WriterException::class);
-        self::expectExceptionMessage("Cannot create directory '$directory'");
+        self::expectExceptionMessageIsOrContains("Cannot create directory '$directory'");
         $this->writer->write($file);
     }
 
@@ -67,7 +67,7 @@ final class WriterTest extends TestCase
         $file->addClass(self::BASE_NAMESPACE . '\\Bar');
 
         self::expectException(WriterException::class);
-        self::expectExceptionMessage("Cannot write file '$path'");
+        self::expectExceptionMessageIsOrContains("Cannot write file '$path'");
         $this->writer->write($file);
     }
 

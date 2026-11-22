@@ -28,7 +28,7 @@ final class RouteDelegatorGeneratorTest extends TestCase
     use GeneratorTrait;
     use RouteTrait;
 
-    private const NAMESPACE = __NAMESPACE__ . '\\Api';
+    private const string NS = __NAMESPACE__ . '\\Api';
 
     protected function setUp(): void
     {
@@ -37,8 +37,8 @@ final class RouteDelegatorGeneratorTest extends TestCase
 
     public function testGetClassNameReturnsName(): void
     {
-        $expected  = self::NAMESPACE . '\\RouteDelegator';
-        $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE);
+        $expected  = self::NS . '\\RouteDelegator';
+        $generator = $this->getRouteDelegatorGenerator(self::NS);
         $actual    = $generator->getClassName();
         self::assertSame($expected, $actual);
     }
@@ -47,9 +47,9 @@ final class RouteDelegatorGeneratorTest extends TestCase
     {
         $path        = '/foo';
         $getPointer  = "/paths$path/get";
-        $getHandler  = self::NAMESPACE . "\\Handlers\\Foo\\GetHandler";
+        $getHandler  = self::NS . "\\Handlers\\Foo\\GetHandler";
         $postPointer = "/paths$path/post";
-        $postHandler = self::NAMESPACE . "\\Handlers\\Foo\\PostHandler";
+        $postHandler = self::NS . "\\Handlers\\Foo\\PostHandler";
 
         // phpcs:disable Generic.Files.LineLength.TooLong
         $expected = <<<INVOKE_BODY
@@ -84,12 +84,12 @@ final class RouteDelegatorGeneratorTest extends TestCase
         $converter->expects(self::once())
             ->method('sort')
             ->willReturnArgument(0);
-        $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE, $converter);
+        $generator = $this->getRouteDelegatorGenerator(self::NS, $converter);
         $file      = $generator->generate($collection, $map);
 
         self::assertTrue($file->hasStrictTypes());
 
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'RouteDelegator');
         $method    = $this->getMethod($class, '__invoke');
 
@@ -138,7 +138,7 @@ final class RouteDelegatorGeneratorTest extends TestCase
     {
         $path    = '/pets';
         $pointer = '/paths/~pets/get';
-        $handler = self::NAMESPACE . "\\Handlers\\Pet\\GetHandler";
+        $handler = self::NS . "\\Handlers\\Pet\\GetHandler";
 
         // phpcs:disable Generic.Files.LineLength.TooLong
         $expected = <<<INVOKE_BODY
@@ -165,10 +165,10 @@ final class RouteDelegatorGeneratorTest extends TestCase
             $pointer => $handler,
         ];
 
-        $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE);
+        $generator = $this->getRouteDelegatorGenerator(self::NS);
         $file      = $generator->generate($collection, $map);
 
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'RouteDelegator');
         $method    = $this->getMethod($class, '__invoke');
 
@@ -183,8 +183,8 @@ final class RouteDelegatorGeneratorTest extends TestCase
     {
         $path       = '/pets';
         $pointer    = '/paths/~pets/get';
-        $middleware = self::NAMESPACE . '\\Middleware\\PetGuard';
-        $handler    = self::NAMESPACE . "\\Handlers\\Pet\\GetHandler";
+        $middleware = self::NS . '\\Middleware\\PetGuard';
+        $handler    = self::NS . "\\Handlers\\Pet\\GetHandler";
 
         // phpcs:disable Generic.Files.LineLength.TooLong
         $expected = <<<INVOKE_BODY
@@ -211,10 +211,10 @@ final class RouteDelegatorGeneratorTest extends TestCase
             $pointer => $handler,
         ];
 
-        $generator = $this->getRouteDelegatorGenerator(self::NAMESPACE);
+        $generator = $this->getRouteDelegatorGenerator(self::NS);
         $file      = $generator->generate($collection, $map);
 
-        $namespace = $this->getNamespace($file, self::NAMESPACE);
+        $namespace = $this->getNamespace($file, self::NS);
         $class     = $this->getClass($namespace, 'RouteDelegator');
         $method    = $this->getMethod($class, '__invoke');
 

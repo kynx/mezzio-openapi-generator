@@ -38,7 +38,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(UnionProperty::class)]
 final class ExistingModelsTest extends TestCase
 {
-    private const NAMESPACE = __NAMESPACE__ . '\\Asset\\Existing';
+    private const string NS = __NAMESPACE__ . '\\Asset\\Existing';
 
     private ExistingModels $existing;
 
@@ -46,47 +46,47 @@ final class ExistingModelsTest extends TestCase
     {
         parent::setUp();
 
-        $this->existing = new ExistingModels(self::NAMESPACE, __DIR__ . '/Asset/Existing');
+        $this->existing = new ExistingModels(self::NS, __DIR__ . '/Asset/Existing');
     }
 
     public function testUpdateClassNamesReturnsRenamed(): void
     {
         $property   = new SimpleProperty('$foo', 'foo', new PropertyMetadata(), PropertyType::Boolean);
         $case       = new EnumCase('Foo', 'foo');
-        $interfaces = [self::NAMESPACE . '\\FooClassInterface'];
+        $interfaces = [self::NS . '\\FooClassInterface'];
 
         $expected = new ModelCollection();
         $expected->add(new ClassModel(
-            self::NAMESPACE . '\\MatchedClass',
+            self::NS . '\\MatchedClass',
             '/components/schemas/FooClass',
-            [self::NAMESPACE . '\\MatchedInterface'],
+            [self::NS . '\\MatchedInterface'],
             $property
         ));
         $expected->add(new EnumModel(
-            self::NAMESPACE . '\\MatchedEnum',
+            self::NS . '\\MatchedEnum',
             '/components/schemas/FooEnum',
             $case
         ));
         $expected->add(new InterfaceModel(
-            self::NAMESPACE . '\\MatchedInterface',
+            self::NS . '\\MatchedInterface',
             '/components/schemas/FooClass',
             $property
         ));
 
         $original = new ModelCollection();
         $original->add(new ClassModel(
-            self::NAMESPACE . '\\FooClass',
+            self::NS . '\\FooClass',
             '/components/schemas/FooClass',
             $interfaces,
             $property
         ));
         $original->add(new EnumModel(
-            self::NAMESPACE . '\\FooEnum',
+            self::NS . '\\FooEnum',
             '/components/schemas/FooEnum',
             $case
         ));
         $original->add(new InterfaceModel(
-            self::NAMESPACE . '\\FooClassInterface',
+            self::NS . '\\FooClassInterface',
             '/components/schemas/FooClass',
             $property
         ));
@@ -98,9 +98,9 @@ final class ExistingModelsTest extends TestCase
     public function testUpdateClassNamesReturnsOriginals(): void
     {
         $expected = new ModelCollection();
-        $expected->add(new ClassModel(self::NAMESPACE . '\\BarClass', '/components/schemas/BarClass', []));
-        $expected->add(new EnumModel(self::NAMESPACE . '\\BarEnum', '/components/schemas/BarEnum'));
-        $expected->add(new InterfaceModel(self::NAMESPACE . '\\BarClassInterface', '/components/schemas/BarClass'));
+        $expected->add(new ClassModel(self::NS . '\\BarClass', '/components/schemas/BarClass', []));
+        $expected->add(new EnumModel(self::NS . '\\BarEnum', '/components/schemas/BarEnum'));
+        $expected->add(new InterfaceModel(self::NS . '\\BarClassInterface', '/components/schemas/BarClass'));
 
         $actual = $this->existing->updateClassNames($expected);
         $expected->rewind();
@@ -110,10 +110,10 @@ final class ExistingModelsTest extends TestCase
     public function testUpdateClassNamesRecursesSubdirs(): void
     {
         $expected = new ModelCollection();
-        $expected->add(new ClassModel(self::NAMESPACE . '\\Subdir\\SubClass', '/components/schemas/SubClass', []));
+        $expected->add(new ClassModel(self::NS . '\\Subdir\\SubClass', '/components/schemas/SubClass', []));
 
         $original = new ModelCollection();
-        $original->add(new ClassModel(self::NAMESPACE . '\\Subdir\\BarClass', '/components/schemas/SubClass', []));
+        $original->add(new ClassModel(self::NS . '\\Subdir\\BarClass', '/components/schemas/SubClass', []));
 
         $actual = $this->existing->updateClassNames($original);
         self::assertEquals($expected, $actual);
@@ -123,7 +123,7 @@ final class ExistingModelsTest extends TestCase
     {
         $path     = __DIR__ . '/Assets/NonExistent';
         $expected = new ModelCollection();
-        $existing = new ExistingModels(self::NAMESPACE, $path);
+        $existing = new ExistingModels(self::NS, $path);
 
         $actual = $existing->updateClassNames($expected);
         self::assertSame($expected, $actual);
@@ -137,36 +137,36 @@ final class ExistingModelsTest extends TestCase
         $existing  = new ExistingModels($namespace, __DIR__ . '/Asset/Broken');
 
         self::expectException(ModelException::class);
-        self::expectExceptionMessage($expected);
+        self::expectExceptionMessageIsOrContains($expected);
         $existing->updateClassNames(new ModelCollection());
     }
 
     public function testUpdateClassNamesRenamesArrayProperties(): void
     {
-        $originalType = new ClassString(self::NAMESPACE . '\\FooEnum', true);
-        $expectedType = new ClassString(self::NAMESPACE . '\\MatchedEnum', true);
+        $originalType = new ClassString(self::NS . '\\FooEnum', true);
+        $expectedType = new ClassString(self::NS . '\\MatchedEnum', true);
 
         $expected = new ModelCollection();
         $expected->add(new ClassModel(
-            self::NAMESPACE . '\\MatchedClass',
+            self::NS . '\\MatchedClass',
             '/components/schemas/FooClass',
             [],
             new ArrayProperty('$foo', 'foo', new PropertyMetadata(), true, $expectedType)
         ));
         $expected->add(new EnumModel(
-            self::NAMESPACE . '\\MatchedEnum',
+            self::NS . '\\MatchedEnum',
             '/components/schemas/FooEnum'
         ));
 
         $original = new ModelCollection();
         $original->add(new ClassModel(
-            self::NAMESPACE . '\\FooClass',
+            self::NS . '\\FooClass',
             '/components/schemas/FooClass',
             [],
             new ArrayProperty('$foo', 'foo', new PropertyMetadata(), true, $originalType)
         ));
         $original->add(new EnumModel(
-            self::NAMESPACE . '\\FooEnum',
+            self::NS . '\\FooEnum',
             '/components/schemas/FooEnum'
         ));
 
@@ -176,30 +176,30 @@ final class ExistingModelsTest extends TestCase
 
     public function testUpdateClassNamesRenamesSimpleProperties(): void
     {
-        $originalType = new ClassString(self::NAMESPACE . '\\FooEnum', true);
-        $expectedType = new ClassString(self::NAMESPACE . '\\MatchedEnum', true);
+        $originalType = new ClassString(self::NS . '\\FooEnum', true);
+        $expectedType = new ClassString(self::NS . '\\MatchedEnum', true);
 
         $expected = new ModelCollection();
         $expected->add(new ClassModel(
-            self::NAMESPACE . '\\MatchedClass',
+            self::NS . '\\MatchedClass',
             '/components/schemas/FooClass',
             [],
             new SimpleProperty('$foo', 'foo', new PropertyMetadata(), $expectedType)
         ));
         $expected->add(new EnumModel(
-            self::NAMESPACE . '\\MatchedEnum',
+            self::NS . '\\MatchedEnum',
             '/components/schemas/FooEnum'
         ));
 
         $original = new ModelCollection();
         $original->add(new ClassModel(
-            self::NAMESPACE . '\\FooClass',
+            self::NS . '\\FooClass',
             '/components/schemas/FooClass',
             [],
             new SimpleProperty('$foo', 'foo', new PropertyMetadata(), $originalType)
         ));
         $original->add(new EnumModel(
-            self::NAMESPACE . '\\FooEnum',
+            self::NS . '\\FooEnum',
             '/components/schemas/FooEnum'
         ));
 
@@ -209,30 +209,30 @@ final class ExistingModelsTest extends TestCase
 
     public function testUpdateClassNamesRenamesUnionProperties(): void
     {
-        $originalType = new ClassString(self::NAMESPACE . '\\FooEnum', true);
-        $expectedType = new ClassString(self::NAMESPACE . '\\MatchedEnum', true);
+        $originalType = new ClassString(self::NS . '\\FooEnum', true);
+        $expectedType = new ClassString(self::NS . '\\MatchedEnum', true);
 
         $expected = new ModelCollection();
         $expected->add(new ClassModel(
-            self::NAMESPACE . '\\MatchedClass',
+            self::NS . '\\MatchedClass',
             '/components/schemas/FooClass',
             [],
             new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, $expectedType, PropertyType::String)
         ));
         $expected->add(new EnumModel(
-            self::NAMESPACE . '\\MatchedEnum',
+            self::NS . '\\MatchedEnum',
             '/components/schemas/FooEnum'
         ));
 
         $original = new ModelCollection();
         $original->add(new ClassModel(
-            self::NAMESPACE . '\\FooClass',
+            self::NS . '\\FooClass',
             '/components/schemas/FooClass',
             [],
             new UnionProperty('$foo', 'foo', new PropertyMetadata(), null, $originalType, PropertyType::String)
         ));
         $original->add(new EnumModel(
-            self::NAMESPACE . '\\FooEnum',
+            self::NS . '\\FooEnum',
             '/components/schemas/FooEnum'
         ));
 
