@@ -9,7 +9,6 @@ use Kynx\Mezzio\OpenApiGenerator\Operation\OperationModel;
 /**
  * @internal
  *
- * @psalm-immutable
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */

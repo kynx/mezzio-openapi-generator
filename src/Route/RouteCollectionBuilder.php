@@ -7,6 +7,7 @@ namespace Kynx\Mezzio\OpenApiGenerator\Route;
 use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Operation;
 use cebe\openapi\spec\Parameter;
+use cebe\openapi\spec\PathItem;
 use cebe\openapi\spec\Reference;
 use cebe\openapi\spec\Schema;
 use cebe\openapi\spec\Server;
@@ -50,7 +51,10 @@ final class RouteCollectionBuilder
         }
         // @fixme Resolve relative paths...
 
-        /** @var string $path */
+        /**
+         * @var string $path
+         * @var PathItem $pathItem
+         */
         foreach ($openApi->paths as $path => $pathItem) {
             foreach ($pathItem->getOperations() as $method => $operation) {
                 $pointer     = $operation->getDocumentPosition()?->getPointer() ?? '';

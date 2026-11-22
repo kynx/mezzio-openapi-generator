@@ -6,9 +6,6 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Mapper;
 
 use DateInterval;
 
-/**
- * @psalm-immutable
- */
 final class DateIntervalMapper implements TypeMapperInterface
 {
     public function canMap(string $type, ?string $format): bool

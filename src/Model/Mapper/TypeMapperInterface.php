@@ -16,8 +16,6 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Mapper;
  * @link https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-00#section-4.2.1 (type)
  * @link https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-validation-00#section-7.3 (string formats)
  * @link https://spec.openapis.org/oas/v3.1.0#dataTypeFormat (OAS formats)
- *
- * @psalm-immutable
  */
 interface TypeMapperInterface
 {

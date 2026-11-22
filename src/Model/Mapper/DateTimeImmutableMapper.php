@@ -8,9 +8,6 @@ use DateTimeImmutable;
 
 use function in_array;
 
-/**
- * @psalm-immutable
- */
 final class DateTimeImmutableMapper implements TypeMapperInterface
 {
     public function canMap(string $type, ?string $format): bool

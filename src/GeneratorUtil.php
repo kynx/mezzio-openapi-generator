@@ -24,7 +24,6 @@ use function ucfirst;
  *
  * @see \KynxTest\Mezzio\OpenApiGenerator\GeneratorUtilTest
  *
- * @psalm-immutable
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */

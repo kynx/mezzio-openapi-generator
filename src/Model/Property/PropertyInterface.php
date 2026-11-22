@@ -7,7 +7,6 @@ namespace Kynx\Mezzio\OpenApiGenerator\Model\Property;
 /**
  * @internal
  *
- * @psalm-immutable
  * @psalm-internal \Kynx\Mezzio\OpenApiGenerator
  * @psalm-internal \KynxTest\Mezzio\OpenApiGenerator
  */
